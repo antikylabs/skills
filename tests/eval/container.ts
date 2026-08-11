@@ -1,0 +1,278 @@
+/**
+ * Container plumbing, shared by the runner and the self-test.
+ *
+ * Everything that knows how to start a container lives here, so the security
+ * posture is stated once. Neither caller ever runs the pi SDK in its own
+ * process.
+ *
+ * Streams rather than blocks: the container's stderr carries the pi event log
+ * line by line, which is written to the run directory and optionally tailed to
+ * the console while the run is still going. stdout carries exactly one JSON
+ * trace, so data and logs never interleave.
+ */
+
+import { spawn, spawnSync } from "node:child_process";
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import type { FauxStep, Trace } from "./cases/index.ts";
+
+const HERE = path.dirname(fileURLToPath(import.meta.url));
+export const REPO_ROOT = path.resolve(HERE, "..", "..");
+export const FIXTURES = path.join(HERE, "fixtures");
+export const RUNS_DIR = path.join(HERE, "runs");
+export const IMAGE = "antiky-skills-eval";
+
+/** pi's reasoning levels, lowest to highest. */
+export const THINKING_LEVELS = ["off", "minimal", "low", "medium", "high", "xhigh"] as const;
+export type ThinkingLevel = (typeof THINKING_LEVELS)[number];
+
+/**
+ * Flags that make the container a boundary rather than a convenience.
+ * Asserted empirically by self-test.ts — do not weaken without updating it.
+ */
+export const HARDENING = [
+  "--read-only",
+  "--cap-drop=ALL",
+  "--security-opt=no-new-privileges",
+  "--memory=1g",
+  "--cpus=1",
+  "--pids-limit=256",
+  "--tmpfs", "/tmp:rw,noexec,nosuid,size=64m",
+  // The agent's writable scratch. Seeded from the read-only fixtures at start,
+  // discarded with the container. Nothing on the host is reachable from it.
+  "--tmpfs", "/workspace:rw,nosuid,size=64m",
+];
+
+/**
+ * Reasoning effort for live runs, from EVAL_THINKING.
+ *
+ * Default `low`. These cases test whether an agent loads a skill and follows a
+ * playbook, not whether it can reason its way to an answer, so a higher level
+ * mostly buys output tokens.
+ */
+export function thinkingLevel(): ThinkingLevel {
+  const raw = (process.env.EVAL_THINKING ?? "low").trim().toLowerCase();
+  if (!(THINKING_LEVELS as readonly string[]).includes(raw)) {
+    process.stderr.write(
+      `EVAL_THINKING="${raw}" is not valid. Use one of: ${THINKING_LEVELS.join(", ")}\n`,
+    );
+    process.exit(2);
+  }
+  return raw as ThinkingLevel;
+}
+
+export function detectRuntime(): string {
+  for (const runtime of ["podman", "docker"]) {
+    if (spawnSync(runtime, ["info"], { stdio: "ignore" }).status === 0) return runtime;
+  }
+  process.stderr.write(
+    "\nNo container runtime is reachable.\n\n" +
+      "This harness runs the pi agent SDK, which has no permission model of its\n" +
+      "own. Its documentation is explicit that an in-process sandbox is not a\n" +
+      "security boundary, so the SDK is never run on the host under any flag.\n\n" +
+      "Start one and try again:\n" +
+      "  podman machine start\n" +
+      "  open -a Docker\n\n",
+  );
+  process.exit(2);
+}
+
+export function ensureImage(runtime: string, rebuild = false): void {
+  const exists = spawnSync(runtime, ["image", "exists", IMAGE], { stdio: "ignore" });
+  if (exists.status === 0 && !rebuild) return;
+  process.stderr.write(`building ${IMAGE}...\n`);
+  const build = spawnSync(
+    runtime,
+    ["build", "-t", IMAGE, "-f", path.join(HERE, "Dockerfile"), REPO_ROOT],
+    { stdio: "inherit" },
+  );
+  if (build.status !== 0) {
+    process.stderr.write("image build failed\n");
+    process.exit(2);
+  }
+}
+
+// --- run directory ---------------------------------------------------------
+
+export interface RunLog {
+  dir: string;
+  id: string;
+  /** Append a line to the orchestrator log, and echo it to the console. */
+  note: (line: string) => void;
+  /** Absolute path for a per-case log file. */
+  casePath: (caseId: string, arm: string, ext: string) => string;
+}
+
+/**
+ * Create `eval/runs/<id>/`, gitignored, holding every log and report for one
+ * run. `EVAL_TAIL=1` additionally streams container stderr to the console as it
+ * arrives.
+ */
+export function openRunLog(label: string, timestamp: string): RunLog {
+  const id = `${timestamp}-${label}`;
+  const dir = path.join(RUNS_DIR, id);
+  fs.mkdirSync(path.join(dir, "cases"), { recursive: true });
+  const logPath = path.join(dir, "run.log");
+
+  return {
+    dir,
+    id,
+    note: (line: string) => {
+      fs.appendFileSync(logPath, line + "\n");
+      process.stdout.write(line + "\n");
+    },
+    casePath: (caseId, arm, ext) => path.join(dir, "cases", `${caseId}.${arm}.${ext}`),
+  };
+}
+
+// --- running ---------------------------------------------------------------
+
+export interface RunOptions {
+  prompt: string;
+  provider: "faux" | "openrouter";
+  modelId: string;
+  systemPrompt: string;
+  thinkingLevel?: ThinkingLevel;
+  /** False runs the baseline arm: no skills offered. Default true. */
+  withSkill?: boolean;
+  script?: FauxStep[];
+  /** Where to write this run's container log. Omit to discard it. */
+  logFile?: string;
+}
+
+const TAIL = process.env.EVAL_TAIL === "1";
+
+/**
+ * Run one agent job in a fresh container and return its trace.
+ *
+ * The container's stderr is streamed to `logFile` as it arrives, and mirrored to
+ * the console when EVAL_TAIL=1, so a long live run is observable rather than
+ * silent until it finishes.
+ */
+export async function runInSandbox(runtime: string, options: RunOptions): Promise<Trace> {
+  const job = {
+    prompt: options.prompt,
+    provider: options.provider,
+    modelId: options.modelId,
+    systemPrompt: options.systemPrompt,
+    thinkingLevel: options.thinkingLevel ?? thinkingLevel(),
+    withSkill: options.withSkill !== false,
+    fauxScript: options.script,
+  };
+
+  const args = ["run", "--rm", "-i", ...HARDENING, "-v", `${FIXTURES}:/fixtures:ro`,
+                "-e", "EVAL_IN_SANDBOX=1", "-e", "EVAL_LOG=1"];
+
+  if (options.provider === "faux") {
+    // A deterministic run needs no network. Remove it rather than trust it.
+    args.push("--network=none");
+  } else {
+    const key = process.env.OPENROUTER_API_KEY;
+    if (!key) {
+      process.stderr.write("EVAL_PROVIDER=openrouter needs OPENROUTER_API_KEY in the environment.\n");
+      process.exit(2);
+    }
+    args.push("-e", `OPENROUTER_API_KEY=${key}`);
+  }
+  args.push(IMAGE);
+
+  const log = options.logFile ? fs.createWriteStream(options.logFile, { flags: "a" }) : null;
+  const tailPrefix = options.logFile ? path.basename(options.logFile, ".log") : "";
+
+  return await new Promise<Trace>((resolve) => {
+    const child = spawn(runtime, args, { stdio: ["pipe", "pipe", "pipe"] });
+    let stdout = "";
+    let stderrTail = "";
+
+    child.stdout.on("data", (chunk) => {
+      stdout += chunk.toString();
+    });
+
+    child.stderr.on("data", (chunk) => {
+      const text = chunk.toString();
+      log?.write(text);
+      stderrTail = (stderrTail + text).slice(-2000);
+      if (TAIL) {
+        for (const line of text.split("\n")) {
+          if (line.trim()) process.stdout.write(`      │ ${tailPrefix} ${line}\n`);
+        }
+      }
+    });
+
+    const finish = (status: number | null) => {
+      log?.end();
+      if (status !== 0 && !stdout.trim()) {
+        resolve({
+          toolCalls: [],
+          finalText: "",
+          usage: undefined,
+          error: `container exited ${status}: ${stderrTail.slice(-300)}`,
+        } as Trace);
+        return;
+      }
+      try {
+        const line = stdout.trim().split("\n").filter(Boolean).pop() ?? "{}";
+        resolve(JSON.parse(line) as Trace);
+      } catch {
+        resolve({
+          toolCalls: [],
+          finalText: "",
+          usage: undefined,
+          error: `unparseable trace: ${stdout.slice(0, 200)}`,
+        } as Trace);
+      }
+    };
+
+    child.on("close", finish);
+    child.on("error", (error) => {
+      log?.end();
+      resolve({ toolCalls: [], finalText: "", usage: undefined, error: String(error) } as Trace);
+    });
+
+    child.stdin.write(JSON.stringify(job));
+    child.stdin.end();
+  });
+}
+
+/** Run an arbitrary command in the image, for probing the sandbox itself. */
+export function probe(runtime: string, command: string): { out: string; code: number } {
+  const result = spawnSync(
+    runtime,
+    ["run", "--rm", "--network=none", ...HARDENING,
+     "-v", `${FIXTURES}:/fixtures:ro`,
+     "--entrypoint", JSON.stringify(["/bin/sh", "-c", command]), IMAGE],
+    { encoding: "utf-8", timeout: 60_000 },
+  );
+  return { out: (result.stdout ?? "") + (result.stderr ?? ""), code: result.status ?? -1 };
+}
+
+/**
+ * The system prompt an evaluated agent gets.
+ *
+ * The baseline arm is identical except that it lists no skills and is not told
+ * to load one — so a difference between the arms is attributable to the skill
+ * rather than to a differently worded prompt.
+ */
+export function systemPrompt(withSkill = true): string {
+  const base = `You are a documentation engineer working in a repository.
+
+You are in a read-only environment. You can read files and run the STE linter. You cannot edit or write files and you cannot run shell commands.`;
+
+  if (!withSkill) return base;
+
+  const skillsDir = path.join(REPO_ROOT, "skills");
+  const listing = fs
+    .readdirSync(skillsDir, { withFileTypes: true })
+    .filter((e) => e.isDirectory())
+    .map((e) => {
+      const md = fs.readFileSync(path.join(skillsDir, e.name, "SKILL.md"), "utf-8");
+      const description = /^description:\s*(.+)$/m.exec(md)?.[1] ?? "";
+      return `- ${e.name}: ${description}`;
+    })
+    .join("\n");
+
+  // The catalog itself is built inside the container by pi's own loadSkills(),
+  // so the host does not need to parse SKILL.md at all.
+  return base;
+}

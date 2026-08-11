@@ -1,0 +1,4 @@
+interface:
+  display_name: "Team: Objectives"
+  short_description: "Scaffold, research, plan, execute, and archive objectives"
+  default_prompt: "Use $team-write-objectives init to scaffold a new objective."
