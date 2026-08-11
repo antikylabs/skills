@@ -5,6 +5,10 @@ These instructions apply to this repository and all its child folders.
 This repository holds portable agent skills. It holds no Antiky source code. A skill in this
 repository must work in any repository that installs it.
 
+## Agent note
+
+- never use coauthored tags for claude or codex or whatever agent you are.
+
 ## Skill layout
 
 One skill is one directory under `skills/`. The directory name is the skill name.
