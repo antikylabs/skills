@@ -1,12 +1,10 @@
-/**
- * BroMetal trigger cases — routing for `general-brometal-patching`.
- *
- * The collision to watch is with a future `brometal-*` skill: this one covers
- * our practice for consuming BroMetal as a patched dependency, not building
- * things with BroMetal. A shader question must not pull it in.
- */
-
-import { type EvalCase, saying, skillInvoked, text, tool, toolPath } from "../../types.ts";
+import {
+  type EvalCase,
+  skillInvoked,
+  text,
+  tool,
+  toolPath,
+} from "../../types.ts";
 import { PATCH_DIR, SKILL } from "./paths.ts";
 
 export const TRIGGER_CASES: EvalCase[] = [
@@ -26,8 +24,14 @@ export const TRIGGER_CASES: EvalCase[] = [
       text("Patch locally to unblock, then send it upstream. ADR 0021 requires the PR."),
     ],
     negativeControl: {
-      reason: "an agent that suggests forking or vendoring instead of loading the practice",
-      trace: saying("Fork BroMetal and maintain your own copy with the fix."),
+      reason: "an agent that reads the defect report, proposes a real remedy, and never opens the skill",
+      script: [
+        tool("list_dir", { path: PATCH_DIR }),
+        text(
+          "The fix is small and upstream is quiet. Fork BroMetal, apply the fix on the fork, and " +
+            "point the dependency at it until upstream moves.",
+        ),
+      ],
     },
   },
 
@@ -46,8 +50,11 @@ export const TRIGGER_CASES: EvalCase[] = [
       text("Bump, re-apply, see what throws, then retire the patches whose fixes shipped."),
     ],
     negativeControl: {
-      reason: "an agent that bumps the version without considering the patch set",
-      trace: saying("Run npm install brometal@0.18.0."),
+      reason: "an agent that checks the installed version, gives a correct upgrade command, and never opens the skill",
+      script: [
+        tool("list_dir", { path: PATCH_DIR }),
+        text("Three patches are applied. Run `npm install brometal@0.18.0` and re-run the test suite."),
+      ],
     },
   },
 

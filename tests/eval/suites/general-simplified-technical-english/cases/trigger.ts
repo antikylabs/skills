@@ -1,15 +1,5 @@
-/**
- * Trigger cases: does the skill get loaded when it should, and stay out of the
- * way when it should not?
- *
- * These test the `description` field in SKILL.md, which is the only thing the
- * agent routes on. A skill that never triggers is dead weight; one that
- * triggers on everything is worse.
- */
-
 import {
   type EvalCase,
-  saying,
   skillInvoked,
   text,
   tool,
@@ -32,8 +22,14 @@ export const TRIGGER_CASES: EvalCase[] = [
       text("Loaded the audit playbook. I will run the linter next."),
     ],
     negativeControl: {
-      reason: "an agent that answers from memory without loading the skill",
-      trace: saying("Your document has several non-approved words. Replace 'ensure' with 'make sure'."),
+      reason: "an agent that reads the document, names real STE violations, and never opens the skill",
+      script: [
+        tool("read_file", { path: DRAFT }),
+        text(
+          "Three problems: 'ensure' is not approved — use 'make sure'; 'utilise' is not approved — " +
+            "use 'use'; and the second paragraph is passive where it should be an instruction.",
+        ),
+      ],
     },
   },
 

@@ -1,16 +1,8 @@
-/**
- * Antiky documentation-standards cases.
- *
- * The generated-page case is the one that matters: an edit under api/ survives
- * until the next generation and then disappears, taking the work with it. It is
- * asserted on the filesystem, not on what the agent says.
- */
-
 import {
   type EvalCase,
-  created,
   mentions,
   modified,
+  nearMiss,
   saying,
   skillInvoked,
   text,
@@ -96,10 +88,13 @@ export const STANDARDS_CASES: EvalCase[] = [
       tool("read_file", { path: `/skills/${SKILL}/SKILL.md` }),
       text("framework/ — it is hand-written framework documentation, not generated API reference."),
     ],
-    negativeControl: {
-      reason: "an agent that guesses a location without loading the standards",
-      trace: saying("Put it in docs/user-facing-docs/lights/directional.md."),
-    },
+    negativeControl: nearMiss(
+      "an agent that reads the docs tree, picks a location that fits it, and never opens the standards",
+      [
+        tool("list_dir", { path: DOCS_ROOT }),
+        text("docs/user-facing-docs/framework/lighting/directional.md, beside the other framework pages."),
+      ],
+    ),
   },
 
   {

@@ -182,6 +182,11 @@ export interface RunOptions {
   thinkingLevel?: ThinkingLevel;
   /** False runs the baseline arm: no skills offered. Default true. */
   withSkill?: boolean;
+  /**
+   * Mount this tree over /skills instead of the baked-in one. The sham arm uses
+   * it to present an identical catalog with generic bodies; see eval/sham.ts.
+   */
+  shamSkillsDir?: string;
   script?: FauxStep[];
   /** Where to write this run's container log. Omit to discard it. */
   logFile?: string;
@@ -209,6 +214,11 @@ export async function runInSandbox(runtime: string, options: RunOptions): Promis
 
   const args = ["run", "--rm", "-i", ...HARDENING, "-v", `${SUITES}:/suites:ro`,
                 "-e", "EVAL_IN_SANDBOX=1", "-e", "EVAL_LOG=1"];
+
+  // Shadowing the baked-in /skills is what makes the sham arm a controlled
+  // comparison: identical image, identical prompt, identical catalog, and the
+  // only difference on disk is the body of each SKILL.md.
+  if (options.shamSkillsDir) args.push("-v", `${options.shamSkillsDir}:/skills:ro`);
 
   if (options.provider === "faux") {
     // A deterministic run needs no network. Remove it rather than trust it.
@@ -304,20 +314,10 @@ The repository is at /workspace and you can read and write it: read_file, list_d
 
 When a task asks you to create or change something, do it. Do not describe the change you would make instead of making it.`;
 
-  if (!withSkill) return base;
-
-  const skillsDir = path.join(REPO_ROOT, "skills");
-  const listing = fs
-    .readdirSync(skillsDir, { withFileTypes: true })
-    .filter((e) => e.isDirectory())
-    .map((e) => {
-      const md = fs.readFileSync(path.join(skillsDir, e.name, "SKILL.md"), "utf-8");
-      const description = /^description:\s*(.+)$/m.exec(md)?.[1] ?? "";
-      return `- ${e.name}: ${description}`;
-    })
-    .join("\n");
-
-  // The catalog itself is built inside the container by pi's own loadSkills(),
-  // so the host does not need to parse SKILL.md at all.
+  // The catalog is built inside the container by pi's own loadSkills(), so the
+  // host never parses SKILL.md. The two arms differ only in whether that catalog
+  // is offered — the prose above is byte-identical either way, which is what
+  // makes a delta attributable to the skill rather than to the wording.
+  void withSkill;
   return base;
 }

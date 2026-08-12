@@ -14,6 +14,35 @@ version, not a patch.
 - suites now reflect the name of the skill for easy correlation
 - added `GOOD_ENGINEERING_H.md` which is part of our standard engineering principles
 
+### Eval methodology
+
+Read the harnesses behind ponytail, impeccable and `agent-skills-eval`, and took four things from
+them. Credits in `tests/README.md`.
+
+- **A third arm.** `EVAL_SHAM=1` runs the suite against a catalog with identical frontmatter and
+  generic bodies, so `with − sham` measures the writing and `sham − without` measures the mere
+  existence of a document. Two arms move both at once and cannot separate them. Ponytail runs the
+  same shape with `caveman`.
+- **Repeats.** `EVAL_REPEAT=n` runs each arm n times, reports the majority verdict, and names any
+  case that did not repeat cleanly. Identical configuration has produced deltas of +20, +19 and +12
+  on this suite; one run is a sample, not a measurement.
+- **Near-miss controls.** A control built from `saying(...)` makes no tool calls, so a
+  `skillInvoked` assertion rejects it for the wrong reason. Eleven trigger controls are now scripted
+  agents that read the real fixtures and answer plausibly, and cut exactly one corner: they never
+  open the skill. The standard is ponytail's — the bad reference is correct on the happy path.
+- **Ordering assertions.** `before(trace, first, second)` — "read the area, then wrote the record"
+  and "wrote the record, then read the area" contain the same calls and are not the same behaviour.
+  From impeccable's `loadedBeforeImplementationWrite`.
+
+### Added
+
+- `repoadrs-index-unnamed`, a trap case after ponytail's `trace-transfer`: the prompt asks only for
+  a record to be filed and the assertion checks the index, which the prompt never mentions. Gate
+  (is the record well-formed?) and trap are scored separately.
+- Mutation contents now cover modified files, not only created ones. The trap case found this —
+  the index is modified, so its text was unreachable and the assertion could tell that the file had
+  been touched but not whether the edit was right.
+
 **This is breaking.** A skill's name is part of its public interface, so the next release is a minor
 bump and every existing install needs the new name:
 

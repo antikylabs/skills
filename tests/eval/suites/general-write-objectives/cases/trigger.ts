@@ -1,12 +1,11 @@
-/**
- * Objectives trigger cases — routing for `general-write-objectives`.
- *
- * Body is a stub; the description is not. See the note in ../adr/trigger.ts —
- * the same reasoning applies, and the same collision risk exists between
- * planning work and ADR work.
- */
-
-import { type EvalCase, SKILLS, saying, skillInvoked, text, tool, toolPath } from "../../types.ts";
+import {
+  type EvalCase,
+  SKILLS,
+  skillInvoked,
+  text,
+  tool,
+  toolPath,
+} from "../../types.ts";
 import { ROADMAP, SKILL } from "./paths.ts";
 
 export const TRIGGER_CASES: EvalCase[] = [
@@ -21,8 +20,14 @@ export const TRIGGER_CASES: EvalCase[] = [
     }),
     script: [tool("read_file", { path: `/skills/${SKILL}/SKILL.md` }), text("Loaded the objectives skill.")],
     negativeControl: {
-      reason: "an agent that invents a plan format instead of loading the skill",
-      trace: saying("Here is a roadmap:\n\n1. Research\n2. Prototype\n3. Ship"),
+      reason: "an agent that reads the intent, produces a credible plan, and never opens the skill",
+      script: [
+        tool("read_file", { path: ROADMAP }),
+        text(
+          "Here is a roadmap:\n\n1. Research the existing lighting path\n2. Prototype the new " +
+            "sampler\n3. Migrate the demo scenes\n4. Ship behind a flag",
+        ),
+      ],
     },
   },
 
@@ -41,8 +46,11 @@ export const TRIGGER_CASES: EvalCase[] = [
       text("A completed objective is replaced by one durable summary in _archives/."),
     ],
     negativeControl: {
-      reason: "an agent that answers an archival-convention question from general habit",
-      trace: saying("You could delete it, or move it to an old/ directory."),
+      reason: "an agent that inspects the finished objective, answers sensibly, and never opens the skill",
+      script: [
+        tool("read_file", { path: ROADMAP }),
+        text("It is finished, so move the folder to an old/ directory and note it in the index."),
+      ],
     },
   },
 

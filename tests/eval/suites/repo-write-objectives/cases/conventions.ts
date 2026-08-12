@@ -1,12 +1,11 @@
-/**
- * Antiky objective-convention cases.
- *
- * These guard the two things that break silently: goal filenames (links between
- * goals already point at execute-goal-NN.md) and where a completed objective's
- * summary goes.
- */
-
-import { type EvalCase, mentions, saying, skillInvoked, text, tool } from "../../types.ts";
+import {
+  type EvalCase,
+  nearMiss,
+  saying,
+  skillInvoked,
+  text,
+  tool,
+} from "../../types.ts";
 import { GOAL, OBJECTIVES_ROOT, SKILL, TOWN } from "./paths.ts";
 
 export const CONVENTION_CASES: EvalCase[] = [
@@ -79,9 +78,13 @@ export const CONVENTION_CASES: EvalCase[] = [
       tool("read_file", { path: `/skills/${SKILL}/SKILL.md` }),
       text("docs/objectives/<kebab-name>/, with objective.md and nothing else until it has content."),
     ],
-    negativeControl: {
-      reason: "an agent that invents a layout",
-      trace: saying("Create docs/plans/new-objective/ with a README and a tasks file."),
-    },
+    negativeControl: nearMiss(
+      "an agent that reads the existing objectives, copies their shape, and never opens the skill",
+      [
+        tool("list_dir", { path: OBJECTIVES_ROOT }),
+        tool("list_dir", { path: TOWN }),
+        text("docs/objectives/<name>/, matching town-lighting: an objective.md and a goals/ folder."),
+      ],
+    ),
   },
 ];

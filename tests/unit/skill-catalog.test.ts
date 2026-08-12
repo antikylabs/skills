@@ -16,6 +16,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { loadCatalog } from "../eval/sandbox/skills.ts";
+import { buildShamSkills, skillNames } from "../eval/sham.ts";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const SKILLS = path.resolve(HERE, "..", "..", "skills");
@@ -101,5 +102,24 @@ describe("skill catalog", () => {
       // The location is how a model activates a skill: it reads that path.
       assert.ok(catalogXml.includes(skill.filePath), `${skill.name} has no location in the catalog`);
     }
+  });
+});
+
+describe("sham arm", () => {
+  it("mirrors every skill's frontmatter exactly, so the third arm controls for the catalog", () => {
+    // The sham arm only controls for the catalog if the catalog is identical.
+    // A drifted description would make the third arm measure the description
+    // change as well as the body change, which is the confound it exists to remove.
+    const root = buildShamSkills();
+    const real = path.resolve(HERE, "../../skills");
+
+    for (const name of skillNames()) {
+      const shamMd = fs.readFileSync(path.join(root, name, "SKILL.md"), "utf-8");
+      const realMd = fs.readFileSync(path.join(real, name, "SKILL.md"), "utf-8");
+      const head = (md: string) => md.slice(0, md.indexOf("\n---", 3) + 4);
+      assert.equal(head(shamMd), head(realMd), `${name}: sham frontmatter differs from the real skill`);
+      assert.notEqual(shamMd, realMd, `${name}: sham body is identical to the real one — it controls for nothing`);
+    }
+    fs.rmSync(root, { recursive: true, force: true });
   });
 });

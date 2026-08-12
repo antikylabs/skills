@@ -83,9 +83,13 @@ export interface Mutations {
 /**
  * Diff the workspace against the pristine fixtures.
  *
- * `contents` carries created files only, capped, because a case usually needs to
- * check what was written and a modified file's diff is rarely what the assertion
- * turns on.
+ * `contents` carries created **and modified** files, capped.
+ *
+ * It was created-only until a case needed to check that a new record had been
+ * added to an existing index — the index is modified, not created, so its text
+ * was unreachable and the assertion could see that the file was touched but not
+ * whether the edit was right. "Touched the right file" is a much weaker claim
+ * than the case was making.
  */
 export function collectMutations(maxBytes = 20_000): Mutations {
   const before = baseline ?? new Map<string, string>();
@@ -110,6 +114,13 @@ export function collectMutations(maxBytes = 20_000): Mutations {
       }
     } else if (prior !== hash) {
       modified.push(rel);
+      const full = path.join(WORKSPACE, rel);
+      try {
+        const stat = fs.statSync(full);
+        contents[rel] = stat.size <= maxBytes ? fs.readFileSync(full, "utf-8") : `(${stat.size} bytes, truncated)`;
+      } catch {
+        /* unreadable: leave it out of contents */
+      }
     }
   }
   for (const rel of before.keys()) if (!after.has(rel)) deleted.push(rel);

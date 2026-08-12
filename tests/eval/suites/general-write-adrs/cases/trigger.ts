@@ -1,21 +1,7 @@
-/**
- * ADR trigger cases — routing for `general-write-adrs`.
- *
- * The skill body is still a stub, so there is no procedure to evaluate yet.
- * The description is not a stub, and routing is decided entirely by it, so
- * these cases are meaningful now and will keep their value once the body
- * lands.
- *
- * The collision cases matter most. `general-write-adrs` and
- * `general-simplified-technical-english` both plausibly match "review this ADR",
- * and nothing in either description currently separates them. If these fail,
- * the fix is a description change, not a case change.
- */
-
 import {
   type EvalCase,
   SKILLS,
-  saying,
+  nearMiss,
   skillInvoked,
   text,
   tool,
@@ -38,10 +24,17 @@ export const TRIGGER_CASES: EvalCase[] = [
       tool("read_file", { path: PROPOSAL }),
       text("Loaded the ADR skill. Drafting the five-part record."),
     ],
-    negativeControl: {
-      reason: "an agent that writes an ADR freehand without loading the skill",
-      trace: saying("# 0022: Keep BroMetal behind the render driver\n\nStatus: Accepted"),
-    },
+    negativeControl: nearMiss(
+      "an agent that reads the notes, writes a well-formed record, and never opens the skill",
+      [
+        tool("read_file", { path: PROPOSAL }),
+        text(
+          "# 0022: Keep BroMetal behind the render driver\n\n" +
+            "## Status\n\nAccepted\n\n## Context\n\nThe renderer had grown direct BroMetal calls.\n\n" +
+            "## Decision\n\nAll BroMetal access goes through the render driver.",
+        ),
+      ],
+    ),
   },
 
   {
@@ -57,10 +50,16 @@ export const TRIGGER_CASES: EvalCase[] = [
       tool("read_file", { path: `/skills/${SKILL}/SKILL.md` }),
       text("An accepted decision is not edited in place. Write a new ADR and mark the old one Superseded."),
     ],
-    negativeControl: {
-      reason: "an agent that offers to edit the accepted record in place",
-      trace: saying("I can update the Decision section of that file to reflect the new choice."),
-    },
+    negativeControl: nearMiss(
+      "an agent that reads the record, gets the shape of the answer right, and never opens the skill",
+      [
+        tool("read_file", { path: ACCEPTED }),
+        text(
+          "That record is Accepted, so I would update its Status and rewrite the Decision section " +
+            "to match what we now believe.",
+        ),
+      ],
+    ),
   },
 
   {

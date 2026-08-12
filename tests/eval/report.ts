@@ -28,12 +28,23 @@ export interface ArmResult {
   /** What the agent actually said. Kept so a failure is diagnosable without re-running it. */
   finalText?: string;
   error?: string;
+  /**
+   * How the repeats fell, when EVAL_REPEAT > 1. `verdict` is then the majority.
+   *
+   * A single run of this suite has produced deltas of +20, +19 and +12 on
+   * identical configuration. Reporting one sample as the result is how that
+   * spread gets mistaken for a change. Ponytail runs ten per cell and reports
+   * the median for the same reason.
+   */
+  repeats?: { total: number; passed: number };
 }
 
 export interface CaseResult {
   testCase: EvalCase;
   withSkill: ArmResult;
   withoutSkill?: ArmResult;
+  /** Identical catalog, generic bodies. See eval/sham.ts. */
+  sham?: ArmResult;
 }
 
 export const zeroUsage = (): UsageTotals => ({
@@ -111,14 +122,34 @@ export function renderReport(input: ReportInput): string {
   // --- results -------------------------------------------------------------
 
   out.push("", "RESULTS");
+  const shamRuns = results.filter((r) => r.sham);
+  const shamPass = results.filter((r) => r.sham?.verdict.passed).length;
   if (paired) {
     const pct = (v: number) => `${((v / total) * 100).toFixed(0)}%`;
     out.push(`  with skill      ${withPass}/${total}  (${pct(withPass)})`);
+    if (shamRuns.length) out.push(`  sham skill      ${shamPass}/${total}  (${pct(shamPass)})`);
     out.push(`  without skill   ${withoutPass}/${total}  (${pct(withoutPass)})`);
     const d = withPass - withoutPass;
     out.push(`  skill delta     ${d > 0 ? "+" : ""}${d} cases  (${d >= 0 ? "+" : ""}${(((withPass - withoutPass) / total) * 100).toFixed(0)} pp)`);
+    if (shamRuns.length) {
+      // The split that two arms cannot show: how much of the delta is the
+      // writing, and how much is any document at all.
+      const content = withPass - shamPass;
+      const catalog = shamPass - withoutPass;
+      out.push(`   of which content  ${content > 0 ? "+" : ""}${content}  (with − sham)`);
+      out.push(`   of which catalog  ${catalog > 0 ? "+" : ""}${catalog}  (sham − without)`);
+    }
   } else {
     out.push(`  passed          ${withPass}/${total}`);
+  }
+
+  const unstable = results.filter((r) => r.withSkill.repeats && r.withSkill.repeats.passed % r.withSkill.repeats.total !== 0);
+  if (unstable.length) {
+    out.push("", `  ${unstable.length} case${unstable.length === 1 ? "" : "s"} did not repeat cleanly:`);
+    for (const r of unstable) {
+      const rep = r.withSkill.repeats!;
+      out.push(`    ${rep.passed}/${rep.total}  ${r.testCase.suite}/${r.testCase.id}`);
+    }
   }
 
   // --- tokens --------------------------------------------------------------
@@ -414,6 +445,17 @@ export function renderMarkdown(input: ReportInput): string {
 }
 
 /** Machine-readable report, written beside the logs. */
+/** One arm, as the JSON report carries it. */
+const arm = (a: ArmResult) => ({
+  passed: a.verdict.passed,
+  detail: a.verdict.detail,
+  tools: a.toolPath,
+  finalText: a.finalText,
+  usage: a.usage,
+  error: a.error,
+  repeats: a.repeats,
+});
+
 export function writeReportFiles(dir: string, input: ReportInput, text: string): void {
   fs.writeFileSync(path.join(dir, "report.md"), renderMarkdown(input));
   fs.writeFileSync(path.join(dir, "report.txt"), text);
@@ -431,28 +473,17 @@ export function writeReportFiles(dir: string, input: ReportInput, text: string):
         totals: {
           withSkill: sumUsage(input.results.map((r) => r.withSkill.usage)),
           withoutSkill: sumUsage(input.results.map((r) => r.withoutSkill?.usage)),
+          sham: sumUsage(input.results.map((r) => r.sham?.usage)),
         },
         cases: input.results.map((r) => ({
           id: r.testCase.id,
           suite: r.testCase.suite,
           kind: r.testCase.kind,
           expectation: r.testCase.expectation,
-          withSkill: {
-            passed: r.withSkill.verdict.passed,
-            detail: r.withSkill.verdict.detail,
-            tools: r.withSkill.toolPath,
-            finalText: r.withSkill.finalText,
-            usage: r.withSkill.usage,
-            error: r.withSkill.error,
-          },
-          withoutSkill: r.withoutSkill && {
-            passed: r.withoutSkill.verdict.passed,
-            detail: r.withoutSkill.verdict.detail,
-            tools: r.withoutSkill.toolPath,
-            finalText: r.withoutSkill.finalText,
-            usage: r.withoutSkill.usage,
-            error: r.withoutSkill.error,
-          },
+          withSkill: arm(r.withSkill),
+          withoutSkill: r.withoutSkill && arm(r.withoutSkill),
+          sham: r.sham && arm(r.sham),
+          repeats: r.withSkill.repeats,
         })),
       },
       null,
