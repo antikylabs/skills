@@ -66,7 +66,8 @@ export type Suite =
   | "general-write-objectives"
   | "general-brometal-patching"
   | "general-write-docs"
-  | "repo-write-docs";
+  | "repo-write-docs"
+  | "general-engineering";
 
 export interface EvalCase {
   id: string;
@@ -168,6 +169,7 @@ export const SKILLS = {
   brometal: "general-brometal-patching",
   writeDocs: "general-write-docs",
   repoDocs: "repo-write-docs",
+  engineering: "general-engineering",
 } as const;
 
 // --- fixture paths ---------------------------------------------------------

@@ -17,6 +17,7 @@ import { OBJECTIVES_CASES } from "./general-write-objectives/cases/index.ts";
 import { BROMETAL_CASES } from "./general-brometal-patching/cases/index.ts";
 import { GENERAL_WRITE_DOCS_CASES } from "./general-write-docs/cases/index.ts";
 import { REPO_WRITE_DOCS_CASES } from "./repo-write-docs/cases/index.ts";
+import { GENERAL_ENGINEERING_CASES } from "./general-engineering/cases/index.ts";
 
 export * from "./types.ts";
 
@@ -27,6 +28,7 @@ export const SUITES = {
   "general-brometal-patching": BROMETAL_CASES,
   "general-write-docs": GENERAL_WRITE_DOCS_CASES,
   "repo-write-docs": REPO_WRITE_DOCS_CASES,
+  "general-engineering": GENERAL_ENGINEERING_CASES,
 } satisfies Record<Suite, EvalCase[]>;
 
 export const SUITE_NAMES = Object.keys(SUITES) as Suite[];

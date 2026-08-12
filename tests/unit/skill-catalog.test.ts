@@ -79,6 +79,20 @@ describe("skill catalog", () => {
     assert.match(init, /Do not overwrite an existing `CONTEXT\.md`/i);
   });
 
+  it("ships a copy of GOOD_ENGINEERING that matches docs/", () => {
+    // The skill's copy is the source of truth and has to work in a repository
+    // that does not carry the file. Two copies drift; this fails the day one is
+    // edited without the other.
+    const shipped = path.join(SKILLS, "general-engineering", "reference", "GOOD_ENGINEERING_H.md");
+    const local = path.resolve(HERE, "..", "..", "docs", "GOOD_ENGINEERING_H.md");
+    if (!fs.existsSync(local)) return; // docs/ copy retired; the skill's is authoritative
+    assert.equal(
+      fs.readFileSync(shipped, "utf-8"),
+      fs.readFileSync(local, "utf-8"),
+      "the shipped GOOD_ENGINEERING has drifted from docs/",
+    );
+  });
+
   it("puts every model-visible skill in the catalog with a description and a location", async () => {
     const { skills, catalogXml } = await loadCatalog(SKILLS);
     for (const skill of skills) {
