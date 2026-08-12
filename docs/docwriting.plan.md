@@ -64,13 +64,17 @@ across, generalised.
 **One primary type per page.** A supporting section of another type is fine; a page that becomes
 two full documents joined together must be split and linked, not duplicated.
 
-### Open question
+### Not ASD-STE100
 
-Does `write` draft to ASD-STE100? The ADR standards require it; the user-facing documentation
-standards do not mention it. My reading is **no by default** — STE is a controlled language for
-procedures aimed at non-native readers, and product documentation has different aims — but this is
-the owner's call, and it is the kind of thing that is expensive to reverse once pages exist. If yes,
-`general-write-docs` composes with `general-simplified-technical-english` rather than restating it.
+**This skill teaches Diátaxis, not STE.** They answer different questions — Diátaxis decides what a
+page is for and how it is shaped; STE constrains the vocabulary and sentence form of a procedure
+aimed at readers whose first language is not English. Product documentation wants to be *readable*,
+which is not the same as *controlled*.
+
+The two skills stay separate and neither invokes the other. An owner who wants a specific page in
+STE can ask for it, and `general-simplified-technical-english` is right there — but
+`general-write-docs` must not reach for it by default, or every tutorial ends up written like a
+maintenance manual.
 
 ## `repo-write-docs`
 
@@ -122,7 +126,8 @@ and getting it wrong destroys work silently.
 ## Acceptance
 
 - `general-write-docs` ships with `classify`, `write`, `audit`, `split`, and a craft reference that
-  carries the failure modes rather than the definitions.
+  carries the failure modes rather than the definitions. Diátaxis only — it does not reach for
+  ASD-STE100.
 - `repo-write-docs` is thin, defers to the general skill, and carries only repository fact.
 - Both have eval suites; the generated-page case asserts on the filesystem.
 - A paired live run shows a positive delta on both, with the collision case passing in both

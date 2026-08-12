@@ -111,6 +111,31 @@ alone does not say what the skill does with it.
 Do not add a prefix without a matching row in this table and in [`README.md`](README.md). A skill
 that does not fit an existing prefix needs a human owner's decision first.
 
+## `repo-` skills and `AGENTS.md`
+
+A `repo-` skill encodes **how to do something** in a repository. The repository's `AGENTS.md` or
+`CLAUDE.md` then *references the skill* rather than restating it:
+
+```markdown
+## Architecture Decision Records
+
+Use the `repo-write-adrs` skill when creating or changing an ADR.
+```
+
+This is context economy, not tidiness. `AGENTS.md` is loaded on every session for every task; a
+skill loads only when it is needed. A procedure inlined into `AGENTS.md` makes every unrelated
+session pay for it, and the file grows until nobody reads it — which destroys exactly the
+progressive disclosure that makes skills worth having.
+
+| Belongs in `AGENTS.md` | Belongs in a `repo-` skill |
+| --- | --- |
+| That a convention exists, and which skill carries it | The convention itself |
+| Constraints binding *every* task — commit style, what must never be committed | Any multi-step procedure |
+| A pointer to the skill | Numbering, naming, placement, retirement steps |
+
+When a `repo-` skill takes over a convention that an `AGENTS.md` states inline, shrink that file to
+a pointer in the same change. Two copies of a convention is worse than either home alone.
+
 ## Writing rules
 
 - Keep the skill short. Put long reference material in `reference/` and link to it.
