@@ -11,6 +11,72 @@ version, not a patch.
 
 Nothing yet.
 
+## [0.2.2] — 2026-08-12
+
+Harness only. No skill changed, so nothing an agent does when it loads a skill is different.
+
+### Changed
+
+- **The eval runs in parallel.** Every agent run is an independent container waiting on an
+  independent API call, and they were executed strictly one at a time. Both arms of a case now run
+  concurrently with each other and with other cases. The deterministic suite went from 53.5s to
+  16.3s — 3.3× — with all 45 cases still passing. `EVAL_CONCURRENCY` overrides; `=1` restores
+  sequential when reading interleaved logs matters more than speed.
+- **The per-container memory cap is measured rather than guessed.** It was `1g`, picked round.
+  Bisected against the heaviest path — two `run_ste_lint` calls, each spawning a second node
+  process that loads the 653 KB vocabulary — a run needs 192m and fails at 128m. The cap is now
+  384m. This was not cosmetic: the cap bounds how many runs fit in the container VM, so 1g held
+  concurrency at two when five fit.
+- **The default is now `openai/gpt-5.6-luna` with `EVAL_THINKING=off`**, chosen by measuring five
+  configurations across the full 45-case paired suite:
+
+  | Config | With skill | Skill delta | Time | Cost |
+  | --- | ---: | ---: | ---: | ---: |
+  | luna @ off | 34/45 | **+20** | **180s** | **$0.046** |
+  | luna @ low | 36/45 | +20 | 1007s | $0.063 |
+  | ling-3.0-flash @ low (Novita) | 37/45 | +20 | 387s | $0.199 |
+  | deepseek-v4-flash-0731 @ off | 37/45 | +15 | 1526s | $0.475 |
+  | gpt-oss-120b @ low (Cerebras fp16) | 22/45 | +7 | 56s | $0.241 |
+
+  Turning reasoning off costs two cases and buys a 5.6× speedup at 73% of the cost, with the skill
+  delta unchanged — reasoning helped both arms equally, so it was never what made the skills work.
+  deepseek and ling score higher in absolute terms but show a smaller delta, because their
+  baselines are stronger: they guess more conventions unaided, so the skills add less.
+
+- `deepseek/deepseek-v4-flash` is pinned to the dated `-0731` snapshot. A rolling alias can be
+  repointed under a pinned eval, silently changing what a release measured.
+
+### Added
+
+- Model definitions for `openai/gpt-oss-120b:nitro` (pinned to `cerebras/fp16`) and
+  `inclusionai/ling-3.0-flash:nitro` (pinned to `novita`), with OpenRouter provider routing.
+  OpenRouter takes provider preferences as a request-body field and pi has no extra-body hook, so a
+  narrow shim adds it to outgoing completion requests and nothing else.
+
+### Fixed
+
+- **`EVAL_THINKING=off` did nothing.** Neither luna nor deepseek has an `off` entry in its
+  `thinkingLevelMap`, so pi sent no reasoning parameter and the models reasoned by default — the
+  setting was accepted and silently ignored. A run labelled `off` emitted 292,563 reasoning tokens.
+  `off` now injects `reasoning: {enabled: false}` at the request level. Verified: 292,563 → 13.
+- **One malformed container response killed an entire paid run.** A response whose last stdout line
+  parsed as JSON but was not a trace left `toolCalls` undefined, and the helper threw — aborting the
+  suite at case 7 of 45 and losing everything already completed. Traces are normalised centrally, the
+  assertion helpers tolerate a partial trace, and a throwing assertion now fails its own case alone.
+- `tests/eval/pool.ts` carries the concurrency policy in one place, sized from VM memory and floored
+  by CPU count.
+
+### Known defects
+
+- **The served-by capture does not fire.** It was added so an unpinned model's cost could be
+  verified against the endpoint actually billed, and it logs nothing — the response body is read
+  asynchronously and the container exits first. OpenRouter advertises `X-Provider-Name` in its
+  CORS list but does not send it. Models with one price (luna) are unaffected; `deepseek-v4-flash-0731`
+  routes across endpoints priced $0.072–$0.130 per M input, so its reported cost is an estimate.
+- `nvidia/nemotron-3.5-lightning` cannot be evaluated on its paid endpoints. Neither
+  `deepinfra/bf16` nor `coreweave/bf16` supports tool calling, and OpenRouter rejects the request.
+  The `:free` variant on `nvidia/nvfp4` does support tools.
+
 ## [0.2.1] — 2026-08-12
 
 Removes Python from the repository. The STE linter has shipped as ESM since v0.1.0; its
@@ -205,7 +271,8 @@ Simplified Technical English, Issue 9.
   `/skills` to the baseline through a tool description. Both are fixed. Treat any single run of a
   small case set as a weak estimate.
 
-[Unreleased]: https://github.com/antikylabs/skills/compare/v0.2.1...HEAD
+[Unreleased]: https://github.com/antikylabs/skills/compare/v0.2.2...HEAD
+[0.2.2]: https://github.com/antikylabs/skills/releases/tag/v0.2.2
 [0.2.1]: https://github.com/antikylabs/skills/releases/tag/v0.2.1
 [0.2.0]: https://github.com/antikylabs/skills/releases/tag/v0.2.0
 [0.1.0]: https://github.com/antikylabs/skills/releases/tag/v0.1.0

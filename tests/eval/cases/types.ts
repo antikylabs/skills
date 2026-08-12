@@ -90,11 +90,11 @@ export const MUTATING = ["edit_file", "write_file", "move_file"] as const;
 
 /** A tool that ran (was not blocked). */
 export const called = (trace: Trace, name: string): boolean =>
-  trace.toolCalls.some((c) => c.name === name && !c.blocked);
+  (trace.toolCalls ?? []).some((c) => c.name === name && !c.blocked);
 
 /** A tool the agent tried to use, whether or not it was allowed. */
 export const attempted = (trace: Trace, name: string): boolean =>
-  trace.toolCalls.some((c) => c.name === name);
+  (trace.toolCalls ?? []).some((c) => c.name === name);
 
 /**
  * Did the agent activate the skill?
@@ -105,21 +105,21 @@ export const attempted = (trace: Trace, name: string): boolean =>
  * calling a tool named after the thing you want.
  */
 export const skillInvoked = (trace: Trace, skill: string = SKILL): boolean =>
-  trace.toolCalls.some(
+  (trace.toolCalls ?? []).some(
     (c) =>
       !c.blocked &&
       (c.name === "read_file" || c.name === "list_dir") &&
       new RegExp(`/skills/${skill}(/|$)`).test(String(c.args.path ?? "")),
   );
 
-export const mentions = (trace: Trace, pattern: RegExp): boolean => pattern.test(trace.finalText);
+export const mentions = (trace: Trace, pattern: RegExp): boolean => pattern.test(trace.finalText ?? "");
 
 export const mutationsAttempted = (trace: Trace): string[] =>
-  trace.toolCalls.filter((c) => (MUTATING as readonly string[]).includes(c.name)).map((c) => c.name);
+  (trace.toolCalls ?? []).filter((c) => (MUTATING as readonly string[]).includes(c.name)).map((c) => c.name);
 
 /** Compact tool trace for reports: `read_file → run_ste_lint`. */
 export const toolPath = (trace: Trace): string =>
-  trace.toolCalls.map((c) => (c.blocked ? `${c.name}(BLOCKED)` : c.name)).join(" → ") || "none";
+  (trace.toolCalls ?? []).map((c) => (c.blocked ? `${c.name}(BLOCKED)` : c.name)).join(" → ") || "none";
 
 // --- mutation helpers ------------------------------------------------------
 

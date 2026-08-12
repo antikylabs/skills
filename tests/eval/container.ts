@@ -30,12 +30,22 @@ export type ThinkingLevel = (typeof THINKING_LEVELS)[number];
 /**
  * Flags that make the container a boundary rather than a convenience.
  * Asserted empirically by self-test.ts — do not weaken without updating it.
+ *
+ * The memory cap is measured, not picked round. Bisected against the heaviest
+ * path — two run_ste_lint calls, each spawning a second node process that loads
+ * the 653 KB vocabulary — a run needs 192m and fails at 128m. The cap is 384m,
+ * double the measured floor, leaving room for a live run's larger prompt and
+ * longer history.
+ *
+ * This matters beyond tidiness: the cap bounds how many runs fit in the
+ * container VM at once, so a generous one silently serialises the suite. The
+ * original 1g was five times the real requirement and held concurrency at two.
  */
 export const HARDENING = [
   "--read-only",
   "--cap-drop=ALL",
   "--security-opt=no-new-privileges",
-  "--memory=1g",
+  "--memory=384m",
   "--cpus=1",
   "--pids-limit=256",
   "--tmpfs", "/tmp:rw,noexec,nosuid,size=64m",
@@ -47,12 +57,17 @@ export const HARDENING = [
 /**
  * Reasoning effort for live runs, from EVAL_THINKING.
  *
- * Default `low`. These cases test whether an agent loads a skill and follows a
- * playbook, not whether it can reason its way to an answer, so a higher level
- * mostly buys output tokens.
+ * Default `off`, chosen from measurement rather than caution. Across the full
+ * 45-case paired suite, luna at `off` scores 34/45 against 36/45 at `low` — two
+ * cases — while running 5.6× faster and 27% cheaper. The skill delta is +20
+ * either way: reasoning helped both arms equally, so it was not what made the
+ * skills work.
+ *
+ * `off` is enforced at the request level, not through pi's thinkingLevelMap.
+ * See installProviderRouting in sandbox/agent-run.ts for why.
  */
 export function thinkingLevel(): ThinkingLevel {
-  const raw = (process.env.EVAL_THINKING ?? "low").trim().toLowerCase();
+  const raw = (process.env.EVAL_THINKING ?? "off").trim().toLowerCase();
   if (!(THINKING_LEVELS as readonly string[]).includes(raw)) {
     process.stderr.write(
       `EVAL_THINKING="${raw}" is not valid. Use one of: ${THINKING_LEVELS.join(", ")}\n`,
@@ -124,6 +139,29 @@ export function openRunLog(label: string, timestamp: string): RunLog {
     },
     casePath: (caseId, arm, ext) => path.join(dir, "cases", `${caseId}.${arm}.${ext}`),
   };
+}
+
+// --- traces ----------------------------------------------------------------
+
+/** A well-formed trace carrying only an error. */
+const errorTrace = (error: string): Trace => ({ toolCalls: [], finalText: "", error });
+
+/**
+ * Force a parsed container response into the Trace shape.
+ *
+ * The container is supposed to print exactly one JSON trace on stdout, but a
+ * crash mid-write, a stray log line, or a partial flush can leave the last line
+ * parseable yet not a trace. Returning that raw would hand every downstream
+ * consumer an object with no `toolCalls`, and one bad case would take out a
+ * whole paid run. Normalising here means a malformed response fails its own
+ * case and nothing else.
+ */
+function normalizeTrace(parsed: unknown, raw: string): Trace {
+  if (!parsed || typeof parsed !== "object" || !Array.isArray((parsed as Trace).toolCalls)) {
+    return errorTrace(`trace missing toolCalls: ${raw.slice(0, 200)}`);
+  }
+  const trace = parsed as Trace;
+  return { ...trace, finalText: trace.finalText ?? "" };
 }
 
 // --- running ---------------------------------------------------------------
@@ -203,31 +241,21 @@ export async function runInSandbox(runtime: string, options: RunOptions): Promis
     const finish = (status: number | null) => {
       log?.end();
       if (status !== 0 && !stdout.trim()) {
-        resolve({
-          toolCalls: [],
-          finalText: "",
-          usage: undefined,
-          error: `container exited ${status}: ${stderrTail.slice(-300)}`,
-        } as Trace);
+        resolve(errorTrace(`container exited ${status}: ${stderrTail.slice(-300)}`));
         return;
       }
       try {
         const line = stdout.trim().split("\n").filter(Boolean).pop() ?? "{}";
-        resolve(JSON.parse(line) as Trace);
+        resolve(normalizeTrace(JSON.parse(line), stdout));
       } catch {
-        resolve({
-          toolCalls: [],
-          finalText: "",
-          usage: undefined,
-          error: `unparseable trace: ${stdout.slice(0, 200)}`,
-        } as Trace);
+        resolve(errorTrace(`unparseable trace: ${stdout.slice(0, 200)}`));
       }
     };
 
     child.on("close", finish);
     child.on("error", (error) => {
       log?.end();
-      resolve({ toolCalls: [], finalText: "", usage: undefined, error: String(error) } as Trace);
+      resolve(errorTrace(String(error)));
     });
 
     child.stdin.write(JSON.stringify(job));

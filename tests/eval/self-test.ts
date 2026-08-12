@@ -17,6 +17,7 @@
 
 import { CASES, type EvalCase, type Trace } from "./cases/index.ts";
 import { detectRuntime, ensureImage, probe, runInSandbox, systemPrompt } from "./container.ts";
+import { concurrency, mapLimit } from "./pool.ts";
 
 interface Check {
   group: string;
@@ -54,8 +55,14 @@ async function counterExample(testCase: EvalCase): Promise<Trace> {
   return { toolCalls: [], finalText: "", error: "negative control declares neither trace nor script" };
 }
 
-for (const testCase of CASES) {
-  const trace = await counterExample(testCase);
+// Counter-examples are independent: the ones with a script each need their own
+// container, and running them one at a time dominated the self-test's runtime.
+const verdicts = await mapLimit(CASES, concurrency(), async (testCase) => ({
+  testCase,
+  trace: await counterExample(testCase),
+}));
+
+for (const { testCase, trace } of verdicts) {
   if (trace.error) {
     check("assertions can fail", `${testCase.suite}/${testCase.id}`, false, `counter-example unusable: ${trace.error}`);
     continue;

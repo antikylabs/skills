@@ -26,9 +26,10 @@ import {
   thinkingLevel,
 } from "./container.ts";
 import { renderReport, writeReportFiles, type ArmResult, type CaseResult } from "./report.ts";
+import { concurrency, mapLimit } from "./pool.ts";
 
 const PROVIDER = (process.env.EVAL_PROVIDER ?? "faux") as "faux" | "openrouter";
-const MODEL_ID = process.env.EVAL_MODEL ?? "deepseek/deepseek-v4-flash";
+const MODEL_ID = process.env.EVAL_MODEL ?? "openai/gpt-5.6-luna";
 // A baseline arm doubles the spend, so it is opt-in — and meaningless on faux,
 // where the responses are scripted regardless of what the agent can see.
 const PAIRED = process.env.EVAL_BASELINE === "1" && PROVIDER !== "faux";
@@ -58,52 +59,62 @@ async function main(): Promise<number> {
       `\nlogs: ${log.dir}\n${"─".repeat(78)}`,
   );
 
-  const results: CaseResult[] = [];
-  let heading = "";
+  const limit = concurrency();
+  log.note(`  running ${selected.length} case${selected.length === 1 ? "" : "s"}${PAIRED ? " × 2 arms" : ""}, ${limit} at a time\n`);
 
-  for (const testCase of selected) {
-    const current = `${testCase.suite} / ${testCase.kind}`;
-    if (current !== heading) {
-      heading = current;
-      log.note(`\n  ${heading}`);
+  const runArm = async (testCase: (typeof selected)[number], withSkill: boolean): Promise<ArmResult> => {
+    const arm = withSkill ? "with-skill" : "no-skill";
+    const trace = await runInSandbox(runtime, {
+      prompt: testCase.prompt,
+      provider: PROVIDER,
+      modelId: MODEL_ID,
+      systemPrompt: withSkill ? promptWith : promptWithout,
+      thinkingLevel: thinking,
+      withSkill,
+      // A live run must not be handed the scripted answer.
+      script: PROVIDER === "faux" ? testCase.script : undefined,
+      logFile: log.casePath(testCase.id, arm, "log"),
+    });
+    // An assertion is arbitrary user code running on a trace that may be
+    // partial. A throw here used to abort the whole run — and on a paid live
+    // suite that means losing every case that had already completed.
+    let verdict;
+    try {
+      verdict = trace.error ? { passed: false, detail: trace.error } : testCase.assert(trace);
+    } catch (error) {
+      verdict = { passed: false, detail: `assertion threw: ${String(error).slice(0, 160)}` };
     }
-
-    const runArm = async (withSkill: boolean): Promise<ArmResult> => {
-      const arm = withSkill ? "with-skill" : "no-skill";
-      const trace = await runInSandbox(runtime, {
-        prompt: testCase.prompt,
-        provider: PROVIDER,
-        modelId: MODEL_ID,
-        systemPrompt: withSkill ? promptWith : promptWithout,
-        thinkingLevel: thinking,
-        withSkill,
-        // A live run must not be handed the scripted answer.
-        script: PROVIDER === "faux" ? testCase.script : undefined,
-        logFile: log.casePath(testCase.id, arm, "log"),
-      });
-      return {
-        verdict: trace.error ? { passed: false, detail: trace.error } : testCase.assert(trace),
-        usage: (trace as { usage?: ArmResult["usage"] }).usage,
-        toolPath: toolPath(trace),
-        error: trace.error,
-      };
+    return {
+      verdict,
+      usage: (trace as { usage?: ArmResult["usage"] }).usage,
+      toolPath: toolPath(trace),
+      error: trace.error,
     };
+  };
 
-    const withSkill = await runArm(true);
-    const withoutSkill = PAIRED ? await runArm(false) : undefined;
+  // Both arms of a case run concurrently with each other and with other cases.
+  // Results come back in input order, so the report is stable no matter what
+  // order they finish in.
+  let done = 0;
+  const results: CaseResult[] = await mapLimit(selected, limit, async (testCase) => {
+    const [withSkill, withoutSkill] = await Promise.all([
+      runArm(testCase, true),
+      PAIRED ? runArm(testCase, false) : Promise.resolve(undefined),
+    ]);
 
+    // Printed on completion rather than in order: a live run is long, and
+    // knowing which cases have landed is worth more than a tidy sequence.
+    done += 1;
     const mark = withSkill.verdict.passed ? "PASS" : "FAIL";
-    const baseline = withoutSkill
-      ? `  baseline: ${withoutSkill.verdict.passed ? "pass" : "fail"}`
-      : "";
+    const baseline = withoutSkill ? `  baseline: ${withoutSkill.verdict.passed ? "pass" : "fail"}` : "";
     log.note(
-      `  ${mark}  ${testCase.id.padEnd(34)} ${withSkill.verdict.detail}${baseline}\n` +
-        `        expected: ${testCase.expectation}\n` +
-        `        tools:    ${withSkill.toolPath}`,
+      `  ${String(done).padStart(3)}/${selected.length}  ${mark}  ${testCase.suite}/${testCase.id}\n` +
+        `           ${withSkill.verdict.detail}${baseline}\n` +
+        `           tools: ${withSkill.toolPath}`,
     );
 
-    results.push({ testCase, withSkill, withoutSkill });
-  }
+    return { testCase, withSkill, withoutSkill };
+  });
 
   const report = renderReport({
     results,

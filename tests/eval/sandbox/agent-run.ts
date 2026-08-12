@@ -93,9 +93,14 @@ const emptyUsage = (): UsageTotals => ({
  * through and `low` is a real low-effort request rather than a silent default.
  */
 const MODELS: Record<string, Model<"openai-completions">> = {
-  "deepseek/deepseek-v4-flash": {
-    id: "deepseek/deepseek-v4-flash",
-    name: "DeepSeek V4 Flash",
+  // A dated snapshot, not the rolling `deepseek-v4-flash` alias: an alias can be
+  // repointed under a pinned eval, which would silently change what a release
+  // measured. Routing is left to OpenRouter, so the endpoint — and therefore the
+  // exact price — varies between $0.072 and $0.130 per M input. The shim records
+  // which provider actually served each call; see the `served_by` log events.
+  "deepseek/deepseek-v4-flash-0731": {
+    id: "deepseek/deepseek-v4-flash-0731",
+    name: "DeepSeek V4 Flash (0731)",
     api: "openai-completions",
     provider: "openrouter",
     baseUrl: "https://openrouter.ai/api/v1",
@@ -103,9 +108,42 @@ const MODELS: Record<string, Model<"openai-completions">> = {
     compat: { requiresReasoningContentOnAssistantMessages: true, thinkingFormat: "deepseek" },
     thinkingLevelMap: { minimal: null, low: null, medium: null, high: "high", xhigh: "max" },
     input: ["text"],
-    cost: { input: 0.14, output: 0.28, cacheRead: 0.022, cacheWrite: 0 },
+    cost: { input: 0.08, output: 0.18, cacheRead: 0.016, cacheWrite: 0 },
     contextWindow: 1_048_576,
     maxTokens: 8192,
+  } as unknown as Model<"openai-completions">,
+  // Routed to Cerebras at fp16 — see OPENROUTER_ROUTING. Pricing here is
+  // Cerebras's ($0.35/$0.75), not gpt-oss-120b's default-routing price
+  // ($0.03/$0.17): the fast provider costs about ten times the input rate, and
+  // the cost report is only honest if it uses the endpoint actually billed.
+  "openai/gpt-oss-120b:nitro": {
+    id: "openai/gpt-oss-120b:nitro",
+    name: "OpenAI gpt-oss-120b (Cerebras fp16)",
+    api: "openai-completions",
+    provider: "openrouter",
+    baseUrl: "https://openrouter.ai/api/v1",
+    reasoning: true,
+    compat: { thinkingFormat: "openai" },
+    thinkingLevelMap: { minimal: "low", low: "low", medium: "medium", high: "high", xhigh: "high" },
+    input: ["text"],
+    cost: { input: 0.35, output: 0.75, cacheRead: 0.35, cacheWrite: 0 },
+    contextWindow: 131_072,
+    maxTokens: 40_960,
+  } as unknown as Model<"openai-completions">,
+  // Routed to Novita — see OPENROUTER_ROUTING. The cheapest endpoint tested.
+  "inclusionai/ling-3.0-flash:nitro": {
+    id: "inclusionai/ling-3.0-flash:nitro",
+    name: "InclusionAI Ling 3.0 Flash (Novita)",
+    api: "openai-completions",
+    provider: "openrouter",
+    baseUrl: "https://openrouter.ai/api/v1",
+    reasoning: true,
+    compat: { thinkingFormat: "openai" },
+    thinkingLevelMap: { minimal: "low", low: "low", medium: "medium", high: "high", xhigh: "high" },
+    input: ["text"],
+    cost: { input: 0.021, output: 0.063, cacheRead: 0.021, cacheWrite: 0 },
+    contextWindow: 262_144,
+    maxTokens: 16_384,
   } as unknown as Model<"openai-completions">,
   "openai/gpt-5.6-luna": {
     id: "openai/gpt-5.6-luna",
@@ -128,6 +166,80 @@ const MODELS: Record<string, Model<"openai-completions">> = {
     maxTokens: 32_000,
   } as unknown as Model<"openai-completions">,
 };
+
+/**
+ * OpenRouter provider routing, per model.
+ *
+ * OpenRouter takes provider preferences as a request-body field. pi's
+ * OpenAICompletionsOptions has no extra-body hook and the model slug cannot
+ * carry a provider, so the only way through is to add the field to the outgoing
+ * request — see installProviderRouting below.
+ */
+const OPENROUTER_ROUTING: Record<string, unknown> = {
+  // `only` pins the endpoint: no silent fallback to a slower or differently
+  // quantized provider, which would make a latency comparison meaningless.
+  "openai/gpt-oss-120b:nitro": { only: ["cerebras/fp16"] },
+  "inclusionai/ling-3.0-flash:nitro": { only: ["novita"] },
+};
+
+/**
+ * Inject OpenRouter provider routing into outgoing requests.
+ *
+ * Deliberately narrow: it rewrites only JSON POST bodies aimed at OpenRouter's
+ * completions endpoint, and only when the pinned model asks for routing.
+ * Everything else passes through untouched. This is a shim around a missing
+ * hook in the SDK, not a general request interceptor — if pi grows an
+ * extra-body option, delete this and pass the field properly.
+ */
+function installProviderRouting(
+  routing: unknown,
+  onServed: (provider: string) => void,
+  disableReasoning = false,
+): void {
+  const original = globalThis.fetch;
+  globalThis.fetch = async (input: any, init?: any) => {
+    const url =
+      typeof input === "string" ? input : input instanceof URL ? input.href : (input?.url ?? "");
+    const isCompletion = url.includes("openrouter.ai") && url.includes("/chat/completions");
+
+    if ((routing || disableReasoning) && init?.body && isCompletion) {
+      try {
+        const body = JSON.parse(String(init.body));
+        if (routing) body.provider = routing;
+        if (disableReasoning) {
+          // pi has no "off" in its thinkingLevelMap, so an off setting sends no
+          // reasoning parameter at all — and a model that reasons by default
+          // just keeps reasoning. Verified: gpt-5.6-luna at EVAL_THINKING=off
+          // still emitted reasoning tokens until this was added, and
+          // deepseek-v4-flash-0731 emitted 292k of them in a run labelled off.
+          // OpenRouter's own switch is the only thing that actually stops it.
+          body.reasoning = { enabled: false };
+          delete body.reasoning_effort;
+        }
+        init = { ...init, body: JSON.stringify(body) };
+      } catch {
+        // Not a JSON body we understand. Leave it exactly as it was.
+      }
+    }
+
+    const response = await original(input, init);
+
+    // Record the endpoint that actually served the call. With unpinned routing
+    // the price varies by endpoint, so the reported cost is only checkable if we
+    // know who answered. Reads a clone so the real stream is untouched.
+    if (isCompletion && response.ok) {
+      response
+        .clone()
+        .text()
+        .then((text) => {
+          const match = /"provider"\s*:\s*"([^"]+)"/.exec(text);
+          if (match?.[1]) onServed(match[1]);
+        })
+        .catch(() => {});
+    }
+    return response;
+  };
+}
 
 /**
  * Turn declarative steps into faux assistant turns.
@@ -157,6 +269,13 @@ export async function runJob(job: Job): Promise<Trace> {
   // The agent works on a copy. /fixtures stays pristine so the run can be diffed.
   seedWorkspace();
 
+  // Every agent event, as JSONL on stderr. The orchestrator streams this to the
+  // run directory and can tail it live. stdout stays clean for the trace.
+  const logEvents = process.env.EVAL_LOG === "1";
+  const logLine = (record: Record<string, unknown>) => {
+    if (logEvents) process.stderr.write(JSON.stringify({ t: Date.now(), ...record }) + "\n");
+  };
+
   const models = createModels();
   let model: Model<any>;
 
@@ -168,16 +287,32 @@ export async function runJob(job: Job): Promise<Trace> {
   } else {
     models.setProvider(openrouterProvider());
     const pinned = MODELS[job.modelId];
-    if (!pinned) throw new Error(`unknown model: ${job.modelId}`);
+    if (!pinned) {
+      throw new Error(`unknown model: ${job.modelId}. Known: ${Object.keys(MODELS).join(", ")}`);
+    }
     model = pinned;
-  }
 
-  // Every agent event, as JSONL on stderr. The orchestrator streams this to the
-  // run directory and can tail it live. stdout stays clean for the trace.
-  const logEvents = process.env.EVAL_LOG === "1";
-  const logLine = (record: Record<string, unknown>) => {
-    if (logEvents) process.stderr.write(JSON.stringify({ t: Date.now(), ...record }) + "\n");
-  };
+    // Always installed: even unrouted models need the served-by record, because
+    // an unpinned endpoint is exactly the case where the price is unknown.
+    const routing = OPENROUTER_ROUTING[job.modelId];
+    const off = job.thinkingLevel === "off";
+    const seen = new Set<string>();
+    installProviderRouting(
+      routing,
+      (provider) => {
+        if (seen.has(provider)) return;
+        seen.add(provider);
+        logLine({ ev: "served_by", model: job.modelId, provider });
+      },
+      off,
+    );
+    logLine({
+      ev: "provider_routing",
+      model: job.modelId,
+      routing: routing ?? "default",
+      reasoning: off ? "disabled" : job.thinkingLevel,
+    });
+  }
 
   // Discovery through pi's own loader, against the skills baked into the image.
   // The baseline arm loads nothing, so its prompt carries no catalog.
