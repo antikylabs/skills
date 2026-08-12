@@ -13,6 +13,7 @@ npm test          # typecheck, harness self-test, then the eval
 | Command | What it proves | Cost |
 | --- | --- | --- |
 | `npm run typecheck` | The harness compiles | free |
+| `npm run test:unit` | The shipped scripts work — 77 tests over `ste_lint.mjs` | free |
 | `npm run test:sandbox` | **The harness catches misbehavior and the container confines it** | free |
 | `npm run test:skill-behavior` | Skill routing and playbook adherence, scripted | free |
 | `npm run test:skill-behavior:live` | The same cases against a real model | ~1¢ |
@@ -60,6 +61,8 @@ reach back into the worktree.
 
 ```
 tests/
+  unit/
+    ste-lint.test.ts  77 tests over the shipped STE linter
   eval/
     run.ts            host orchestrator — spawns containers, never loads the SDK
     self-test.ts      negative control: proves the assertions can fail

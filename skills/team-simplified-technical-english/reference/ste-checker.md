@@ -1,29 +1,29 @@
 # The STE checker
 
-A deterministic Simplified Technical English checker. Python 3 standard library only — no install,
+A deterministic Simplified Technical English checker. Node standard library only — no install,
 no network, no model.
 
 | File | What it is |
 | --- | --- |
-| `scripts/ste_lint.py` | the checker |
+| `scripts/ste_lint.mjs` | the checker |
 | `scripts/ste100-lint.json` | the controlled vocabulary: 2,197 entries, the 61 rules, the numeric limits |
 | `scripts/ste100.json` | the same vocabulary plus an STE and a non-STE example for every entry |
 | `reference/ste-guide.md` | the rules condensed to under 400 lines, for a writer or a model to read |
 
-`ste_lint.py` loads `ste100-lint.json` from beside itself, so it runs with no configuration.
+`ste_lint.mjs` loads `ste100-lint.json` from beside itself, so it runs with no configuration.
 `ste100.json` adds the example sentences, which is what you want when writing STE or showing a
 writer what a rule looks like in practice.
 
 The example sentences are **not** the standard's. Every one was written fresh for this package and
-verified against `ste_lint.py`, so the examples conform to the rules they illustrate.
+verified against `ste_lint.mjs`, so the examples conform to the rules they illustrate.
 
 ## Use
 
 ```bash
-python3 <skill-dir>/scripts/ste_lint.py manual.txt
-python3 <skill-dir>/scripts/ste_lint.py --mode procedural steps.txt
-python3 <skill-dir>/scripts/ste_lint.py --json docs/*.md
-cat draft.txt | python3 <skill-dir>/scripts/ste_lint.py -
+node <skill-dir>/scripts/ste_lint.mjs manual.txt
+node <skill-dir>/scripts/ste_lint.mjs --mode procedural steps.txt
+node <skill-dir>/scripts/ste_lint.mjs --json docs/*.md
+cat draft.txt | node <skill-dir>/scripts/ste_lint.mjs -
 ```
 
 Findings come out in the usual `file:line:column:` form, each naming the rule it came from:
@@ -96,16 +96,24 @@ order, always.
 
 ## Using the vocabulary directly
 
-```python
-import json
-ste = json.load(open("<skill-dir>/scripts/ste100-lint.json"))
+```js
+import ste from "<skill-dir>/scripts/ste100-lint.json" with { type: "json" };
 
-ste["words"]["ensure"]        # [{"approved": False, "pos": "v", "senses": [...]}]
-ste["forms"]["connects"]      # "CONNECT" — inflected forms resolve to headwords
-ste["limits"]["max_words_per_procedural_sentence"]   # {"value": 20, "rule": "5.1"}
-ste["rules"]                  # 61 entries: 53 rules + 8 general recommendations
-ste["recurring_errors"]       # the 39 most frequent mistakes, with replacements
-ste["approved_verbs"]         # the 208 approved verbs
+ste.words["ensure"];        // [{ approved: false, pos: "v", senses: [...] }]
+ste.forms["connects"];      // "CONNECT" — inflected forms resolve to headwords
+ste.limits.max_words_per_procedural_sentence;   // { value: 20, rule: "5.1" }
+ste.rules;                  // 61 entries: 53 rules + 8 general recommendations
+ste.recurring_errors;       // the 39 most frequent mistakes, with replacements
+ste.approved_verbs;         // the 208 approved verbs
+```
+
+The linter also exports its own API, so a script can reuse the checker rather than parse its output:
+
+```js
+import { checkText, Dictionary } from "<skill-dir>/scripts/ste_lint.mjs";
+
+const dictionary = Dictionary.load();
+const findings = checkText(text, "draft.md", dictionary, "procedural");
 ```
 
 Lookup is by lowercased headword. The value is a list because one spelling can appear more than once

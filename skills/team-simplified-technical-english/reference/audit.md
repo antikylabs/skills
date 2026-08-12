@@ -25,7 +25,7 @@ real violations.
 ### 2. Run the linter
 
 ```bash
-python3 <skill-dir>/scripts/ste_lint.py --json <file>...
+node <skill-dir>/scripts/ste_lint.mjs --json <file>...
 ```
 
 Use `--json` when you will process the findings; use the default format when you will read them.
@@ -86,7 +86,7 @@ audit. State what you checked and what you found.
 
 ## When the linter cannot run
 
-If `python3` is absent, say so and stop. Do not substitute your own judgement for the dictionary
+If `node` is absent, say so and stop. Do not substitute your own judgement for the dictionary
 and then present the result as an audit — the vocabulary is exactly the part that cannot be
 recalled reliably. Report which checks are unavailable and offer the judgement audit alone, clearly
 labelled.

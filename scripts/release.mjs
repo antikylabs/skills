@@ -147,11 +147,14 @@ ok("up to date with origin/main");
 
 // --- 2. verify (free) ------------------------------------------------------
 
-step("Verify — typecheck, harness self-test, deterministic eval");
+step("Verify — typecheck, unit tests, harness self-test, deterministic eval");
 info("free; no model is called");
 
 run("npm", ["run", "typecheck"], { cwd: TESTS, capture: true, failure: "typecheck failed" });
 ok("typecheck clean");
+
+run("npm", ["run", "test:unit"], { cwd: TESTS, capture: true, failure: "unit tests failed" });
+ok("unit tests passed");
 
 run("npm", ["run", "test:sandbox"], { cwd: TESTS, failure: "harness self-test failed — the eval cannot be trusted" });
 ok("harness self-test passed");

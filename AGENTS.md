@@ -114,7 +114,7 @@ Before you commit a skill change:
 - Run `npx skills add . --list` and confirm the skill appears with the expected name.
 - Confirm the frontmatter is valid YAML.
 - Confirm all local links resolve.
-- Run each skill's own tests. A skill that ships a script must ship tests for it.
+- A skill that ships a script must ship tests for it, under `tests/unit/`.
 - Run the harness self-test and the deterministic eval:
 
   ```bash

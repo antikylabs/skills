@@ -248,6 +248,11 @@ export class Dictionary {
     this._technical = null;
   }
 
+  /**
+   * @param {string|null} [dataPath] path to ste100-lint.json. Found beside this
+   *   file when omitted.
+   * @returns {Dictionary}
+   */
   static load(dataPath = null) {
     const resolved = dataPath || Dictionary.find();
     return new Dictionary(JSON.parse(fs.readFileSync(resolved, "utf-8")));
@@ -503,7 +508,16 @@ const _CONDITION_OPENERS = new Set(
 );
 const _STEP_RE = /^\s*(?:\(?\d+[.)]|\(?[A-Za-z][.)])\s+/;
 
-/** Check one document. Returns findings sorted by position. */
+/**
+ * Check one document. Returns findings sorted by position.
+ *
+ * @param {string} text
+ * @param {string} filePath name used in the findings
+ * @param {Dictionary} dictionary
+ * @param {string} [mode] "auto", "procedural", or "descriptive"
+ * @param {boolean} [strict] also report words absent from the dictionary
+ * @returns {Finding[]}
+ */
 export function checkText(text, filePath, dictionary, mode = "auto", strict = false) {
   const findings = [];
   for (const block of blocks(text)) {

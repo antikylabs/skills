@@ -22,12 +22,12 @@ before its result when the reader must know the condition first.
 The vocabulary is the part you cannot do from memory. Look words up:
 
 ```bash
-python3 - <<'PY'
-import json
-ste = json.load(open("<skill-dir>/scripts/ste100.json"))
-for entry in ste["words"]["ensure"]:
-    print(entry["approved"], entry["pos"], [s.get("alternative") for s in entry["senses"]])
-PY
+node -e '
+  const ste = require("<skill-dir>/scripts/ste100.json");
+  for (const entry of ste.words["ensure"]) {
+    console.log(entry.approved, entry.pos, entry.senses.map(s => s.alternative));
+  }
+'
 ```
 
 `ste100.json` carries an STE and a non-STE example sentence for every entry, which is what you want
@@ -47,7 +47,7 @@ Lint your own draft. This is not optional — you wrote it from the same memory 
 dictionary:
 
 ```bash
-python3 <skill-dir>/scripts/ste_lint.py --mode <procedural|descriptive|auto> draft.md
+node <skill-dir>/scripts/ste_lint.mjs --mode <procedural|descriptive|auto> draft.md
 ```
 
 Fix every error. Read each warning and info and either fix it or satisfy yourself it is a participle

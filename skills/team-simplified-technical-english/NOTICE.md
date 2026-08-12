@@ -17,7 +17,7 @@ This skill is not a copy of the standard and is no substitute for it.
 | Rule statements and numeric limits | yes. `reference/ste-guide.md` is a paraphrase; the JSON carries the rule statements close to their published wording |
 | Example sentences | only originals written for this package and verified against the linter |
 
-`scripts/ste_lint.py` and the build pipeline that produced the JSON are original work and carry no
+`scripts/ste_lint.mjs` and the build pipeline that produced the JSON are original work and carry no
 such restriction.
 
 Anyone applying STE should obtain the standard itself. It is free, and a summary is not the same

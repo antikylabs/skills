@@ -27,10 +27,10 @@ Resolve `<skill-dir>` to the base directory the runtime reports for this skill. 
 reports none, use `.claude/skills/team-simplified-technical-english/` or
 `.agents/skills/team-simplified-technical-english/`. Keep cwd at the user's project.
 
-Run the linter directly. It needs Python 3 and nothing else — no install, no network, no model:
+Run the linter directly. It needs Node and nothing else — no install, no network, no model:
 
 ```bash
-python3 <skill-dir>/scripts/ste_lint.py <file>...
+node <skill-dir>/scripts/ste_lint.mjs <file>...
 ```
 
 The data file sits next to the script and is found automatically.
@@ -70,7 +70,7 @@ the decision. When a fix would alter meaning, stop and ask.
 | --- | --- |
 | [reference/ste-guide.md](reference/ste-guide.md) | The 53 rules and 8 general recommendations, condensed. Read before writing or judging |
 | [reference/ste-checker.md](reference/ste-checker.md) | Linter options, finding severities, and how to read output |
-| `scripts/ste_lint.py` | The checker. Standard library only, deterministic |
+| `scripts/ste_lint.mjs` | The checker. Node standard library only, deterministic |
 | `scripts/ste100-lint.json` | The controlled vocabulary, the 61 rules, the numeric limits |
 | `scripts/ste100.json` | The same vocabulary plus an STE and non-STE example for each entry |
 

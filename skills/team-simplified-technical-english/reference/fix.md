@@ -41,13 +41,12 @@ Work through the file in one pass. Preserve:
 For an unapproved word, use the alternative the dictionary gives. Look it up rather than guessing:
 
 ```bash
-python3 - <<'PY'
-import json
-ste = json.load(open("<skill-dir>/scripts/ste100.json"))
-for entry in ste["words"]["utilize"]:
-    for sense in entry["senses"]:
-        print(sense.get("alternative"), sense.get("examples", [])[:1])
-PY
+node -e '
+  const ste = require("<skill-dir>/scripts/ste100.json");
+  for (const entry of ste.words["utilize"]) {
+    for (const sense of entry.senses) console.log(sense.alternative, sense.examples?.[0]);
+  }
+'
 ```
 
 Where an approved alternative does not fit the sentence, rewrite the sentence. Do not force a word
@@ -58,7 +57,7 @@ into a construction that no longer reads.
 Re-run the linter on the changed files:
 
 ```bash
-python3 <skill-dir>/scripts/ste_lint.py <file>...
+node <skill-dir>/scripts/ste_lint.mjs <file>...
 ```
 
 Repeat until no error remains, or until every remaining error is one you decided not to fix for a

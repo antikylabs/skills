@@ -11,6 +11,37 @@ version, not a patch.
 
 Nothing yet.
 
+## [0.2.1] — 2026-08-12
+
+Removes Python from the repository. The STE linter has shipped as ESM since v0.1.0; its
+implementation and its tests were still Python underneath.
+
+### Changed
+
+- **`ste_lint.mjs` is the only linter.** `ste_lint.py` is deleted. The two were proven
+  byte-identical across 186 differential cases — 31 files × 3 modes × 2 strict settings, plus
+  matching exit codes and stderr — before the Python was removed.
+- **The 77 linter tests are TypeScript**, at `tests/unit/ste-lint.test.ts`, run by `node:test`
+  through tsx. They import the linter directly and drive its CLI as a subprocess, so both the API
+  and the command-line contract stay covered.
+- **Every playbook now says `node`.** `SKILL.md`, `audit.md`, `write.md`, `fix.md`,
+  `ste-checker.md`, and `NOTICE.md` had `python3 <skill-dir>/scripts/ste_lint.py` in their
+  commands. An agent following them would have run a file that no longer exists.
+- The two dictionary-lookup snippets and the vocabulary example are Node rather than Python, and
+  `ste-checker.md` now documents the linter's exported API — `checkText` and `Dictionary` — so a
+  caller can reuse the checker instead of parsing its output.
+- `npm test` runs the unit suite, and `scripts/release.mjs` runs it in the free verification stage
+  before spending anything on a live eval.
+
+### Fixed
+
+- A test asserting the skill ships no Python, so the two implementations cannot drift back apart.
+
+### Notes
+
+No skill behaviour changed. The commands an agent runs are different strings pointing at the same
+checker, which is why this is a patch release.
+
 ## [0.2.0] — 2026-08-11
 
 Adds a fourth skill, makes the eval harness measure behaviour rather than prose, and turns cutting
@@ -174,6 +205,7 @@ Simplified Technical English, Issue 9.
   `/skills` to the baseline through a tool description. Both are fixed. Treat any single run of a
   small case set as a weak estimate.
 
-[Unreleased]: https://github.com/antikylabs/skills/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/antikylabs/skills/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/antikylabs/skills/releases/tag/v0.2.1
 [0.2.0]: https://github.com/antikylabs/skills/releases/tag/v0.2.0
 [0.1.0]: https://github.com/antikylabs/skills/releases/tag/v0.1.0

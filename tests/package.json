@@ -4,7 +4,7 @@
   "type": "module",
   "description": "Test and evaluation harness for the skills in this repository.",
   "scripts": {
-    "test": "npm run typecheck && npm run test:sandbox && npm run test:skill-behavior",
+    "test": "npm run typecheck && npm run test:unit && npm run test:sandbox && npm run test:skill-behavior",
     "test:sandbox": "node --env-file-if-exists=.env node_modules/.bin/tsx eval/self-test.ts",
     "test:skill-behavior": "node --env-file-if-exists=.env node_modules/.bin/tsx eval/run.ts",
     "test:skill-behavior:live": "EVAL_PROVIDER=openrouter node --env-file-if-exists=.env node_modules/.bin/tsx eval/run.ts",
@@ -12,7 +12,8 @@
     "test:skill-behavior:paired": "EVAL_PROVIDER=openrouter EVAL_BASELINE=1 node --env-file-if-exists=.env node_modules/.bin/tsx eval/run.ts",
     "sandbox:build": "podman build -t antiky-skills-eval -f eval/Dockerfile ..",
     "sandbox:rebuild": "EVAL_REBUILD=1 tsx eval/run.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:unit": "tsx --test unit/*.test.ts"
   },
   "comment:overrides": "@aws-sdk/types ^3.974.3 is required somewhere in the pi-ai bedrock provider chain but was never published; 3.974.2 is the newest that exists. Remove this override once the upstream range resolves.",
   "overrides": {
