@@ -30,8 +30,9 @@ An agent deciding for itself that it was unclear is the opposite of the point, a
 costs nothing in the trigger budget.
 
 **It names a controlled language and a vocabulary source.** "Explain it more simply" produces a
-different kind of vague. "Re-pitch in STE using the ubiquitous language from CONTEXT.md" produces a
-specific rewrite with a checkable standard behind it.
+different kind of vague. Naming a standard and a glossary produces a specific rewrite with something
+checkable behind it. Ours names the standard we ship; the glossary is the part we do not have — see
+below.
 
 ## Why it fits here
 
@@ -65,24 +66,26 @@ Body, roughly:
 > - Restore the context: what were you looking at, and what were you trying to establish?
 > - Write it in ASD-STE100 Simplified Technical English — short active sentences, one topic each,
 >   approved vocabulary. Load `general-simplified-technical-english` if you need the rules.
-> - Use the project's ubiquitous language. Read the nearest `CONTEXT.md`, `AGENTS.md`, or glossary
->   for the terms this repository actually uses, and use those terms.
+> - Use the terms this repository already uses. Read the nearest `AGENTS.md`, and the ADRs for
+>   anything architectural. Do not reach for a synonym that reads better.
 > - If the thing you said was wrong rather than unclear, say that instead of re-pitching it.
 
 That last bullet is mine, not the original's, and it matters: sometimes the message did not land
 because it was incorrect, and a fluent re-pitch of a wrong claim is worse than the first attempt.
 
-## Open question
+## Where the vocabulary comes from
 
-**What is our `CONTEXT.md`?** The original names a specific file. We do not have one. Candidates:
-the nearest `AGENTS.md`, `docs/GOOD_ENGINEERING_H.md`, the ADR corpus as a de-facto glossary, or a
-new `CONTEXT.md` holding Antiky's ubiquitous language — entity, component, render driver, slice,
-objective, goal, revision.
+The original names `CONTEXT.md`. **We do not have one and are not adopting the idea for now**, so
+the skill must not name a file that does not exist — an instruction to read a missing file is worse
+than no instruction, because the agent either invents its contents or stalls.
 
-A real one would be worth more than this skill. Right now an agent's terminology comes from whatever
-it last read, which is exactly the drift the ADRs exist to prevent. I would raise creating one as
-its own piece of work; until then the skill should say "the nearest `AGENTS.md` or glossary" rather
-than name a file that does not exist.
+Instead: *"use the terms this repository already uses — read the nearest `AGENTS.md`, and the ADRs
+for anything architectural."* That is true today, needs no new file, and degrades gracefully in a
+repository that has neither.
+
+Worth noting rather than acting on: an agent's terminology currently comes from whatever it last
+read, which is the drift ADRs exist to prevent. If a glossary ever appears — under any name — this
+skill should point at it, and that is a one-line change.
 
 ## Evaluation
 
@@ -116,5 +119,6 @@ exists.
 
 - `general-wait-what` ships, under 30 lines, no `reference/`, `disable-model-invocation: true`.
 - A unit test proves it is excluded from the catalog.
-- The `CONTEXT.md` question is answered or explicitly deferred in the skill's text.
+- The skill names no file that does not exist. Vocabulary comes from the nearest `AGENTS.md`
+  and the ADRs.
 - Attribution to mattpocock/skills.

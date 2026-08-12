@@ -95,8 +95,21 @@ exactly why it is a separate skill.
 - **Audience**: a developer with the framework and CLI and no knowledge of this repository's
   delivery plan or demos. A repository demo may be *labelled* an example but must not define the
   product contract.
-- **`_A` suffix** on `DOCUMENTATION_STANDARDS_A.md` — establish what `_A` means alongside the known
-  `_H` (human-owned) before writing the overlay, and record it.
+- **Ownership suffixes.** Antiky marks who owns a file: `_H` human, `_A` agent, `_S` script
+  (generated). `DOCUMENTATION_STANDARDS_A.md` is agent-owned, which is why an agent may maintain it
+  where it may not touch an `_H` record without instruction. The overlay states all three, because
+  an agent that knows only `_H` will treat everything unsuffixed as fair game.
+
+- **The generated pages do not carry `_S`, and probably should.** I checked: every page under
+  `api/` — `engine-session.md`, `identity.md`, `point-light-core.md`, and the rest — is unsuffixed,
+  and `DOCUMENTATION_STANDARDS_A.md` is the only suffixed file in the whole tree. So the "never
+  hand-edit" rule cannot lean on the marker; it has to name the `api/` path, and an agent that
+  reaches a generated page by any other route sees nothing telling it to stop.
+
+  Renaming them `*_S.md` would make the rule self-evident at the point of use instead of requiring
+  path knowledge, and would let the overlay's eval assert on a suffix rather than a directory. That
+  is a change to the Antiky repository and a suggestion, not part of this plan — worth raising as
+  its own piece of work. Until then the overlay names the path.
 
 ## Evaluation
 
