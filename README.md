@@ -37,9 +37,14 @@ can install one domain at a time and read a skill list without opening it.
 
 | Prefix | Domain |
 | --- | --- |
-| `antiky-` | Working with the Antiky CLI, Framework, and Studio. |
+| `antiky-` | **Using** Antiky products — building a game with the CLI, Framework, or Studio. |
 | `brometal-` | Building things with BroMetal — shaders, render passes, effects. |
-| `general-` | Working practice not tied to one Antiky system — documentation, records, planning, dependencies. |
+| `repo-` | **Working inside** an Antiky repository — where files go, local tooling, house conventions. |
+| `general-` | Working practice not tied to Antiky at all — portable to any repository. |
+
+`antiky-` and `repo-` are easy to confuse. `antiky-` helps someone **use** Antiky — a game developer
+with the released CLI who does not have this repository. `repo-` helps someone **work inside** an
+Antiky repository — where a file goes, which script generates it, what the house conventions are.
 
 ## Skills
 

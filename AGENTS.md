@@ -84,14 +84,26 @@ Every skill name starts with one of these prefixes.
 
 | Prefix | Domain |
 | --- | --- |
-| `antiky-` | Working with the Antiky CLI, Framework, and Studio. |
+| `antiky-` | **Using** Antiky products — building a game with the CLI, Framework, or Studio. |
 | `brometal-` | Building things with BroMetal — shaders, render passes, effects. |
-| `general-` | Working practice that is not tied to one Antiky system — documentation, records, planning, dependencies. |
+| `repo-` | **Working inside** an Antiky repository — where files go, local tooling, house conventions. |
+| `general-` | Working practice not tied to Antiky at all — portable to any repository. |
 
 The prefix names **what the agent is doing**, not what the subject matter is.
-`general-brometal-patching` carries our practice for consuming BroMetal as a patched dependency, so
-it is `general-`. A skill for writing BroMetal shaders would be `brometal-`. Both are about
-BroMetal; only one is about BroMetal work.
+
+**`antiky-` and `repo-` are the pair that gets confused, so be deliberate.** `antiky-` is for a
+reader who *uses* Antiky — a game developer with the released CLI and Framework, who neither has nor
+wants this repository. `repo-` is for someone *working inside* an Antiky repository, who needs to
+know that ADRs are numbered per area or that `docs/user-facing-docs/api/` is generated.
+
+A skill about writing user-facing documentation is `general-` if it teaches Diátaxis, and `repo-` if
+it says which folder the page goes in. Neither is `antiky-`, because neither helps anyone *use*
+Antiky. A skill that teaches a game developer to light a scene is `antiky-`.
+
+The same test separates `general-` from `brometal-`. `general-brometal-patching` carries our
+practice for consuming BroMetal as a patched dependency — that is dependency practice, portable in
+shape, so it is `general-`. A skill for writing BroMetal shaders would be `brometal-`. Both are
+about BroMetal; only one is about BroMetal work.
 
 After the prefix, name the task. `general-brometal-patching`, not `general-brometal` — the subject
 alone does not say what the skill does with it.
