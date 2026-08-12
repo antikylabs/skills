@@ -106,14 +106,22 @@ Before you commit a skill change:
 - Run `npx skills add . --list` and confirm the skill appears with the expected name.
 - Confirm the frontmatter is valid YAML.
 - Confirm all local links resolve.
-- Run each skill's own tests. A skill that ships a script must ship tests for it:
+- Run each skill's own tests. A skill that ships a script must ship tests for it.
+- Run the harness self-test and the deterministic eval:
 
   ```bash
-  python3 skills/team-simplified-technical-english/tests/test_ste_lint.py
+  cd tests && npm test          # typecheck, self-test, then the eval
   ```
 
 - Run `git diff --check`.
 
 A passing script test says the tool works. It says nothing about whether the agent loads the skill
-when it should, or follows the playbook once loaded. Those need behavioral evals, which this
-repository does not yet have.
+when it should, or follows the playbook once loaded. That is what `tests/eval/` measures, and a
+change to a skill's behaviour should be validated with a paired live run:
+
+```bash
+cd tests && npm run test:skill-behavior:paired
+```
+
+Run `npm run test:sandbox` before trusting any eval result. A green suite means nothing unless the
+assertions have been shown capable of failing.
