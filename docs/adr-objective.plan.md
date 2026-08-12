@@ -103,11 +103,22 @@ and skills keep only the steps. That was wrong in the direction that costs the m
 exactly what an always-loaded file should not be carrying, because there is no bound on how many of
 them accumulate.
 
-**Consequence for `docs/adr/AGENTS.md` and `docs/user-facing-docs/AGENTS.md`.** Both currently carry
-their conventions inline. Once the `repo-` skills exist, those files shrink to a pointer, and the
-convention has one home. That is a change to the *Antiky* repository, not this one — it needs its
-own goal and the owner's agreement, and until it happens the skills and those files will both carry
-the conventions. The skills should say the `AGENTS.md` is the authority while that is true.
+**The skill becomes the authority, not a mirror of one.** `docs/adr/AGENTS.md` currently carries the
+numbering, ownership, and supersede conventions inline. Once `repo-write-adrs` exists, that file
+shrinks to the pointer above and the conventions live in the skill.
+
+The reason is reuse, the same as in [docwriting.plan.md](docwriting.plan.md): conventions stored in
+one repository serve one repository. Carried by a skill, they install everywhere at once, and
+changing them is one edit rather than one per repository.
+
+So the skill must **not** say "read `docs/adr/AGENTS.md` as the authority" — which is what
+`general-write-adrs` does today. That instruction is right while the convention lives there and
+wrong the moment it moves, and leaving it in produces two homes for one rule, which is worse than
+either alone.
+
+Shrinking those files is a change to the *Antiky* repository, not this one. It needs its own goal
+and the owner's agreement, and it should land in the same change that ships the skill rather than
+drifting behind it.
 
 ## Migration
 
@@ -125,11 +136,20 @@ If the split happens, per skill:
 
 ## What this costs
 
-Doubling the skill count doubles the catalog every agent carries, and the catalog is the thing that
-decides routing. On the last full run, `team-write-objectives` scored 7/13 partly because four
-descriptions were competing; eight will be worse. **The split is right for maintenance and a real
-risk for triggering**, and that tension should be measured rather than argued — run the eval with
-the overlays present and see what the trigger cases do.
+Less than I first thought, because the two kinds of skill reach an agent by different routes.
+`general-*` competes in the catalog on description match. `repo-*` is reached because an `AGENTS.md`
+names it — deterministic, no contest.
+
+That matters, because every routing problem measured so far comes from description competition:
+`adr-trigger-not-ste` flipping between identical runs, objectives scoring 7/13 against four
+competing descriptions. Adding four `repo-` skills does not add four competitors.
+
+**Worth deciding when building: should `repo-` skills carry `disable-model-invocation: true`?** It
+would keep them out of the catalog entirely, so they cost nothing in routing and are reached only
+through the pointer that names them. The cost is that a model working in an Antiky repository could
+not load one on its own recognition — it would depend on `AGENTS.md` being present and read. My read
+is **yes for the ones an `AGENTS.md` reliably names**, but this is measurable rather than arguable:
+ship them visible, run the eval, and see whether the `general-` trigger cases degrade.
 
 ## Acceptance
 

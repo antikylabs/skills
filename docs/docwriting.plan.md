@@ -78,8 +78,9 @@ maintenance manual.
 
 ## `repo-write-docs`
 
-Everything here is repository fact, and all of it would be wrong in another repository. That is
-exactly why it is a separate skill.
+The house standards for Antiky documentation, carried by a skill so every repository gets the same
+ones. See "The skill is the authority" below — this is not a mirror of what a repository already
+says, it is where those rules live.
 
 - **Where pages live**: `docs/user-facing-docs/{api,cli,framework,mcp,studio}/`, `assets/`.
 - **`api/` is generated.** Do not hand-edit. Change
@@ -111,6 +112,49 @@ exactly why it is a separate skill.
   is a change to the Antiky repository and a suggestion, not part of this plan — worth raising as
   its own piece of work. Until then the overlay names the path.
 
+## The skill is the authority, not the repository
+
+Decided, and it inverts the usual reading of "overlay". `repo-write-docs` does not *mirror* what
+`docs/user-facing-docs/AGENTS.md` says — it **replaces** it. That file shrinks to a pointer:
+
+```markdown
+Use the `repo-write-docs` skill when writing or restructuring a page in this folder.
+```
+
+The standards and the placement rules live in the skill.
+
+**The reason is reuse.** Standards stored inside one repository serve that repository only. The same
+standards carried by a skill can be installed everywhere at once — every Antiky repository that
+writes user-facing documentation gets the same rules from one place, and a change to them is one
+edit rather than one per repository. That is what makes this worth doing at all; an overlay that
+only ever serves `antikylabs/antiky` would not justify a second skill.
+
+It also removes the drift risk outright. There is no second copy to fall behind, because there is
+no second copy.
+
+Two consequences to handle when building:
+
+- The skill must not say "read `AGENTS.md` as the authority", which is what `general-write-adrs`
+  does today and what I had drafted here. It *is* the authority.
+- Facts that are genuinely per-repository — a generator command, a test path — either get stated as
+  a pattern the skill can check for, or stay in `AGENTS.md` as the small remainder. Do not let that
+  remainder quietly grow back into the standards.
+
+## Routing
+
+Not a risk, as it turns out. The two skills reach an agent by **different mechanisms**:
+
+- `general-write-docs` is model-invoked, from the catalog, on description match. Default behaviour.
+- `repo-write-docs` is reached because `AGENTS.md` names it — deterministic, not a trigger contest.
+
+That matters more than it looks. Every routing problem measured so far — `adr-trigger-not-ste`
+flipping between runs, objectives scoring 7/13 against four competing descriptions — comes from
+skills competing on description match. A skill an `AGENTS.md` points at directly does not compete,
+so its description can be narrow and unassertive without costing it anything.
+
+Still worth one collision case in each direction, cheap to write, but this is no longer the thing
+that would sink the design.
+
 ## Evaluation
 
 A new suite at `tests/eval/suites/general-write-docs/` and another for the overlay. Cases worth
@@ -126,22 +170,16 @@ having, each with the negative control the harness requires:
 The generated-page case is the one I would write first. It is behavioural, it is cheap to assert,
 and getting it wrong destroys work silently.
 
-## Risks
-
-- **The overlay drifts from the repository.** Paths, generator commands, and test names are all
-  facts that change. Mitigation: the overlay states them once and tells the agent to read
-  `docs/user-facing-docs/AGENTS.md` as the authority, exactly as `general-write-adrs` does today.
-- **Two skills, one job, ambiguous routing.** Both descriptions mention documentation, and the ADR
-  suite already showed cross-skill interference when descriptions overlap. The overlay's description
-  must be explicitly about *this repository's* documentation tree, and the trigger cases must
-  include a collision case in both directions.
-
 ## Acceptance
 
 - `general-write-docs` ships with `classify`, `write`, `audit`, `split`, and a craft reference that
   carries the failure modes rather than the definitions. Diátaxis only — it does not reach for
   ASD-STE100.
-- `repo-write-docs` is thin, defers to the general skill, and carries only repository fact.
+- `repo-write-docs` defers to the general skill for craft and carries the house standards itself.
+  It does not name an `AGENTS.md` as its authority.
+- `docs/user-facing-docs/AGENTS.md` in the Antiky repository shrinks to a pointer at the skill, in
+  its own change with the owner's agreement.
 - Both have eval suites; the generated-page case asserts on the filesystem.
-- A paired live run shows a positive delta on both, with the collision case passing in both
-  directions.
+- A paired live run shows a positive delta on `general-write-docs`. `repo-write-docs` is reached by
+  an `AGENTS.md` pointer rather than by description match, so its trigger cases matter less than its
+  behaviour once loaded.
