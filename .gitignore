@@ -1,0 +1,17 @@
+node_modules/
+.DS_Store
+*.log
+__pycache__/
+*.pyc
+
+# Secrets. .env holds a real API key; .env.example is the committed template.
+.env
+.env.*
+!.env.example
+
+# Local agent skill install targets
+.claude/skills/
+.agents/skills/
+
+# Eval run logs and reports
+tests/eval/runs/
