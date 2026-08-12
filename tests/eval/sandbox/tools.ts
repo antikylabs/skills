@@ -31,7 +31,7 @@ export const MUTATING_TOOLS = ["edit_file", "write_file", "move_file"] as const;
 const WORKSPACE_HINT = "/workspace";
 
 /** Roots the agent may read. Anything else is refused even inside the container. */
-const READABLE_ROOTS = ["/workspace", "/fixtures", "/skills"];
+const READABLE_ROOTS = ["/workspace", "/skills"];
 
 /** The only root the agent may write. /skills and the pristine fixtures stay immutable. */
 const WRITABLE_ROOTS = ["/workspace"];
@@ -126,7 +126,7 @@ export function buildTools(record: (call: RecordedCall) => void, withSkill = tru
     execute: async (_id, params) => {
       record({ name: "run_ste_lint", args: { path: params.path, mode: params.mode }, blocked: false });
       const resolved = assertReadable(params.path);
-      const linter = "/skills/team-simplified-technical-english/scripts/ste_lint.mjs";
+      const linter = "/skills/general-simplified-technical-english/scripts/ste_lint.mjs";
       const result = spawnSync(
         process.execPath,
         [linter, "--mode", params.mode ?? "auto", "--fail-on", "never", resolved],

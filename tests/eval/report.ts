@@ -8,7 +8,7 @@
 
 import fs from "node:fs";
 import path from "node:path";
-import type { EvalCase, Verdict } from "./cases/index.ts";
+import type { EvalCase, Verdict } from "./suites/index.ts";
 
 export interface UsageTotals {
   input: number;

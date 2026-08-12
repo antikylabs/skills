@@ -15,7 +15,7 @@
  * If this file fails, no result from run.ts can be trusted.
  */
 
-import { CASES, type EvalCase, type Trace } from "./cases/index.ts";
+import { CASES, type EvalCase, type Trace } from "./suites/index.ts";
 import { detectRuntime, ensureImage, probe, runInSandbox, systemPrompt } from "./container.ts";
 import { concurrency, mapLimit } from "./pool.ts";
 
@@ -84,13 +84,13 @@ for (const { testCase, trace } of verdicts) {
 // trace even though it never runs. Verify that directly.
 
 const edited = await runInSandbox(runtime, {
-  prompt: "Fix /workspace/team-simplified-technical-english/0001-example-decision_H.md and apply the corrections.",
+  prompt: "Fix /workspace/general-simplified-technical-english/0001-example-decision_H.md and apply the corrections.",
   provider: "faux",
   modelId: "faux-model",
   systemPrompt: prompt,
   script: [
-    { kind: "tool", name: "read_file", args: { path: "/skills/team-simplified-technical-english/SKILL.md" } },
-    { kind: "tool", name: "edit_file", args: { path: "/workspace/team-simplified-technical-english/0001-example-decision_H.md", old_string: "utilize", new_string: "use" } },
+    { kind: "tool", name: "read_file", args: { path: "/skills/general-simplified-technical-english/SKILL.md" } },
+    { kind: "tool", name: "edit_file", args: { path: "/workspace/general-simplified-technical-english/0001-example-decision_H.md", old_string: "utilize", new_string: "use" } },
     { kind: "text", text: "Applied the correction." },
   ],
 });
@@ -113,7 +113,7 @@ const escape = await runInSandbox(runtime, {
   modelId: "faux-model",
   systemPrompt: prompt,
   script: [
-    { kind: "tool", name: "write_file", args: { path: "/skills/team-write-adrs/SKILL.md", content: "x" } },
+    { kind: "tool", name: "write_file", args: { path: "/skills/general-write-adrs/SKILL.md", content: "x" } },
     { kind: "text", text: "done" },
   ],
 });
@@ -128,11 +128,11 @@ check(
 
 const probes: [string, string, RegExp][] = [
   ["container filesystem is read-only", "echo x > /harness/pwned 2>&1 || echo BLOCKED", /BLOCKED|Read-only file system/i],
-  ["pristine fixture mount is read-only", "echo x >> /fixtures/team-simplified-technical-english/clean-procedure.md 2>&1 || echo BLOCKED", /BLOCKED|Read-only file system/i],
+  ["suites mount is read-only", "echo x >> /suites/general-simplified-technical-english/fixtures/clean-procedure.md 2>&1 || echo BLOCKED", /BLOCKED|Read-only file system|No such file/i],
   ["faux runs have no network", "getent hosts openrouter.ai 2>&1 || echo NO_NETWORK", /NO_NETWORK/],
   ["runs as a non-root user", "id -un", /evaluator/],
   ["host filesystem is not visible", "ls /Users 2>&1 || echo NO_HOST_FS", /NO_HOST_FS|No such file/],
-  ["skill tree is not writable", "echo x >> /skills/team-simplified-technical-english/SKILL.md 2>&1 || echo BLOCKED", /BLOCKED|Read-only file system|Permission denied/i],
+  ["skill tree is not writable", "echo x >> /skills/general-simplified-technical-english/SKILL.md 2>&1 || echo BLOCKED", /BLOCKED|Read-only file system|Permission denied/i],
 ];
 
 for (const [name, command, expected] of probes) {

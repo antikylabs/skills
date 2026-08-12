@@ -1,4 +1,0 @@
-interface:
-  display_name: "Team: BroMetal"
-  short_description: "Patch BroMetal, upstream the fix, retire the patch"
-  default_prompt: "Use $team-brometal update to bump BroMetal and retire landed patches."

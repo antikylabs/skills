@@ -29,7 +29,7 @@ import type { Model } from "@earendil-works/pi-ai";
 import { buildTools, type RecordedCall } from "./tools.ts";
 import { loadCatalog, SKILL_INSTRUCTIONS } from "./skills.ts";
 import { seedWorkspace, collectMutations, type Mutations } from "./workspace.ts";
-import type { FauxStep } from "../cases/types.ts";
+import type { FauxStep } from "../suites/types.ts";
 
 /** pi's reasoning levels, lowest to highest. */
 export const THINKING_LEVELS = ["off", "minimal", "low", "medium", "high", "xhigh"] as const;

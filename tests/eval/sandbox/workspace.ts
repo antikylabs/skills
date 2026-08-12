@@ -20,12 +20,36 @@ import path from "node:path";
 import crypto from "node:crypto";
 
 export const WORKSPACE = "/workspace";
-export const PRISTINE = "/fixtures";
 
-/** Copy the fixtures into the writable workspace. Called once per run. */
+/** The read-only suites mount: /suites/<skill>/{cases,fixtures}. */
+export const SUITES = "/suites";
+
+/**
+ * Hashes of every file as it was seeded. The diff is taken against this rather
+ * than against a second mount, so the workspace is assembled from many suites
+ * without needing a matching pristine tree to compare with.
+ */
+let baseline: Map<string, string> | null = null;
+
+/**
+ * Assemble the writable workspace from every suite's fixtures.
+ *
+ * Each skill's fixtures land under its own name, so a case addresses
+ * /workspace/<skill-name>/... exactly as it did when fixtures were one tree.
+ * Called once per run.
+ */
 export function seedWorkspace(): void {
   fs.mkdirSync(WORKSPACE, { recursive: true });
-  fs.cpSync(PRISTINE, WORKSPACE, { recursive: true });
+  if (fs.existsSync(SUITES)) {
+    for (const entry of fs.readdirSync(SUITES, { withFileTypes: true })) {
+      if (!entry.isDirectory()) continue;
+      const from = path.join(SUITES, entry.name, "fixtures");
+      if (fs.existsSync(from)) {
+        fs.cpSync(from, path.join(WORKSPACE, entry.name), { recursive: true });
+      }
+    }
+  }
+  baseline = walk(WORKSPACE);
 }
 
 function hashFile(target: string): string {
@@ -64,7 +88,7 @@ export interface Mutations {
  * turns on.
  */
 export function collectMutations(maxBytes = 20_000): Mutations {
-  const before = walk(PRISTINE);
+  const before = baseline ?? new Map<string, string>();
   const after = walk(WORKSPACE);
 
   const created: string[] = [];

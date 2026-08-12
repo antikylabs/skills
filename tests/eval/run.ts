@@ -16,7 +16,7 @@
  * the assertions have been shown capable of failing.
  */
 
-import { select, selectorHelp, toolPath } from "./cases/index.ts";
+import { select, selectorHelp, toolPath } from "./suites/index.ts";
 import {
   detectRuntime,
   ensureImage,

@@ -1,4 +1,0 @@
-interface:
-  display_name: "Team: Write ADRs"
-  short_description: "Write and propose Architecture Decision Records"
-  default_prompt: "Use $team-write-adrs write to record the decision we just made."

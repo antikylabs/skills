@@ -9,7 +9,23 @@ version, not a patch.
 
 ## [Unreleased]
 
-Nothing yet.
+- refactor `team-` to `general-`
+- refactor tests to `suites` with contained eval & fixture per suite
+- suites now reflect the name of the skill for easy correlation
+- added `GOOD_ENGINEERING_H.md` which is part of our standard engineering principles
+
+**This is breaking.** A skill's name is part of its public interface, so the next release is a minor
+bump and every existing install needs the new name:
+
+| Old | New |
+| --- | --- |
+| `team-simplified-technical-english` | `general-simplified-technical-english` |
+| `team-write-adrs` | `general-write-adrs` |
+| `team-write-objectives` | `general-write-objectives` |
+| `team-brometal` | `general-brometal-patching` |
+
+`team-brometal` also gained its task: the naming rule is prefix plus task, and a subject alone does
+not say what the skill does with it.
 
 ## [0.2.3] — 2026-08-12
 

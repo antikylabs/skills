@@ -15,11 +15,16 @@ import { spawn, spawnSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import type { FauxStep, Trace } from "./cases/index.ts";
+import type { FauxStep, Trace } from "./suites/index.ts";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 export const REPO_ROOT = path.resolve(HERE, "..", "..");
-export const FIXTURES = path.join(HERE, "fixtures");
+/**
+ * The suites tree: one directory per skill, each with cases/ and fixtures/.
+ * Mounted read-only in the container, which assembles /workspace from the
+ * fixtures inside it — see sandbox/workspace.ts.
+ */
+export const SUITES = path.join(HERE, "suites");
 export const RUNS_DIR = path.join(HERE, "runs");
 export const IMAGE = "antiky-skills-eval";
 
@@ -202,7 +207,7 @@ export async function runInSandbox(runtime: string, options: RunOptions): Promis
     fauxScript: options.script,
   };
 
-  const args = ["run", "--rm", "-i", ...HARDENING, "-v", `${FIXTURES}:/fixtures:ro`,
+  const args = ["run", "--rm", "-i", ...HARDENING, "-v", `${SUITES}:/suites:ro`,
                 "-e", "EVAL_IN_SANDBOX=1", "-e", "EVAL_LOG=1"];
 
   if (options.provider === "faux") {
@@ -271,7 +276,7 @@ export function probe(runtime: string, command: string): { out: string; code: nu
   const result = spawnSync(
     runtime,
     ["run", "--rm", "--network=none", ...HARDENING,
-     "-v", `${FIXTURES}:/fixtures:ro`,
+     "-v", `${SUITES}:/suites:ro`,
      "--entrypoint", JSON.stringify(["/bin/sh", "-c", command]), IMAGE],
     { encoding: "utf-8", timeout: 60_000 },
   );

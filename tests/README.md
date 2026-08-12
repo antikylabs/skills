@@ -68,17 +68,25 @@ tests/
     self-test.ts      negative control: proves the assertions can fail
     container.ts      container plumbing and the hardening flags
     report.ts         cost, token accounting, and the paired assessment
-    cases/            one directory per skill, named for the skill
-      <skill-name>/   paths.ts + one file per concern
-    fixtures/
-      <skill-name>/   the documents that skill's cases work on
+    pool.ts           bounded concurrency, sized from the container VM
+    suites/
+      types.ts        shared vocabulary and assertion helpers
+      index.ts        the registry
+      <skill-name>/
+        cases/        one file per concern, plus paths.ts
+        fixtures/     the documents those cases work on
     Dockerfile        the sandbox image
     sandbox/
       agent-run.ts    runs ONLY inside the container
       tools.ts        the read-only tool surface
       skills.ts       discovery via pi's own loadSkills()
-      workspace.ts    the writable copy, and the mutation diff
+      workspace.ts    assembles /workspace from every suite's fixtures
 ```
+
+Everything one skill needs lives under `suites/<skill-name>/`, named exactly for the skill. The
+container mounts `suites/` read-only and assembles `/workspace` from each suite's `fixtures/`, so a
+case addresses `/workspace/<skill-name>/…` and the skill, its cases, and its fixtures are never
+more than one directory apart.
 
 Case and fixture directories are named **exactly** for the skill they exercise, so a skill, its
 cases, and its fixtures are always found under the same name.
@@ -124,11 +132,12 @@ observable — which is the entire ownership case.
 
 ## Adding a case
 
-1. Add fixtures under `eval/fixtures/`.
-2. Add the case to `CASES` in `eval/cases.ts` with an assertion over the trace.
-3. Add a passing script to `FAUX_SCRIPTS` in `eval/faux-scripts.ts`.
-4. Prove the assertion can fail — extend `eval/self-test.ts` with a trace that
-   should fail it. An assertion with no negative control is not a test.
+1. Add fixtures under `eval/suites/<skill-name>/fixtures/`.
+2. Add the case under `eval/suites/<skill-name>/cases/`, and register it in that suite's `index.ts`.
+3. Give the case a `script` that satisfies it, and a `negativeControl` that must not.
+4. Prove the assertion can fail — every case declares a required `negativeControl`, and the
+   self-test feeds each one to its own assertion. An assertion with no counter-example is not a
+   test.
 5. `EVAL_REBUILD=1 npm run test:skill-behavior` to pick up skill changes.
 
 ## Environment variables

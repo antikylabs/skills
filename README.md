@@ -13,10 +13,10 @@ the [Agent Skills specification](https://agentskills.io) and install with the op
 npx skills add antikylabs/skills --list
 
 # Install one skill
-npx skills add antikylabs/skills --skill team-write-adrs
+npx skills add antikylabs/skills --skill general-write-adrs
 
 # Install several skills for a specific agent
-npx skills add antikylabs/skills -a claude-code --skill team-write-adrs --skill team-write-objectives
+npx skills add antikylabs/skills -a claude-code --skill general-write-adrs --skill general-write-objectives
 
 # Install everything
 npx skills add antikylabs/skills --all
@@ -27,7 +27,7 @@ Add `-g` to install to your user directory instead of the current project.
 ## Use without installing
 
 ```bash
-npx skills use antikylabs/skills@team-write-adrs | claude
+npx skills use antikylabs/skills@general-write-adrs | claude
 ```
 
 ## Name prefixes
@@ -38,17 +38,17 @@ can install one domain at a time and read a skill list without opening it.
 | Prefix | Domain |
 | --- | --- |
 | `antiky-` | Working with the Antiky CLI, Framework, and Studio. |
-| `brometal-` | Working with BroMetal directly. |
-| `team-` | Antiky Labs day-to-day working practice. |
+| `brometal-` | Building things with BroMetal — shaders, render passes, effects. |
+| `general-` | Working practice not tied to one Antiky system — documentation, records, planning, dependencies. |
 
 ## Skills
 
 | Skill | Status | Purpose |
 | --- | --- | --- |
-| [`team-write-adrs`](skills/team-write-adrs/) | Ready | Write and propose Architecture Decision Records. |
-| [`team-write-objectives`](skills/team-write-objectives/) | Ready | Run objectives end to end: scaffold, research, plan, goals, execute, audit, archive. |
-| [`team-brometal`](skills/team-brometal/) | Ready | Consume BroMetal as a patched dependency and upstream the fixes. |
-| [`team-simplified-technical-english`](skills/team-simplified-technical-english/) | Ready | Write, audit, and fix text against ASD-STE100 Issue 9. Carries a deterministic linter and the controlled vocabulary. |
+| [`general-write-adrs`](skills/general-write-adrs/) | Ready | Write and propose Architecture Decision Records. |
+| [`general-write-objectives`](skills/general-write-objectives/) | Ready | Run objectives end to end: scaffold, research, plan, goals, execute, audit, archive. |
+| [`general-brometal-patching`](skills/general-brometal-patching/) | Ready | Consume BroMetal as a patched dependency and upstream the fixes. |
+| [`general-simplified-technical-english`](skills/general-simplified-technical-english/) | Ready | Write, audit, and fix text against ASD-STE100 Issue 9. Carries a deterministic linter and the controlled vocabulary. |
 
 Stub skills contain frontmatter only. They are placeholders and do not yet give an agent useful
 instructions.
@@ -59,17 +59,17 @@ A skill that covers more than one job routes through a sub-command. `SKILL.md` h
 table; each command has its own playbook under `reference/`.
 
 ```
-/team-simplified-technical-english audit docs/adr/framework/0021-*.md
-/team-simplified-technical-english fix README.md
-/team-simplified-technical-english write
+/general-simplified-technical-english audit docs/adr/framework/0021-*.md
+/general-simplified-technical-english fix README.md
+/general-simplified-technical-english write
 ```
 
 | Skill | Commands |
 | --- | --- |
-| `team-simplified-technical-english` | `write`, `audit`, `fix` |
-| `team-write-adrs` | `write`, `suggest` |
-| `team-brometal` | `update`, `patch`, `pr` |
-| `team-write-objectives` | `init`, `create-research`, `create-plan`, `create-goals`, `execute`, `audit`, `complete-goal`, `complete-objective` |
+| `general-simplified-technical-english` | `write`, `audit`, `fix` |
+| `general-write-adrs` | `write`, `suggest` |
+| `general-brometal-patching` | `update`, `patch`, `pr` |
+| `general-write-objectives` | `init`, `create-research`, `create-plan`, `create-goals`, `execute`, `audit`, `complete-goal`, `complete-objective` |
 
 ## Repository layout
 
@@ -82,7 +82,7 @@ skills/
 ```
 
 The CLI discovers skills in `skills/` up to three directory levels deep, so category folders such as
-`skills/team/team-write-adrs/SKILL.md` also work.
+`skills/team/general-write-adrs/SKILL.md` also work.
 
 ## Add a skill
 
@@ -99,7 +99,7 @@ sets `INSTALL_INTERNAL_SKILLS=1`.
 
 ## Third-party notices
 
-`team-simplified-technical-english` carries the ASD-STE100 controlled vocabulary and a summary of
+`general-simplified-technical-english` carries the ASD-STE100 controlled vocabulary and a summary of
 its rules. ASD-STE100 is the property of ASD and its name is an EU registered trade mark. See
-[the skill's notice](skills/team-simplified-technical-english/NOTICE.md) for what is and is not
+[the skill's notice](skills/general-simplified-technical-english/NOTICE.md) for what is and is not
 included, and get the standard itself, free, from <https://www.asd-ste100.org>.

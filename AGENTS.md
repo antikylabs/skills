@@ -8,6 +8,7 @@ repository must work in any repository that installs it.
 ## Agent note
 
 - never use coauthored tags for claude or codex or whatever agent you are.
+- read @docs/GOOD_ENGINEERING_H.md for good practices
 
 ## Skill layout
 
@@ -44,7 +45,7 @@ Rules:
 - State in each playbook whether the command writes files.
 - Do not let a read-only command apply changes because the changes look obvious.
 
-`team-simplified-technical-english` is the worked example.
+`general-simplified-technical-english` is the worked example.
 
 ## Scripts
 
@@ -62,7 +63,7 @@ a tool the skill exists to run.
 
 ```markdown
 ---
-name: team-write-adrs
+name: general-write-adrs
 description: What the skill does and when an agent must use it.
 ---
 ```
@@ -72,7 +73,7 @@ Rules:
 - Make `name` lowercase, use hyphens, and match the directory name.
 - Start `name` with a domain prefix. See "Name prefixes" below.
 - After the prefix, name the task. Start with a verb when a verb reads naturally. Examples:
-  `antiky-build-games`, `brometal-write-shaders`, `team-write-adrs`.
+  `antiky-build-games`, `brometal-write-shaders`, `general-write-adrs`.
 - Write `description` for routing. State the task and the trigger. An agent reads this line to
   decide whether to load the skill.
 - Set `metadata.internal: true` while a skill is a stub or is not ready to ship.
@@ -85,15 +86,15 @@ Every skill name starts with one of these prefixes.
 | --- | --- |
 | `antiky-` | Working with the Antiky CLI, Framework, and Studio. |
 | `brometal-` | Building things with BroMetal — shaders, render passes, effects. |
-| `team-` | Antiky Labs day-to-day working practice, whatever it is about. |
+| `general-` | Working practice that is not tied to one Antiky system — documentation, records, planning, dependencies. |
 
-The prefix names **what the agent is doing**, not what the subject matter is. `team-brometal`
-carries our practice for consuming BroMetal as a patched dependency, so it is `team-`. A skill for
-writing BroMetal shaders would be `brometal-`. Both are about BroMetal; only one is about BroMetal
-work.
+The prefix names **what the agent is doing**, not what the subject matter is.
+`general-brometal-patching` carries our practice for consuming BroMetal as a patched dependency, so
+it is `general-`. A skill for writing BroMetal shaders would be `brometal-`. Both are about
+BroMetal; only one is about BroMetal work.
 
-After the prefix, name the task — except where the prefix plus a subject already reads as the
-task, as in `team-brometal`.
+After the prefix, name the task. `general-brometal-patching`, not `general-brometal` — the subject
+alone does not say what the skill does with it.
 
 Do not add a prefix without a matching row in this table and in [`README.md`](README.md). A skill
 that does not fit an existing prefix needs a human owner's decision first.
@@ -133,3 +134,7 @@ cd tests && npm run test:skill-behavior:paired
 
 Run `npm run test:sandbox` before trusting any eval result. A green suite means nothing unless the
 assertions have been shown capable of failing.
+
+A skill's eval lives at `tests/eval/suites/<skill-name>/`, holding both its `cases/` and its
+`fixtures/`. The directory is named exactly for the skill, so a skill and everything that measures
+it stay together.
