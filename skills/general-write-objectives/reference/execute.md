@@ -56,7 +56,7 @@ Then check **Completion definition** as a whole. All of it, or the goal is not c
 ### 5. Write the summary
 
 `goals/summary-goal-NN.md`, from [templates/summary-goal.md](templates/summary-goal.md). The
-exemplar is `demo-refining/goals/_completed/summary-goal-01.md`.
+project's own completed summaries are the best exemplar; read one before writing your first.
 
 The summary leads with **Action needed from the owner** — a table of what needs them, why it needs
 them specifically, and what it blocks. If nothing does, say that explicitly. Burying an owner
@@ -66,8 +66,8 @@ Then record:
 
 - what was delivered, with commits;
 - **what you got wrong and corrected**, including anything a later check disproved. A summary that
-  reports only success is not a record, it is a press release. The `demo-refining` summary
-  supersedes its own headline metric — that is the standard;
+  reports only success is not a record, it is a press release. A good summary will supersede its own
+  headline finding when a later check disproves it;
 - traps found: bugs, surprises, and stale comments worth knowing about even though they are fixed;
 - what is now unblocked, and what remains blocked.
 

@@ -15,11 +15,10 @@ objective scaffolded for a two-hour change is dead weight.
 
 ## Layout
 
-Simple goals live under `docs/objectives/goals/`, beside the objective folders rather than inside
-one:
+Simple goals live beside the objective folders rather than inside one:
 
 ```
-docs/objectives/
+<objectives>/
   goals/
     <goal-name>/
       goal.md                      the contract, same format as execute-goal-NN.md
@@ -77,7 +76,7 @@ init --simple → create-research → (goal.md written directly) → execute →
 5. **`complete-goal`** moves the whole folder:
 
    ```bash
-   git mv docs/objectives/goals/<goal-name> docs/objectives/goals/_completed/
+   git mv <objectives>/goals/<goal-name> <objectives>/goals/_completed/
    ```
 
    Then fix the relative links the move broke, and update the index.

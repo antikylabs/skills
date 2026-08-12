@@ -18,10 +18,10 @@ Move a finished goal and its summary into `goals/_completed/`.
 3. **Move both files together:**
 
    ```bash
-   git mv docs/objectives/<name>/goals/execute-goal-NN.md \
-          docs/objectives/<name>/goals/_completed/
-   git mv docs/objectives/<name>/goals/summary-goal-NN.md \
-          docs/objectives/<name>/goals/_completed/
+   git mv <objectives>/<name>/goals/execute-goal-NN.md \
+          <objectives>/<name>/goals/_completed/
+   git mv <objectives>/<name>/goals/summary-goal-NN.md \
+          <objectives>/<name>/goals/_completed/
    ```
 
    Use `git mv` so history follows the file.
@@ -30,7 +30,7 @@ Move a finished goal and its summary into `goals/_completed/`.
    an extra `../`. Links from open goals to this one now need `_completed/`. Check both directions:
 
    ```bash
-   grep -rn "execute-goal-NN" docs/objectives/<name>/
+   grep -rn "execute-goal-NN" <objectives>/<name>/
    ```
 
    A prerequisite link that 404s is how an executor ends up guessing what a prerequisite required.
@@ -58,7 +58,7 @@ Write the durable archive summary and retire the objective folder.
 2. **Read the whole objective**: `objective.md`, every plan document, every goal summary in
    `_completed/`. The archive summary is written from the whole arc, not from the last goal.
 
-3. **Write `docs/objectives/_archives/<name>-summary.md`.** One durable document. The exemplar is
+3. **Write `<objectives>/_archives/<name>-summary.md`.** One durable document. The exemplar is
    `_archives/studio-summary.md`. It records:
 
    | Section | Contents |
@@ -83,7 +83,7 @@ Write the durable archive summary and retire the objective folder.
    If any part of the folder must survive — a reference document other work depends on — move it to
    its permanent home first, and say in the summary where it went.
 
-5. **Update `docs/objectives/README.md`:** remove the row from active, add it to archived.
+5. **Update the objectives index:** remove the row from active, add it to archived.
 
 6. **Report**: the summary path, what shipped, the durable constraints created, and anything that
    needs the owner before the folder is deleted.

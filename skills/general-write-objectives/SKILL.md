@@ -1,9 +1,9 @@
 ---
 name: general-write-objectives
-description: Run Antiky objectives end to end — scaffold an objective, plan and fan out research, compile research into a numbered plan, cut well-bounded goals, execute a goal and summarize it, audit a plan with a specialist reviewer panel, and archive a finished objective. Use when starting a large arc of work, when planning or replanning, when executing a goal from goals/, or when a piece of work needs the research→plan→execute→summarize→archive lifecycle.
+description: Run Objectives end to end — scaffold an objective, plan and fan out research, compile research into a numbered plan, cut well-bounded goals, execute a goal and summarize it, audit a plan with a specialist reviewer panel, and archive a finished objective. Use when starting a large arc of work, when planning or replanning, when executing a goal from goals/, or when a piece of work needs the research→plan→execute→summarize→archive lifecycle.
 ---
 
-# Antiky objectives
+# Objectives
 
 An objective is a large arc of work — an epic. It owns its research, its plan, its goals, and its
 closeout. Every objective moves through one lifecycle:
@@ -27,8 +27,8 @@ question is not finished — see [reference/goals.md](reference/goals.md).
 can start, and every summary names what needs the owner's attention afterward. Burying a decision
 the operator has to make is the failure mode this skill exists to prevent.
 
-**Plans apply direction, they do not replace it.** Read `VISION_DIRECTION_H.md` and
-`GOOD_ENGINEERING_H.md`, and the relevant `docs/adr/` and `docs/aip/` records. An objective cannot
+**Plans apply direction, they do not replace it.** Read the project's direction and engineering-principle documents, and the relevant decision
+records. An objective cannot
 overrule an accepted decision. If the work needs one changed, that is an ADR, not a plan — use the
 `general-write-adrs` skill.
 
@@ -68,8 +68,8 @@ command set — every command detects which scale it is operating at and adjusts
 
 | Detected | Scale | Paths |
 | --- | --- | --- |
-| `<name>/objective.md` exists | Objective | `docs/objectives/<name>/…` |
-| `goals/<goal-name>/goal.md` exists | Simple goal | `docs/objectives/goals/<goal-name>/…` |
+| `<name>/objective.md` exists | Objective | `<objectives>/<name>/…` |
+| `goals/<goal-name>/goal.md` exists | Simple goal | `<objectives>/goals/<goal-name>/…` |
 
 At simple scale, `create-plan` and `create-goals` do not apply: the research feeds straight into
 `goal.md`, which is written to the same full contract format. `execute`, `audit`, and `complete-goal`

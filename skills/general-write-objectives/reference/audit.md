@@ -71,8 +71,8 @@ The main agent remediates — not the reviewers. Fix the confirmed findings in t
 the goal files.
 
 - Amending an **open goal**: edit it in place. Note what changed and why at the bottom.
-- Amending a **plan document**: add a later numbered document that supersedes it, as
-  `demo-refining` does with `12-VISUAL-METRICS-CRITIQUE.md`. Do not rewrite history.
+- Amending a **plan document**: add a later numbered document that supersedes it, with a later
+  numbered document that says what it supersedes. Do not rewrite history.
 - A finding that invalidates a **completed goal**: do not edit the completed goal. Record it in the
   audit report and, if it needs work, cut a new goal.
 

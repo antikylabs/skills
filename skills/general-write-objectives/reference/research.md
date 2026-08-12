@@ -14,8 +14,8 @@ nothing to research against.
 
 Then read what constrains the answer before you go looking for one:
 
-- `docs/VISION_DIRECTION_H.md` and `docs/GOOD_ENGINEERING_H.md`
-- the ADRs and AIPs that touch this area
+- the project's direction and engineering-principle documents
+- the decision records that touch this area
 - the repository `AGENTS.md`, and the nearest one to the code in question
 
 Research that rediscovers something an accepted ADR already settles is wasted, and worse, it invites

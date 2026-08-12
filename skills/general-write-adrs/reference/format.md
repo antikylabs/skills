@@ -26,11 +26,11 @@ State the decision in active voice. For example, write "We will..."
 Describe the benefits, costs, and other results of the decision.
 ```
 
-Keep it small. Add links, or a short list of options, only when the Context or the AIP does not
-already carry what a reader needs.
+Keep it small. Add links, or a short list of options, only when the Context does not already carry
+what a reader needs.
 
-Antiky usually keeps the options analysis in the related AIP rather than the ADR. Include it only
-when a reader cannot follow the decision without it.
+Where a project has a separate proposal document, the options analysis usually belongs there rather
+than in the ADR. Include it in the record only when a reader cannot follow the decision without it.
 
 ## What belongs in each part
 
@@ -54,7 +54,7 @@ decision. State what gets worse, and what the team is accepting.
 | `Superseded` | A newer ADR replaces it. Name and link that ADR in the status |
 
 New records are usually `Accepted`: the owner decides before the record is written. There is no
-`Proposed` status — proposal and review live in the AIP or the pull request.
+`Proposed` status — a proposal is not yet a decision, and belongs wherever the project reviews them.
 
 When a record supersedes another, say so under its own status too:
 
@@ -63,51 +63,28 @@ When a record supersedes another, say so under its own status too:
 
 Accepted
 
-Supersedes [0006: Keep BroMetal inside the Antiky render driver](0006-brometal-render-driver_H.md).
+Supersedes [0006: Route all writes through the session](0006-session-writes.md).
 ```
 
 ## Naming and numbering
 
-Files are named `NNNN-short-title_H.md`:
+Records are numbered and the number never changes. A common convention is `NNNN-short-title.md` with
+a four-digit number, a lowercase hyphenated title, and a suffix marking ownership.
 
-- `NNNN` is four digits, the next unused number **in that area**.
-- The title is lowercase and hyphenated, and describes the decision.
-- `_H` marks the record as human-owned. Every ADR carries it.
+**Decide whether numbering is global or per area, and be consistent.** A project with separate areas
+usually numbers within each, so two records can share a number across areas. Read the area before
+choosing a number rather than taking the highest number in the tree — that is the mistake that
+collides.
 
-**Numbering is per area, not global.** Each area has its own sequence starting at 0001. Read the
-area's directory before choosing a number:
+Numbers are never reused, including for a superseded record. A gap in the sequence is information.
 
-```bash
-ls docs/adr/framework/*.md | sed 's|.*/||' | grep -oE '^[0-9]{4}' | sort -n | tail -1
-```
-
-Numbers are never reused, including for a deleted or superseded record.
-
-## Areas
-
-Place the record in the area whose architecture it governs:
-
-| Area | Governs |
-| --- | --- |
-| `docs/adr/framework/` | Antiky Framework: world data, simulation, rendering boundary, sessions |
-| `docs/adr/cli/` | The Antiky CLI and its project services |
-| `docs/adr/studio/` | Antiky Studio: the editor, workspace, and project model |
-
-If a decision spans two areas, it usually is two decisions, or it belongs to the area that owns the
-boundary. Ask the owner rather than filing it twice.
-
-Do not invent an area. A new area is a decision for a human owner.
+Your project's conventions — the areas, the exact filename pattern, the ownership suffix, the index
+format — belong to its own `repo-` skill. This file covers what is true of ADRs anywhere.
 
 ## The index
 
-`docs/adr/README.md` lists every record under its area heading:
-
-```markdown
-- [0021: Own BroMetal in a BroMetal render driver](framework/0021-brometal-render-driver-ownership_H.md)
-```
-
-The entry text is the record's title, including its number. A record missing from the index is
-invisible. Add the entry in the same change that adds the record.
+Most projects keep a list of every record. Add the entry in the same change that adds the record — a
+record missing from the index is invisible to a reader browsing the tree.
 
 ## Changing a decision
 
@@ -120,37 +97,19 @@ When a decision changes:
 3. Change the old record's status to `Superseded by` and link the new record.
 4. Do not delete the old record. Do not reuse its number.
 
-For an owner-approved clarification that must happen in place, preserve the committed text first.
-Run this while `HEAD` still contains the prior wording:
+For an owner-approved clarification that must happen in place, **preserve the committed text
+first**. A project usually has a procedure for this — a revision-history entry recording the commit
+hash of the prior wording, so the change is auditable. Follow it before editing, not after.
 
-```bash
-./docs/adr/tag-hash.sh docs/adr/framework/0001-example_H.md "Clarified the boundary of the decision."
-```
-
-The script appends a revision-history entry holding the current full commit hash and the note. Then
-make the edit.
-
-Do not rewrite an existing `_H` ADR only because its language does not conform to the writing
-standard. That needs an explicit instruction from the owner.
 
 ## Writing standard
 
-Every ADR must use ASD-STE100 Simplified Technical English, current issue. Use the
-`general-simplified-technical-english` skill rather than judging the vocabulary from memory.
+An ADR is read years later by someone who was not there. Write for them: short active sentences, one
+topic each, one term for one meaning throughout, and an uncommon term defined where it first occurs.
 
-The rules that matter most here:
+Some projects require a controlled language such as ASD-STE100. Where that applies it will be stated
+by the project's own `repo-` skill; do not assume it.
 
-- Use approved words and established technical terms.
-- Give one meaning to each term, and use the same term every time.
-- Explain an uncommon Antiky or software term where it first occurs.
-- Use active voice, one topic per sentence, no more than 25 words in a descriptive sentence.
-- Use a vertical list when it makes complex text easier to follow.
-- Do not use a semicolon.
-- Use an `-ing` word only where the standard approves it or it is a technical term.
-- Put a condition before its result when the reader needs the condition first.
-
-Do not drop a necessary technical detail to shorten a sentence. Explain it with short sentences and
-consistent terms instead.
 
 ## Verification
 
@@ -158,12 +117,12 @@ Before delivering ADR work:
 
 - The record has Title, Status, Context, Decision, and Consequences.
 - The status is one of the three permitted values.
-- The number is the next unused one in that area, and four digits.
-- The filename ends `_H.md`.
-- The record appears in the ADR index under the right area.
+- The number is the next unused one, following the project's numbering scheme.
+- The filename follows the project's pattern.
+- The record appears in the ADR index.
 - Every local link resolves.
 - `git diff --check` is clean.
 - The STE audit is reported separately from the format and link checks.
 
-Never report an ADR as STE compliant when you ran only format, link, sentence-length, or automated
-checks.
+Where a controlled-language standard applies, never report the record as compliant with it when you
+ran only format, link, sentence-length, or automated checks.

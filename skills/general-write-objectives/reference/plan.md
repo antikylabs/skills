@@ -4,8 +4,8 @@ Compile `research/` into numbered plan documents at the objective root.
 
 Aliases: `compile-research-to-plan`.
 
-The exemplar is `docs/objectives/scratch/demo-refining/`. Read `02-REMEDIATION-PLAN.md` there before
-writing your first plan document — it shows the level of specificity expected.
+Where a project has an exemplar plan, read it before writing your first — it shows the level of
+specificity expected far better than a description can.
 
 ## Procedure
 
@@ -18,7 +18,7 @@ compressions as if they were facts.
 ### 2. Decide the document set
 
 Plan documents are numbered `NN-<TITLE>.md` at the objective root, starting at `00`. Each holds one
-coherent piece of thinking. The set from `demo-refining` shows the shape:
+coherent piece of thinking. A typical set looks like:
 
 | Number | Kind | Holds |
 | --- | --- | --- |
@@ -58,8 +58,7 @@ of a plan and it is almost always missing.
 
 If the plan needs something an ADR forbids, or reveals a decision nobody has recorded:
 
-- say so in its own numbered document, as `demo-refining` does with `08-ADR-IMPACT.md` and
-  `09-RENDER-DRIVER-DECISION.md`;
+- say so in its own numbered document, named for the decision it examines;
 - do not plan around the ADR silently;
 - do not write the ADR yourself — use `general-write-adrs suggest`, and reference the proposal here.
 

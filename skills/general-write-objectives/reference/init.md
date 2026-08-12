@@ -6,7 +6,7 @@ Aliases: `scaffold`.
 
 ## Do this
 
-1. **Create `docs/objectives/<name>/objective.md`** from
+1. **Create `<objectives>/<name>/objective.md`** from
    [templates/objective.md](templates/objective.md), with every prompt left unanswered.
 2. **Say these three things, in your reply:**
    - the path you created;
@@ -38,7 +38,7 @@ Ask, if it is not clear from the request:
 - Is this a large arc of work, or one bounded piece? A large arc is an objective. One bounded piece
   is a simple goal — see [simple-goals.md](simple-goals.md), and use `init <name> --simple`.
 - What is the short kebab-case name? Prefer the subject, not the activity: `demo-refining`,
-  `inspection-tooling`, `asset-catalog`.
+  `inspection-tooling`, `asset-catalog` are the right shape.
 
 Check the name is not taken, including in `_archives/`. A name reused after archival makes the
 history ambiguous.
@@ -46,7 +46,7 @@ history ambiguous.
 ### 2. Create the folder
 
 ```
-docs/objectives/<name>/
+<objectives>/<name>/
   objective.md
 ```
 
@@ -64,7 +64,7 @@ state.
 
 ### 4. Add the index entry
 
-Add the objective to the active table in `docs/objectives/README.md`:
+Add the objective to the active table in the objectives index:
 
 ```markdown
 | [<Name>](<name>/README.md) | — | <one line, from the owner's intent or "being defined"> |

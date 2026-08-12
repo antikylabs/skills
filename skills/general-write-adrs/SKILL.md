@@ -1,21 +1,21 @@
 ---
 name: general-write-adrs
-description: Write and propose Antiky Architecture Decision Records. Use when a human owner has made an architecture decision and wants it recorded, when a decision needs superseding, when an ADR's format, numbering, status, or index entry needs checking, or when work reveals an undocumented decision that should become an ADR. Covers the five-part format, per-area numbering, ownership, and the supersede rule.
+description: Write and propose Architecture Decision Records. Use when someone has made an architecture decision and wants it recorded, when a decision needs superseding, when an ADR's format, status, or index entry needs checking, or when work reveals an undocumented decision that should become an ADR. Covers the five-part Nygard format, numbering, ownership, and the supersede rule.
 ---
 
-# Write Antiky ADRs
+# Write ADRs
 
-An Architecture Decision Record captures one important decision about the Antiky architecture, why
+An Architecture Decision Record captures one important decision about a system's architecture, why
 it was necessary, and what follows from it. It is a short permanent record — not a proposal, a
 design specification, or an implementation plan.
 
-ADRs and accepted AIPs are what the team holds AI accountable to. They are inspected line by line
+Accepted decision records are what a team holds AI accountable to. They are inspected line by line
 precisely so the code built on them does not have to be. Write them accordingly.
 
 ## The rule that governs every command
 
-**ADRs are human-owned.** Core Contributors write, approve, and own them, and every file carries the
-`_H` suffix. Do not create or change an ADR without an explicit instruction from a human owner, and
+**ADRs are human-owned.** People write, approve, and own them; many projects mark this in the
+filename. Do not create or change an ADR without an explicit instruction from its owner, and
 never change an accepted decision in place — see [reference/format.md](reference/format.md).
 
 An ADR must stand on facts and requirements. It must not cite an objective, goal, feedback record,
@@ -39,16 +39,16 @@ Routing:
   cannot infer that from the code.
 
 `write` records a decision. `suggest` proposes one. Never let `suggest` file an Accepted record:
-proposal and review belong in an AIP or a pull request, not in the ADR tree.
+proposal and review belong in a proposal document or a pull request, not in the ADR tree.
 
 ## Language
 
-Every ADR must conform to ASD-STE100 Simplified Technical English, Issue 9. Use the
-`general-simplified-technical-english` skill — its `write` command drafts to the standard and its
-`audit` command checks a draft with the linter.
+Write for someone reading this years later who was not there: short active sentences, one topic
+each, one term for one meaning.
 
-Do not claim STE conformance from a linter run alone. The linter decides 14 checks; roughly half the
-53 rules need judgement. Report both separately.
+Some projects require a controlled language such as ASD-STE100. Where that applies, their own
+`repo-` skill states it, and `general-simplified-technical-english` carries the standard and its
+linter. Do not assume it applies, and never claim conformance from a linter run alone.
 
 ## Reference
 
@@ -58,6 +58,6 @@ Do not claim STE conformance from a linter run alone. The linter decides 14 chec
 | [reference/write.md](reference/write.md) | Recording a decision an owner has made |
 | [reference/suggest.md](reference/suggest.md) | Drafting a record that does not exist yet, with rationale and impact |
 
-Read the target repository's own `docs/adr/README.md` and `docs/adr/AGENTS.md` before writing. They
-are the authority. This skill carries the conventions so an agent applies them consistently, not so
-it can skip reading them.
+Where a project has its own ADR conventions — the areas, the numbering scheme, the filename pattern,
+the index, the proposal process — those belong to its `repo-` skill. In an Antiky repository that is
+`repo-write-adrs`. This skill is portable and says nothing about placement.

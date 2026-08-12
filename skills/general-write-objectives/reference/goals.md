@@ -4,8 +4,7 @@ Cut the plan into bounded, ordered goals under `goals/`.
 
 Aliases: `compile-goals`.
 
-The exemplar is `docs/objectives/scratch/demo-refining/goals/execute-goal-02.md`. Read it before
-writing your first goal. The template is [templates/execute-goal.md](templates/execute-goal.md).
+Where a project has an exemplar goal, read it before writing your first. The template is [templates/execute-goal.md](templates/execute-goal.md).
 
 ## What a goal is
 
@@ -24,7 +23,7 @@ file, the goal is not written.
 Every goal traces to a specific plan document, and cites it with a path and line range:
 
 ```markdown
-This goal delivers Track A from `docs/objectives/<name>/06-WORK-PACKETS.md:138-172`.
+This goal delivers Track A from `<objectives>/<name>/06-WORK-PACKETS.md:138-172`.
 ```
 
 A goal with no plan citation is one you invented. Delete it or go back to `create-plan`.

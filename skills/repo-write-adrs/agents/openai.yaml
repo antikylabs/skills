@@ -1,0 +1,4 @@
+interface:
+  display_name: "Antiky ADR Conventions"
+  short_description: "Areas, per-area numbering, ownership, and the index"
+  default_prompt: "Use $repo-write-adrs for where an ADR goes in this repository."

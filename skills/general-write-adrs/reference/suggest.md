@@ -12,7 +12,7 @@ Read [format.md](format.md) first.
 ## Why this command is separate
 
 The ADR tree holds decisions that are made. There is no `Proposed` status, and proposal and review
-belong in an AIP or a pull request. An agent that files a plausible-looking Accepted record has
+belong in a proposal document or a pull request. An agent that files a plausible-looking Accepted record has
 manufactured authority the team never granted — and because ADRs are what the team holds AI
 accountable to, a fabricated one corrupts the thing that makes the rest trustworthy.
 
@@ -72,7 +72,7 @@ State the intended area and what the number would be, as information — do not 
 | What is undocumented? | The specific rule the architecture already relies on |
 | What breaks without it? | A concrete way a future change goes wrong |
 | Why now? | The trigger — a conflict, a new capability, a recurring argument |
-| Why an ADR and not a comment, a plan, or an AIP? | An ADR records a decision that constrains future work |
+| Why an ADR and not a comment, a plan, or a proposal? | An ADR records a decision that constrains future work |
 
 If you cannot answer "what breaks without it" concretely, do not propose the record.
 
@@ -83,7 +83,7 @@ If you cannot answer "what breaks without it" concretely, do not propose the rec
 - **Existing code** — what is already non-conforming, and roughly how much. Name files.
 - **Future work** — what becomes forbidden, what becomes required, what needs a new exception path.
 - **Reversal cost** — how expensive this is to undo once code depends on it. High reversal cost is
-  an argument for an AIP first, not against the decision.
+  an argument for a proposal document first, not against the decision.
 - **What it does not cover** — the adjacent questions this record deliberately leaves open, so the
   owner is not surprised later.
 
@@ -108,5 +108,5 @@ on evidence is a good outcome.
 Present the proposal in your reply by default.
 
 If the owner wants it on disk, write it outside the ADR tree — a scratch path, the pull request
-body, or an AIP draft, as the owner directs. Never `docs/adr/<area>/NNNN-*.md`, because a file in
+body, or a proposal draft, as the owner directs. Never inside the ADR tree, because a file in
 that location with that name pattern reads as a filed decision no matter what its status line says.

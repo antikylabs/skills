@@ -18,20 +18,20 @@ Ask, if it is not already clear:
 - What did the owner decide? State it back in one sentence.
 - Is this one decision, or several? One record holds one decision. Two decisions are two records.
 - Does it change an existing decision? If so, this is a supersede — see step 5.
-- Is there a related AIP? Link it in the Context.
+- Is there a related proposal document? Link it in the Context.
 
-If the owner is describing options rather than an outcome, stop. That is a `suggest` job, or an AIP.
+If the owner is describing options rather than an outcome, stop. That is a `suggest` job.
 
 ### 2. Place and number it
 
-Choose the area from what the decision governs (`framework/`, `cli/`, `studio/`), then read that
-area for the next number:
+Follow the project's numbering scheme. Where records are grouped into areas, numbering is usually
+**per area** — read that area for its highest number rather than taking the highest in the tree:
 
 ```bash
 ls docs/adr/<area>/*.md | sed 's|.*/||' | grep -oE '^[0-9]{4}' | sort -n | tail -1
 ```
 
-Numbering is per area. Do not use a global maximum, and do not reuse a number.
+Do not reuse a number. The project's `repo-` skill states which scheme applies.
 
 ### 3. Gather the Context before drafting
 
@@ -42,15 +42,15 @@ the existing records, not from assumption:
 - Which existing ADRs bear on it? Read them. A conflict between two records is often exactly what
   the new record resolves, and saying so is the clearest possible Context.
 - What limits apply — platform, performance, dependency maturity, team size?
-- What does the related AIP establish?
+- What does the related proposal document establish?
 
 An ADR must not use an objective, goal, feedback record, or implementation plan as its authority.
 Cite facts and requirements.
 
 ### 4. Draft
 
-Use the five-part template from [format.md](format.md). Write to ASD-STE100 — invoke the
-`general-simplified-technical-english` skill with `write` and give it the draft.
+Use the five-part template from [format.md](format.md). If the project requires a controlled
+language, invoke `general-simplified-technical-english` with `write` and give it the draft.
 
 Watch these, in order of how often they go wrong:
 

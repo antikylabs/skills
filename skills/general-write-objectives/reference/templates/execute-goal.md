@@ -27,7 +27,7 @@
 <!-- One or two paragraphs. What this delivers and what is blocked on it. Cite the plan document
      this comes from, with a line range. -->
 
-This goal delivers <scope> from `docs/objectives/<name>/NN-<PLAN-DOC>.md:LL-LL`.
+This goal delivers <scope> from `<objectives>/<name>/NN-<PLAN-DOC>.md:LL-LL`.
 
 <What is blocked on this, and what specifically goes wrong if it is done badly.>
 
