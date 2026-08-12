@@ -15,6 +15,8 @@ import { ASDSTE100_CASES } from "./general-simplified-technical-english/cases/in
 import { ADR_CASES } from "./general-write-adrs/cases/index.ts";
 import { OBJECTIVES_CASES } from "./general-write-objectives/cases/index.ts";
 import { BROMETAL_CASES } from "./general-brometal-patching/cases/index.ts";
+import { GENERAL_WRITE_DOCS_CASES } from "./general-write-docs/cases/index.ts";
+import { REPO_WRITE_DOCS_CASES } from "./repo-write-docs/cases/index.ts";
 
 export * from "./types.ts";
 
@@ -23,6 +25,8 @@ export const SUITES = {
   "general-write-adrs": ADR_CASES,
   "general-write-objectives": OBJECTIVES_CASES,
   "general-brometal-patching": BROMETAL_CASES,
+  "general-write-docs": GENERAL_WRITE_DOCS_CASES,
+  "repo-write-docs": REPO_WRITE_DOCS_CASES,
 } satisfies Record<Suite, EvalCase[]>;
 
 export const SUITE_NAMES = Object.keys(SUITES) as Suite[];
@@ -35,7 +39,7 @@ export const byKind = (kind: CaseKind): EvalCase[] => CASES.filter((c) => c.kind
 
 export const byId = (id: string): EvalCase | undefined => CASES.find((c) => c.id === id);
 
-const KINDS: CaseKind[] = ["trigger", "audit", "fix", "reporting", "write", "patch", "pr", "update"];
+const KINDS: CaseKind[] = ["trigger", "audit", "fix", "reporting", "write", "patch", "pr", "update", "classify", "split"];
 
 /**
  * Resolve an EVAL_ONLY selector, in order of specificity:

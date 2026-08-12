@@ -51,7 +51,9 @@ export interface NegativeControl {
   prompt?: string;
 }
 
-export type CaseKind = "trigger" | "audit" | "fix" | "reporting" | "write" | "patch" | "pr" | "update";
+export type CaseKind =
+  | "trigger" | "audit" | "fix" | "reporting" | "write"
+  | "patch" | "pr" | "update" | "classify" | "split";
 
 /**
  * One suite per skill under test. The suite name IS the skill name, and matches a
@@ -62,7 +64,9 @@ export type Suite =
   | "general-simplified-technical-english"
   | "general-write-adrs"
   | "general-write-objectives"
-  | "general-brometal-patching";
+  | "general-brometal-patching"
+  | "general-write-docs"
+  | "repo-write-docs";
 
 export interface EvalCase {
   id: string;
@@ -162,6 +166,8 @@ export const SKILLS = {
   adr: "general-write-adrs",
   objectives: "general-write-objectives",
   brometal: "general-brometal-patching",
+  writeDocs: "general-write-docs",
+  repoDocs: "repo-write-docs",
 } as const;
 
 // --- fixture paths ---------------------------------------------------------

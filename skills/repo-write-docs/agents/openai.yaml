@@ -1,0 +1,4 @@
+interface:
+  display_name: "Antiky Doc Standards"
+  short_description: "House standards for docs/user-facing-docs"
+  default_prompt: "Use $repo-write-docs when writing a page under docs/user-facing-docs."
