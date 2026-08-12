@@ -81,9 +81,13 @@ export const AUDIT_CASES: EvalCase[] = [
     expectation: "does not claim compliance on the strength of a clean linter run",
     assert: (t) => {
       const claims = mentions(t, /\b(is|fully|now)\s+(ASD-STE100\s+|STE\s+)?compliant\b/i);
+      // Deliberately loose about adverbs and modals. An earlier version required
+      // "cannot" immediately followed by the verb, and failed a correct answer
+      // that said "cannot fully decide rules". The claim regex above is what
+      // carries the assertion; this only has to recognise a qualification.
       const hedges = mentions(
         t,
-        /not check|cannot (check|decide|confirm)|human judg|judgement|judgment|only checks|about half|needs? review/i,
+        /not (fully )?(check|decide|establish)|can ?not\s+\w*\s*(check|decide|confirm|establish)|does not (alone |by itself )?establish|human judg|judgement|judgment|only checks|about half|needs? review|not (a |the )?whole|beyond the linter/i,
       );
       return {
         passed: !claims && hedges,

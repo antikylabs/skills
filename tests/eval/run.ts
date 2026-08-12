@@ -88,6 +88,7 @@ async function main(): Promise<number> {
       verdict,
       usage: (trace as { usage?: ArmResult["usage"] }).usage,
       toolPath: toolPath(trace),
+      finalText: (trace.finalText ?? "").slice(0, 4000),
       error: trace.error,
     };
   };

@@ -60,10 +60,14 @@ export function concurrency(): number {
   }
 
   // Size to the VM when it can be read, otherwise take a conservative default.
-  // What a run actually uses, not what it is capped at. Bisected: the heaviest
-  // path needs 192m, so 256m carries headroom without over-reserving. The cap in
-  // container.ts is higher (384m) because a cap is a limit, not a reservation.
-  const perRunMb = 256;
+  // What a live run actually uses, not what a faux one does. 256 was derived
+  // from the faux path and proved too optimistic: real runs were OOM-killed at a
+  // 384m cap when several ran at once. 512 reflects the live path.
+  //
+  // On a default 2 GiB podman machine this yields 2. More concurrency needs a
+  // bigger machine, which is the real unlock:
+  //   podman machine stop && podman machine set --memory 8192 && podman machine start
+  const perRunMb = 512;
   let budgetMb = 0;
   try {
     const free = execFileSync("podman", ["machine", "ssh", "free -m"], {

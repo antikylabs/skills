@@ -25,6 +25,8 @@ export interface ArmResult {
   verdict: Verdict;
   usage?: UsageTotals;
   toolPath: string;
+  /** What the agent actually said. Kept so a failure is diagnosable without re-running it. */
+  finalText?: string;
   error?: string;
 }
 
@@ -439,6 +441,7 @@ export function writeReportFiles(dir: string, input: ReportInput, text: string):
             passed: r.withSkill.verdict.passed,
             detail: r.withSkill.verdict.detail,
             tools: r.withSkill.toolPath,
+            finalText: r.withSkill.finalText,
             usage: r.withSkill.usage,
             error: r.withSkill.error,
           },
@@ -446,6 +449,7 @@ export function writeReportFiles(dir: string, input: ReportInput, text: string):
             passed: r.withoutSkill.verdict.passed,
             detail: r.withoutSkill.verdict.detail,
             tools: r.withoutSkill.toolPath,
+            finalText: r.withoutSkill.finalText,
             usage: r.withoutSkill.usage,
             error: r.withoutSkill.error,
           },

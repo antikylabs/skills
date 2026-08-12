@@ -11,6 +11,65 @@ version, not a patch.
 
 Nothing yet.
 
+## [0.2.3] — 2026-08-12
+
+Harness only, again — but this release invalidates the previous one's numbers. A review of every
+failing case found that most were defects in the tests, and one was the harness telling the agent
+something untrue. Failures went from 17 to 12 without touching a single skill.
+
+### Fixed
+
+- **The system prompt contradicted the tool surface.** It said *"You cannot edit or write files"*
+  while `write_file`, `edit_file`, and `move_file` were all registered and working — the writable
+  workspace landed in v0.2.0 and the prompt was never updated. Agents believed it and described the
+  change they would make instead of making it.
+
+  This is the root of the "describes instead of acting" pattern reported as a skill defect in
+  v0.2.0, v0.2.1, and v0.2.2. It was the harness, not the playbooks. Every "created no ADR file",
+  "left the header untouched", and "did not delete the module" failure came from here.
+
+  It also produced **false passes**: `adr-write-supersede-not-edit` passed only because the agent
+  could not write. With writing working it fails — the model edits an accepted record in place,
+  which the skill forbids. That is a real gap, and it was invisible.
+
+- **`clean-procedure.md` was not clean.** The fixture carried 5 STE errors while its case prompt
+  asserted "the linter reports zero findings". The model ran the linter, correctly found the errors,
+  correctly said the document does not conform — and the assertion failed it for not hedging about
+  compliance. Rewritten to lint clean, verified at 0 findings.
+
+- **The ADR numbering fixture had no areas.** `adr-write-numbers-per-area` asserted per-area
+  numbering against a flat directory with no `framework/`, so the rule it exists to test could not
+  be exercised. The fixture now mirrors the real tree: `framework/` holds 0001–0002 and `cli/` holds
+  0001–0005, so per-area numbering gives 0003 and a global maximum gives 0006. The two rules now
+  give different answers, which is the only way the case can discriminate.
+
+- **Three assertions failed correct answers.** Each matched on a phrasing rather than a meaning:
+  - `cannot (check|decide)` missed "cannot **fully** decide rules";
+  - `cannot (write|invent)` missed "**must** not invent the objective's intent";
+  - the wrong-answer pattern matched "**not** one module per file" — the correct answer, quoting the
+    thing it was rejecting. A lookbehind was not enough; the negation can sit several words earlier.
+
+- **Containers were OOM-killed under concurrency.** The 384m cap set in v0.2.2 came from bisecting a
+  short faux run; a live run carries the skill catalog, a long tool history, and a dozen turns, and
+  exceeded it once several ran at once — surfacing as `container exited 137` and losing two cases per
+  run. The cap is 768m and the concurrency planner assumes 512m per live run.
+
+### Added
+
+- `report.json` records what the agent actually said (`finalText`, truncated). Every failure above
+  needed a re-run to diagnose, because the report kept the verdict and the tool trace but not the
+  answer. It does now.
+
+### Notes
+
+**The eval numbers in v0.2.2's report should not be compared with later ones.** They were measured
+against a harness that told agents they could not write, so any case requiring a file to be created
+was failing for the harness's reason, and at least one was passing for it.
+
+Current standing, luna at `off`, full paired suite: 33/45 with the skills against 14/45 without —
+a +19 delta. The remaining 12 failures are now worth reading as signal rather than noise, and
+several cluster on `team-write-objectives`.
+
 ## [0.2.2] — 2026-08-12
 
 Harness only. No skill changed, so nothing an agent does when it loads a skill is different.
@@ -271,7 +330,8 @@ Simplified Technical English, Issue 9.
   `/skills` to the baseline through a tool description. Both are fixed. Treat any single run of a
   small case set as a weak estimate.
 
-[Unreleased]: https://github.com/antikylabs/skills/compare/v0.2.2...HEAD
+[Unreleased]: https://github.com/antikylabs/skills/compare/v0.2.3...HEAD
+[0.2.3]: https://github.com/antikylabs/skills/releases/tag/v0.2.3
 [0.2.2]: https://github.com/antikylabs/skills/releases/tag/v0.2.2
 [0.2.1]: https://github.com/antikylabs/skills/releases/tag/v0.2.1
 [0.2.0]: https://github.com/antikylabs/skills/releases/tag/v0.2.0

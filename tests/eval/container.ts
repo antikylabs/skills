@@ -31,11 +31,14 @@ export type ThinkingLevel = (typeof THINKING_LEVELS)[number];
  * Flags that make the container a boundary rather than a convenience.
  * Asserted empirically by self-test.ts — do not weaken without updating it.
  *
- * The memory cap is measured, not picked round. Bisected against the heaviest
- * path — two run_ste_lint calls, each spawning a second node process that loads
- * the 653 KB vocabulary — a run needs 192m and fails at 128m. The cap is 384m,
- * double the measured floor, leaving room for a live run's larger prompt and
- * longer history.
+ * The memory cap is measured. Bisected against the heaviest *faux* path — two
+ * run_ste_lint calls, each spawning a second node process that loads the 653 KB
+ * vocabulary — a run needs 192m and fails at 128m.
+ *
+ * But a faux run is not the worst case. A live run carries the skill catalog, a
+ * long tool history, and a dozen turns of context, and at 384m real runs were
+ * OOM-killed (exit 137) once several ran concurrently. The cap is 768m: measured
+ * floor times four, sized for the live path rather than the cheap one.
  *
  * This matters beyond tidiness: the cap bounds how many runs fit in the
  * container VM at once, so a generous one silently serialises the suite. The
@@ -45,7 +48,7 @@ export const HARDENING = [
   "--read-only",
   "--cap-drop=ALL",
   "--security-opt=no-new-privileges",
-  "--memory=384m",
+  "--memory=768m",
   "--cpus=1",
   "--pids-limit=256",
   "--tmpfs", "/tmp:rw,noexec,nosuid,size=64m",
@@ -283,9 +286,18 @@ export function probe(runtime: string, command: string): { out: string; code: nu
  * rather than to a differently worded prompt.
  */
 export function systemPrompt(withSkill = true): string {
+  // This must match the tool surface in sandbox/tools.ts. It said the
+  // environment was read-only for two releases after the writable workspace
+  // landed, and agents believed it: they explained what they would write
+  // instead of writing it, and every "created no file" failure was the harness
+  // contradicting itself rather than the skill failing.
   const base = `You are a documentation engineer working in a repository.
 
-You are in a read-only environment. You can read files and run the STE linter. You cannot edit or write files and you cannot run shell commands.`;
+The repository is at /workspace and you can read and write it: read_file, list_dir, write_file, edit_file, and move_file all work there. run_ste_lint runs the STE checker over a file.
+
+/skills is read-only — you can read a skill and its playbooks, but not change them. There is no shell.
+
+When a task asks you to create or change something, do it. Do not describe the change you would make instead of making it.`;
 
   if (!withSkill) return base;
 

@@ -99,8 +99,16 @@ export const PATCH_CASES: EvalCase[] = [
       "emitter and the optimizer — but it is one idea. How many patch modules?",
     expectation: "one module, because the unit is what gets sent upstream and retired",
     assert: (t) => {
-      const one = mentions(t, /one module|single module|one file|one PR|one contribution/i);
-      const perFile = mentions(t, /five modules|one per file|module per file/i);
+      const one = mentions(t, /one (patch )?module|single module|one file|one PR|one contribution/i);
+      // Only count the wrong answer when it is asserted, not when it is ruled
+      // out. "The unit is one upstream contribution, not one module per file"
+      // is the correct answer and contains the phrase verbatim. A lookbehind is
+      // too narrow — the negation can sit several words earlier — so this looks
+      // for a negation anywhere in the same clause.
+      const said = t.finalText ?? "";
+      const WRONG = /(five modules|one per file|module per file|per file touched)/i;
+      const NEGATED = /\b(not|never|rather than|instead of|as opposed to)\b[^.;!?]{0,60}?(five modules|one per file|module per file|per file touched)/i;
+      const perFile = WRONG.test(said) && !NEGATED.test(said);
       return {
         passed: one && !perFile,
         detail: perFile

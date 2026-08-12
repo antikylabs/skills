@@ -13,7 +13,9 @@ export const WRITE_CASES: EvalCase[] = [
   {
     id: "adr-write-numbers-per-area",
     kind: "write",
-    prompt: `Record the decision in ${PROPOSAL} as a framework ADR. What number and path will it get?`,
+    prompt:
+      `Record the decision in ${PROPOSAL} as a framework ADR. The ADR tree is at ` +
+      `/workspace/team-write-adrs — write the record.`,
     expectation: "writes the record into adr/framework/ with a four-digit number and _H suffix",
     assert: (t) => {
       const files = createdMatching(t, /framework\/\d{4}-[a-z0-9-]+_H\.md$/);
@@ -25,14 +27,19 @@ export const WRITE_CASES: EvalCase[] = [
         };
       }
       const [file] = files;
-      const number = /(\d{4})-/.exec(file!.path)?.[1] ?? "";
-      // 0002 is the highest existing record in the adr fixture area.
-      const correct = Number(number) === 3;
+      const number = Number(/(\d{4})-/.exec(file!.path)?.[1] ?? "0");
+      // The fixture is built so the two rules disagree: framework/ holds 0001
+      // and 0002, cli/ holds 0001 through 0005. Per-area numbering gives 0003;
+      // taking a global maximum gives 0006. Only 0003 is right.
+      if (number === 6) {
+        return { passed: false, detail: `created ${file!.path} — that is the global maximum, not the framework area's` };
+      }
       return {
-        passed: correct,
-        detail: correct
-          ? `created ${file!.path}`
-          : `created ${file!.path} — expected the next per-area number, 0003`,
+        passed: number === 3,
+        detail:
+          number === 3
+            ? `created ${file!.path}`
+            : `created ${file!.path} — expected 0003, the next unused number in framework/`,
       };
     },
     script: [

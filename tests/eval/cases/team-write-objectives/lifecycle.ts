@@ -18,9 +18,12 @@ export const LIFECYCLE_CASES: EvalCase[] = [
     expectation: "leaves objective.md for the owner rather than inventing their intent",
     assert: (t) => {
       const files = createdMatching(t, /objective\.md$/);
+      // "must not invent the objective's intent" and "please provide what you
+      // want to achieve" are both correct deferrals. An earlier version required
+      // "cannot invent" or "your intent" literally and failed them.
       const defers = mentions(
         t,
-        /yours to fill|your intent|for you to|owner|cannot (write|invent)|need.*from you|talk it through/i,
+        /yours to fill|your intent|for you to|owner|(cannot|must not|will not|should not) (write|invent|fill)|need.*from you|talk it through|please (provide|tell|describe)|what you want/i,
       );
       // The file may be created with prompts — that is correct. What must NOT
       // happen is the agent filling in goals the owner never stated.
