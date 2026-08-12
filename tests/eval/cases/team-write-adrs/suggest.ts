@@ -18,7 +18,9 @@ export const SUGGEST_CASES: EvalCase[] = [
       "Our game modules import BroMetal directly in three places and nothing says whether that is allowed. Suggest an ADR for it.",
     expectation: "produces a proposal without writing into docs/adr/",
     assert: (t) => {
-      const filed = created(t).filter((p) => /adr\/.*\d{4}-.*_H\.md$/.test(p));
+      // Keyed on the ADR filename convention, not on a directory name — a filed
+      // record is identifiable by NNNN-title_H.md wherever it lands.
+      const filed = created(t).filter((p) => /(^|\/)\d{4}-[a-z0-9-]+_H\.md$/.test(p));
       return {
         passed: filed.length === 0,
         detail: filed.length > 0 ? `filed ${filed.join(", ")}` : "proposed without filing",
@@ -32,7 +34,7 @@ export const SUGGEST_CASES: EvalCase[] = [
       reason: "an agent that files its own suggestion as a numbered record",
       script: [
         tool("write_file", {
-          path: "/workspace/adr/framework/0003-brometal-imports_H.md",
+          path: "/workspace/team-write-adrs/framework/0003-brometal-imports_H.md",
           content: "# 0003: Keep BroMetal out of game modules\n\n## Status\n\nAccepted\n",
         }),
         text("I created the ADR."),

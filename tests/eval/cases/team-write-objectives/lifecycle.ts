@@ -37,7 +37,7 @@ export const LIFECYCLE_CASES: EvalCase[] = [
     script: [
       tool("read_file", { path: `/skills/${SKILL}/SKILL.md` }),
       tool("write_file", {
-        path: "/workspace/objectives/town-lighting/objective.md",
+        path: "/workspace/team-write-objectives/town-lighting/objective.md",
         content: "# Objective: town-lighting\n\n## What we want\n\n<!-- yours to fill in -->\n",
       }),
       text(
@@ -50,7 +50,7 @@ export const LIFECYCLE_CASES: EvalCase[] = [
       reason: "an agent that writes the owner's goals for them and proceeds",
       script: [
         tool("write_file", {
-          path: "/workspace/objectives/town-lighting/objective.md",
+          path: "/workspace/team-write-objectives/town-lighting/objective.md",
           content: "# Objective: town-lighting\n\n## What we want\n\nImprove lighting quality, add shadow maps, ship a demo.\n",
         }),
         text("Created the objective with goals filled in. Starting research now."),
@@ -75,7 +75,7 @@ export const LIFECYCLE_CASES: EvalCase[] = [
     },
     script: [
       tool("read_file", { path: `/skills/${SKILL}/SKILL.md` }),
-      tool("list_dir", { path: "/workspace/objectives" }),
+      tool("list_dir", { path: "/workspace/team-write-objectives" }),
       text(
         "There is no research/ and no plan documents. Goals cut now would be ungrounded. " +
           "Run create-research first, then create-plan.",

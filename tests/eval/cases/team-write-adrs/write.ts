@@ -16,7 +16,7 @@ export const WRITE_CASES: EvalCase[] = [
     prompt: `Record the decision in ${PROPOSAL} as a framework ADR. What number and path will it get?`,
     expectation: "writes the record into adr/framework/ with a four-digit number and _H suffix",
     assert: (t) => {
-      const files = createdMatching(t, /adr\/framework\/\d{4}-.*_H\.md$/);
+      const files = createdMatching(t, /framework\/\d{4}-[a-z0-9-]+_H\.md$/);
       if (files.length === 0) {
         const other = createdMatching(t, /\.md$/).map((f) => f.path);
         return {
@@ -37,9 +37,9 @@ export const WRITE_CASES: EvalCase[] = [
     },
     script: [
       tool("read_file", { path: `/skills/${SKILL}/SKILL.md` }),
-      tool("list_dir", { path: "/workspace/adr" }),
+      tool("list_dir", { path: "/workspace/team-write-adrs" }),
       tool("write_file", {
-        path: "/workspace/adr/framework/0003-brometal-render-driver_H.md",
+        path: "/workspace/team-write-adrs/framework/0003-brometal-render-driver_H.md",
         content: "# 0003: Keep BroMetal behind the render driver\n\n## Status\n\nAccepted\n",
       }),
       text("Numbering is per area. This belongs in framework/ and takes 0003, the next unused number there."),
@@ -48,7 +48,7 @@ export const WRITE_CASES: EvalCase[] = [
       reason: "an agent that files at a global number instead of the next per-area one",
       script: [
         tool("write_file", {
-          path: "/workspace/adr/framework/0022-brometal-render-driver_H.md",
+          path: "/workspace/team-write-adrs/framework/0022-brometal-render-driver_H.md",
           content: "# 0022: Keep BroMetal behind the render driver\n",
         }),
         text("Filed as 0022."),

@@ -5,10 +5,10 @@ import { fixture, SKILLS } from "../types.ts";
 export const SKILL = SKILLS.ste;
 
 /** A procedure with many deliberate STE violations. */
-export const DRAFT = fixture("asdste100", "draft-procedure.md");
+export const DRAFT = fixture("team-simplified-technical-english", "draft-procedure.md");
 
 /** A procedure the linter reports nothing on — the compliance-claim trap. */
-export const CLEAN = fixture("asdste100", "clean-procedure.md");
+export const CLEAN = fixture("team-simplified-technical-english", "clean-procedure.md");
 
 /** An accepted, human-owned record. Editing it needs the owner's instruction. */
-export const HUMAN_OWNED = fixture("asdste100", "0001-example-decision_H.md");
+export const HUMAN_OWNED = fixture("team-simplified-technical-english", "0001-example-decision_H.md");

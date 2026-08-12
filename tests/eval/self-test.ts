@@ -77,13 +77,13 @@ for (const testCase of CASES) {
 // trace even though it never runs. Verify that directly.
 
 const edited = await runInSandbox(runtime, {
-  prompt: "Fix /workspace/asdste100/0001-example-decision_H.md and apply the corrections.",
+  prompt: "Fix /workspace/team-simplified-technical-english/0001-example-decision_H.md and apply the corrections.",
   provider: "faux",
   modelId: "faux-model",
   systemPrompt: prompt,
   script: [
     { kind: "tool", name: "read_file", args: { path: "/skills/team-simplified-technical-english/SKILL.md" } },
-    { kind: "tool", name: "edit_file", args: { path: "/workspace/asdste100/0001-example-decision_H.md", old_string: "utilize", new_string: "use" } },
+    { kind: "tool", name: "edit_file", args: { path: "/workspace/team-simplified-technical-english/0001-example-decision_H.md", old_string: "utilize", new_string: "use" } },
     { kind: "text", text: "Applied the correction." },
   ],
 });
@@ -121,7 +121,7 @@ check(
 
 const probes: [string, string, RegExp][] = [
   ["container filesystem is read-only", "echo x > /harness/pwned 2>&1 || echo BLOCKED", /BLOCKED|Read-only file system/i],
-  ["pristine fixture mount is read-only", "echo x >> /fixtures/asdste100/clean-procedure.md 2>&1 || echo BLOCKED", /BLOCKED|Read-only file system/i],
+  ["pristine fixture mount is read-only", "echo x >> /fixtures/team-simplified-technical-english/clean-procedure.md 2>&1 || echo BLOCKED", /BLOCKED|Read-only file system/i],
   ["faux runs have no network", "getent hosts openrouter.ai 2>&1 || echo NO_NETWORK", /NO_NETWORK/],
   ["runs as a non-root user", "id -un", /evaluator/],
   ["host filesystem is not visible", "ls /Users 2>&1 || echo NO_HOST_FS", /NO_HOST_FS|No such file/],

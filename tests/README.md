@@ -63,14 +63,22 @@ tests/
   eval/
     run.ts            host orchestrator — spawns containers, never loads the SDK
     self-test.ts      negative control: proves the assertions can fail
-    cases.ts          the eval cases and their assertions
-    faux-scripts.ts   scripted agent turns for deterministic runs
+    container.ts      container plumbing and the hardening flags
+    report.ts         cost, token accounting, and the paired assessment
+    cases/            one directory per skill, named for the skill
+      <skill-name>/   paths.ts + one file per concern
+    fixtures/
+      <skill-name>/   the documents that skill's cases work on
     Dockerfile        the sandbox image
-    fixtures/         documents under review, including an _H human-owned record
     sandbox/
       agent-run.ts    runs ONLY inside the container
       tools.ts        the read-only tool surface
+      skills.ts       discovery via pi's own loadSkills()
+      workspace.ts    the writable copy, and the mutation diff
 ```
+
+Case and fixture directories are named **exactly** for the skill they exercise, so a skill, its
+cases, and its fixtures are always found under the same name.
 
 ## Configuration
 

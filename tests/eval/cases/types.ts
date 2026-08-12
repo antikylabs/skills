@@ -51,10 +51,18 @@ export interface NegativeControl {
   prompt?: string;
 }
 
-export type CaseKind = "trigger" | "audit" | "fix" | "reporting" | "write";
+export type CaseKind = "trigger" | "audit" | "fix" | "reporting" | "write" | "patch" | "pr" | "update";
 
-/** One suite per skill under test. Matches a directory under cases/ and fixtures/. */
-export type Suite = "asdste100" | "adr" | "objectives";
+/**
+ * One suite per skill under test. The suite name IS the skill name, and matches a
+ * directory under both cases/ and fixtures/ — so a skill, its cases, and its
+ * fixtures are always found under the same name.
+ */
+export type Suite =
+  | "team-simplified-technical-english"
+  | "team-write-adrs"
+  | "team-write-objectives"
+  | "team-brometal";
 
 export interface EvalCase {
   id: string;
@@ -78,7 +86,7 @@ export const inSuite = (suite: Suite, cases: EvalCase[]): EvalCase[] =>
 
 export const SKILL = "team-simplified-technical-english";
 
-export const MUTATING = ["edit_file", "write_file", "bash"] as const;
+export const MUTATING = ["edit_file", "write_file", "move_file"] as const;
 
 /** A tool that ran (was not blocked). */
 export const called = (trace: Trace, name: string): boolean =>
@@ -153,6 +161,7 @@ export const SKILLS = {
   ste: "team-simplified-technical-english",
   adr: "team-write-adrs",
   objectives: "team-write-objectives",
+  brometal: "team-brometal",
 } as const;
 
 // --- fixture paths ---------------------------------------------------------

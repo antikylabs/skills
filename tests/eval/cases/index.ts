@@ -4,25 +4,27 @@
  * One directory per skill under test, mirrored by one directory per skill under
  * fixtures/. Inside a suite, one file per concern.
  *
- *   cases/asdste100/{trigger,audit,fix,reporting}.ts
- *   cases/adr/trigger.ts
- *   cases/objectives/trigger.ts
+ *   cases/team-simplified-technical-english/{trigger,audit,fix,reporting}.ts
+ *   cases/team-write-adrs/trigger.ts
+ *   cases/team-write-objectives/trigger.ts
  *
  * Register a suite here and it joins every runner, the self-test included —
  * which fails the build if any case lacks a working negative control.
  */
 
 import type { CaseKind, EvalCase, Suite } from "./types.ts";
-import { ASDSTE100_CASES } from "./asdste100/index.ts";
-import { ADR_CASES } from "./adr/index.ts";
-import { OBJECTIVES_CASES } from "./objectives/index.ts";
+import { ASDSTE100_CASES } from "./team-simplified-technical-english/index.ts";
+import { ADR_CASES } from "./team-write-adrs/index.ts";
+import { OBJECTIVES_CASES } from "./team-write-objectives/index.ts";
+import { BROMETAL_CASES } from "./team-brometal/index.ts";
 
 export * from "./types.ts";
 
 export const SUITES = {
-  asdste100: ASDSTE100_CASES,
-  adr: ADR_CASES,
-  objectives: OBJECTIVES_CASES,
+  "team-simplified-technical-english": ASDSTE100_CASES,
+  "team-write-adrs": ADR_CASES,
+  "team-write-objectives": OBJECTIVES_CASES,
+  "team-brometal": BROMETAL_CASES,
 } satisfies Record<Suite, EvalCase[]>;
 
 export const SUITE_NAMES = Object.keys(SUITES) as Suite[];
@@ -35,7 +37,7 @@ export const byKind = (kind: CaseKind): EvalCase[] => CASES.filter((c) => c.kind
 
 export const byId = (id: string): EvalCase | undefined => CASES.find((c) => c.id === id);
 
-const KINDS: CaseKind[] = ["trigger", "audit", "fix", "reporting", "write"];
+const KINDS: CaseKind[] = ["trigger", "audit", "fix", "reporting", "write", "patch", "pr", "update"];
 
 /**
  * Resolve an EVAL_ONLY selector, in order of specificity:
@@ -70,7 +72,7 @@ export const selectorHelp = (): string =>
     "Valid EVAL_ONLY values:",
     `  suites: ${SUITE_NAMES.join(", ")}`,
     `  kinds:  ${[...new Set(CASES.map((c) => c.kind))].join(", ")}`,
-    "  scoped: asdste100:audit",
+    "  scoped: team-write-adrs:write",
     "  or any case id",
   ].join("\n");
 

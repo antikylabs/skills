@@ -84,8 +84,16 @@ Every skill name starts with one of these prefixes.
 | Prefix | Domain |
 | --- | --- |
 | `antiky-` | Working with the Antiky CLI, Framework, and Studio. |
-| `brometal-` | Working with BroMetal directly. |
-| `team-` | Antiky Labs day-to-day working practice. |
+| `brometal-` | Building things with BroMetal — shaders, render passes, effects. |
+| `team-` | Antiky Labs day-to-day working practice, whatever it is about. |
+
+The prefix names **what the agent is doing**, not what the subject matter is. `team-brometal`
+carries our practice for consuming BroMetal as a patched dependency, so it is `team-`. A skill for
+writing BroMetal shaders would be `brometal-`. Both are about BroMetal; only one is about BroMetal
+work.
+
+After the prefix, name the task — except where the prefix plus a subject already reads as the
+task, as in `team-brometal`.
 
 Do not add a prefix without a matching row in this table and in [`README.md`](README.md). A skill
 that does not fit an existing prefix needs a human owner's decision first.

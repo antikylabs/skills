@@ -1,7 +1,7 @@
 /**
  * ASD-STE100 suite — cases for `team-simplified-technical-english`.
  *
- * Fixtures live in ../../fixtures/asdste100/.
+ * Fixtures live in ../../fixtures/team-simplified-technical-english/.
  */
 
 import { inSuite } from "../types.ts";
@@ -10,7 +10,7 @@ import { AUDIT_CASES } from "./audit.ts";
 import { FIX_CASES } from "./fix.ts";
 import { REPORTING_CASES } from "./reporting.ts";
 
-export const ASDSTE100_CASES = inSuite("asdste100", [
+export const ASDSTE100_CASES = inSuite("team-simplified-technical-english", [
   ...TRIGGER_CASES,
   ...AUDIT_CASES,
   ...FIX_CASES,

@@ -11,6 +11,72 @@ version, not a patch.
 
 Nothing yet.
 
+## [0.2.0] — 2026-08-11
+
+Adds a fourth skill, makes the eval harness measure behaviour rather than prose, and turns cutting
+a release into one command.
+
+### Added
+
+**`team-brometal`** — consume BroMetal as a patched dependency and upstream the fixes.
+
+- Three commands: `update` (bump, re-check every patch, retire what landed), `patch` (add a local
+  patch), `pr` (fork, implement against source, open the pull request, tag the patch with it).
+- Encodes the practice from BroMetal PRs #3–#7: one patch module per upstream contribution, every
+  module naming its pull request and its retirement steps, and the runner's four guarantees —
+  patch every installed copy, guard the version, throw on a moved target, stay idempotent.
+- `reference/pr-template.md` carries the nine-section pull request body, including the closing
+  hand-over that invites the maintainer to decline.
+- The rule that makes `update` possible at all: a patch with no upstream URL cannot be retired by
+  anyone who was not there, so `update` reports it as a defect in its own right.
+- ADR `framework/0021` is the authority. A contribution must help renderers in general or correct
+  an error; an Antiky preference does not go upstream, and therefore does not become a patch.
+
+**Release tooling**
+
+- `scripts/release.mjs`, run as `npm run release v0.2.0`. Preflight, free verification, paired live
+  eval, report generation, commit, annotated tag, push — in that order, each gated on the last.
+  `--dry-run`, `--skip-eval`, and `--no-push` for rehearsal. The harness self-test runs before the
+  live eval, because a measurement whose assertions cannot fail is not worth paying for.
+- A root `package.json` with `release`, `test`, `eval`, `eval:paired`, and `sandbox`.
+
+### Changed
+
+- **The eval agent now works in a writable `/workspace`** seeded from the read-only fixtures, so
+  cases assert on the files produced rather than on what the agent said it would do.
+  `edit_file`, `write_file`, and `move_file` really run; writes outside the workspace refuse.
+  Every run is diffed against the pristine fixtures.
+- **Skill discovery uses pi's own `loadSkills()`**, and the catalog is the `<available_skills>` XML
+  from the Agent Skills specification. Activation is a file read of the SKILL.md, matching pi's
+  real mechanism.
+- **Case and fixture directories are named exactly for the skill they exercise**
+  (`tests/eval/cases/team-write-adrs/`, `tests/eval/fixtures/team-write-adrs/`), so a skill, its
+  cases, and its fixtures are always found under one name.
+- Reasoning effort is configurable with `EVAL_THINKING`, defaulting to `low`.
+- Run artifacts now include `report.md` alongside `report.txt` and `report.json`.
+- `AGENTS.md` states that a name prefix describes what the agent is *doing*, not the subject
+  matter — `team-brometal` is our practice for consuming BroMetal, while a `brometal-` skill would
+  be for building things with it.
+
+### Fixed
+
+- **The eval overstated the skills' effect.** Two harness defects, both corrected: a dedicated
+  `invoke_skill` tool made activation far more salient than in production, and the baseline arm was
+  told about `/skills` through a tool description, letting it find skills by exploring. The
+  measured delta moved substantially at each fix. Numbers before v0.2.0 should not be compared with
+  numbers after it.
+- `objectives/reference/init.md` explained instead of acting — the eval caught 12 reads and zero
+  writes. Front-loading the action into a "Do this" block fixed it, and the trace dropped to 5 tool
+  calls.
+- Two ADR assertions were coupled to a directory name and became vacuous when the suites were
+  renamed. The harness self-test caught it. Both now key on the `NNNN-title_H.md` filename.
+
+### Known defects
+
+Recorded in [LATEST-EVAL-REPORT.md](LATEST-EVAL-REPORT.md) rather than hidden. The recurring one:
+in several playbooks the model reads the instructions and *describes* the right action instead of
+taking it. The `init.md` fix is the proven remedy and has not yet been applied elsewhere.
+
 ## [0.1.0] — 2026-08-11
 
 First release. Three `team-` skills, a deterministic linter, and a sandboxed evaluation harness that
@@ -108,5 +174,6 @@ Simplified Technical English, Issue 9.
   `/skills` to the baseline through a tool description. Both are fixed. Treat any single run of a
   small case set as a weak estimate.
 
-[Unreleased]: https://github.com/antikylabs/skills/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/antikylabs/skills/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/antikylabs/skills/releases/tag/v0.2.0
 [0.1.0]: https://github.com/antikylabs/skills/releases/tag/v0.1.0

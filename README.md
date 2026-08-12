@@ -47,6 +47,7 @@ can install one domain at a time and read a skill list without opening it.
 | --- | --- | --- |
 | [`team-write-adrs`](skills/team-write-adrs/) | Ready | Write and propose Architecture Decision Records. |
 | [`team-write-objectives`](skills/team-write-objectives/) | Ready | Run objectives end to end: scaffold, research, plan, goals, execute, audit, archive. |
+| [`team-brometal`](skills/team-brometal/) | Ready | Consume BroMetal as a patched dependency and upstream the fixes. |
 | [`team-simplified-technical-english`](skills/team-simplified-technical-english/) | Ready | Write, audit, and fix text against ASD-STE100 Issue 9. Carries a deterministic linter and the controlled vocabulary. |
 
 Stub skills contain frontmatter only. They are placeholders and do not yet give an agent useful
@@ -67,6 +68,7 @@ table; each command has its own playbook under `reference/`.
 | --- | --- |
 | `team-simplified-technical-english` | `write`, `audit`, `fix` |
 | `team-write-adrs` | `write`, `suggest` |
+| `team-brometal` | `update`, `patch`, `pr` |
 | `team-write-objectives` | `init`, `create-research`, `create-plan`, `create-goals`, `execute`, `audit`, `complete-goal`, `complete-objective` |
 
 ## Repository layout
