@@ -36,23 +36,29 @@ const READABLE_ROOTS = ["/workspace", "/skills"];
 /** The only root the agent may write. /skills and the pristine fixtures stay immutable. */
 const WRITABLE_ROOTS = ["/workspace"];
 
-function assertWritable(target: string): string {
-  const resolved = path.resolve(target);
-  if (!WRITABLE_ROOTS.some((root) => resolved.startsWith(root + path.sep) || resolved === root)) {
-    throw new Error(
-      `refusing to write outside ${WRITABLE_ROOTS.join(", ")}: ${target}. ` +
-        "The skills tree and the pristine fixtures are read-only.",
-    );
+/**
+ * Translate the address the agent uses into the directory a worker owns.
+ *
+ * Several agents now share one container, so each needs its own copy of the
+ * fixtures — but every prompt, every `fixture()` path, and every mutation
+ * assertion is written in terms of `/workspace`. Rewriting those per worker
+ * would mean the agent's own output referred to different paths on every run,
+ * and assertions that check a path would have to know which worker produced it.
+ *
+ * So the agent keeps saying `/workspace` and this maps it onto `<root>`. The
+ * check happens on the agent-visible path, before translation, so the refusal
+ * message quotes what the agent actually asked for.
+ */
+function resolveIn(root: string, target: string, roots: readonly string[], deny: string): string {
+  const asked = path.resolve(target);
+  const allowed = roots.some((r) => asked === r || asked.startsWith(r + path.sep));
+  if (!allowed) throw new Error(`${deny}: ${target}`);
+  if (root === WORKSPACE_HINT) return asked;
+  if (asked === WORKSPACE_HINT) return root;
+  if (asked.startsWith(WORKSPACE_HINT + path.sep)) {
+    return path.join(root, asked.slice(WORKSPACE_HINT.length + 1));
   }
-  return resolved;
-}
-
-function assertReadable(target: string): string {
-  const resolved = path.resolve(target);
-  if (!READABLE_ROOTS.some((root) => resolved === root || resolved.startsWith(root + path.sep))) {
-    throw new Error(`path outside the readable roots (${READABLE_ROOTS.join(", ")}): ${target}`);
-  }
-  return resolved;
+  return asked; // /skills and friends are shared and read-only
 }
 
 const PathSchema = Type.Object({ path: Type.String({ description: "Absolute path" }) });
@@ -77,7 +83,18 @@ const MoveSchema = Type.Object({ from: Type.String(), to: Type.String() });
  *   comparison. The roots stay readable either way; only the advertisement
  *   differs, matching a deployment where no catalog was disclosed.
  */
-export function buildTools(record: (call: RecordedCall) => void, withSkill = true): AgentTool[] {
+export function buildTools(
+  record: (call: RecordedCall) => void,
+  withSkill = true,
+  workspaceRoot: string = WORKSPACE_HINT,
+): AgentTool[] {
+  const assertWritable = (target: string) =>
+    resolveIn(workspaceRoot, target, WRITABLE_ROOTS,
+      `refusing to write outside ${WRITABLE_ROOTS.join(", ")}. The skills tree and the pristine fixtures are read-only`);
+  const assertReadable = (target: string) =>
+    resolveIn(workspaceRoot, target, READABLE_ROOTS,
+      `path outside the readable roots (${READABLE_ROOTS.join(", ")})`);
+
   const readRoots = withSkill
     ? "Available roots: /fixtures (the documents under review) and /skills (the installed skills, including each SKILL.md and its reference playbooks)."
     : "Available root: /fixtures (the documents under review).";

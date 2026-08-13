@@ -172,11 +172,215 @@ function normalizeTrace(parsed: unknown, raw: string): Trace {
   return { ...trace, finalText: trace.finalText ?? "" };
 }
 
+/**
+ * The Codex subscription tokens, read from the CLI's own credential file.
+ *
+ * Codex stores `tokens.access_token` / `tokens.refresh_token`; pi wants
+ * `{ access, refresh }`. Only those two fields are forwarded — the id token and
+ * account id stay on the host, because nothing in the run needs them.
+ */
+function codexTokens(): { access: string; refresh: string; expires: number } {
+  const file = path.join(process.env.HOME ?? "", ".codex", "auth.json");
+  if (!fs.existsSync(file)) {
+    process.stderr.write(
+      `EVAL_PROVIDER=codex needs Codex credentials at ${file}.\n` +
+        "Sign in with the Codex CLI first, then re-run.\n",
+    );
+    process.exit(2);
+  }
+  const parsed = JSON.parse(fs.readFileSync(file, "utf-8")) as {
+    tokens?: { access_token?: string; refresh_token?: string };
+  };
+  const access = parsed.tokens?.access_token;
+  const refresh = parsed.tokens?.refresh_token;
+  if (!access || !refresh) {
+    process.stderr.write(`${file} has no OAuth tokens — sign in with the Codex CLI again.\n`);
+    process.exit(2);
+  }
+
+  /**
+   * The real expiry, from the access token's own `exp` claim.
+   *
+   * This started as `0`, meaning "assume stale, let pi refresh first". That is
+   * harmless for one agent and wrong for several: a batch of twelve jobs each
+   * decided the token needed refreshing and hit the token endpoint at once, and
+   * every request came back empty. The token was valid for another seventeen
+   * hours. Passing the true expiry means no refresh happens until one is due,
+   * and then only because it is actually due.
+   */
+  let expires = 0;
+  try {
+    const payload = access.split(".")[1] ?? "";
+    const claims = JSON.parse(Buffer.from(payload, "base64url").toString("utf-8")) as { exp?: number };
+    if (claims.exp) expires = claims.exp * 1000;
+  } catch {
+    // Not a JWT we can read. Leave it stale so pi refreshes once, which is the
+    // safe direction: a needless refresh beats sending a lapsed token.
+  }
+  return { access, refresh, expires };
+}
+
+// --- batched running -------------------------------------------------------
+
+export interface BatchJob {
+  /** Stable id used to name this job's log file. */
+  id: string;
+  prompt: string;
+  systemPrompt: string;
+  withSkill: boolean;
+  script?: FauxStep[];
+  shamSkillsDir?: string;
+}
+
+/**
+ * Run many jobs inside **one** container.
+ *
+ * The old shape was one container per case: 134 of them for a paired suite. That
+ * cost about 1.3s of startup each — which measurement showed was never the
+ * bottleneck — and 512 MB of budget each, which was. Concurrency came out of
+ * dividing VM memory by the size of a Node process, so it sat at 2 regardless of
+ * what the work needed.
+ *
+ * Several agents in one process share the interpreter and the SDK, so the
+ * ceiling becomes the provider's rate limit rather than our own arithmetic. Each
+ * job still gets a freshly seeded workspace of its own inside the container.
+ *
+ * Jobs stream back as NDJSON `{index, trace}` as they finish, so a result is
+ * recorded the moment it lands. Per-job stderr is demultiplexed by the `job`
+ * field the container stamps on every log line.
+ */
+export async function runBatchInSandbox(
+  runtime: string,
+  options: {
+    jobs: BatchJob[];
+    provider: "faux" | "openrouter" | "codex";
+    modelId: string;
+    thinkingLevel?: ThinkingLevel;
+    concurrency: number;
+    shamSkillsDir?: string;
+    logFor?: (job: BatchJob, index: number) => string | undefined;
+    onResult?: (index: number, trace: Trace) => void;
+  },
+): Promise<Trace[]> {
+  const batch = {
+    concurrency: options.concurrency,
+    jobs: options.jobs.map((job) => ({
+      prompt: job.prompt,
+      provider: options.provider,
+      modelId: options.modelId,
+      systemPrompt: job.systemPrompt,
+      thinkingLevel: options.thinkingLevel ?? thinkingLevel(),
+      withSkill: job.withSkill,
+      fauxScript: job.script,
+    })),
+  };
+
+  const args = ["run", "--rm", "-i", ...batchHardening(options.concurrency),
+                "-v", `${SUITES}:/suites:ro`, "-e", "EVAL_IN_SANDBOX=1", "-e", "EVAL_LOG=1"];
+  if (options.shamSkillsDir) args.push("-v", `${options.shamSkillsDir}:/skills:ro`);
+  applyProviderEnv(args, options.provider);
+  args.push(IMAGE);
+
+  const traces: Trace[] = new Array(options.jobs.length);
+  const logs = options.jobs.map((job, index) => {
+    const file = options.logFor?.(job, index);
+    return file ? fs.createWriteStream(file, { flags: "a" }) : null;
+  });
+
+  return await new Promise<Trace[]>((resolve) => {
+    const child = spawn(runtime, args, { stdio: ["pipe", "pipe", "pipe"] });
+    let outBuf = "";
+    let errBuf = "";
+
+    child.stdout.on("data", (chunk) => {
+      outBuf += chunk.toString();
+      let nl: number;
+      while ((nl = outBuf.indexOf("\n")) >= 0) {
+        const line = outBuf.slice(0, nl).trim();
+        outBuf = outBuf.slice(nl + 1);
+        if (!line) continue;
+        try {
+          const { index, trace } = JSON.parse(line) as { index: number; trace: unknown };
+          const normalized = normalizeTrace(trace, line);
+          traces[index] = normalized;
+          options.onResult?.(index, normalized);
+        } catch {
+          /* a partial or non-JSON line: the missing trace is caught below */
+        }
+      }
+    });
+
+    // Route each log line to its own case file using the `job` tag. Untagged
+    // lines (startup, crashes) go to every open log, because at that point there
+    // is no way to know which job they belong to and losing them is worse.
+    child.stderr.on("data", (chunk) => {
+      errBuf += chunk.toString();
+      let nl: number;
+      while ((nl = errBuf.indexOf("\n")) >= 0) {
+        const line = errBuf.slice(0, nl);
+        errBuf = errBuf.slice(nl + 1);
+        const tag = /"job"\s*:\s*(\d+)/.exec(line);
+        if (tag) logs[Number(tag[1])]?.write(line + "\n");
+        else for (const log of logs) log?.write(line + "\n");
+        if (TAIL) process.stderr.write(line + "\n");
+      }
+    });
+
+    child.on("close", (code) => {
+      for (const log of logs) log?.end();
+      for (let i = 0; i < traces.length; i++) {
+        traces[i] ??= errorTrace(`container exited ${code} without returning a trace for job ${i}`);
+      }
+      resolve(traces);
+    });
+
+    child.stdin.write(JSON.stringify(batch));
+    child.stdin.end();
+  });
+}
+
+/**
+ * Hardening for a batched container.
+ *
+ * Memory scales with the number of agents sharing the process rather than being
+ * a flat per-container figure: one interpreter and one copy of the SDK, plus
+ * each agent's conversation and its own seeded workspace copy.
+ */
+function batchHardening(concurrency: number): string[] {
+  const base = 512;
+  const perAgent = 192;
+  const memMb = base + perAgent * concurrency;
+  const tmpMb = 64 + 48 * concurrency;
+  return HARDENING.map((flag) =>
+    flag.startsWith("--memory=")
+      ? `--memory=${memMb}m`
+      : flag.startsWith("/workspace:")
+        ? `/workspace:rw,nosuid,size=${tmpMb}m`
+        : flag,
+  );
+}
+
+/** Provider credentials and network posture, shared by both run paths. */
+function applyProviderEnv(args: string[], provider: "faux" | "openrouter" | "codex"): void {
+  if (provider === "faux") {
+    args.push("--network=none");
+  } else if (provider === "codex") {
+    args.push("-e", `CODEX_OAUTH=${JSON.stringify(codexTokens())}`);
+  } else {
+    const key = process.env.OPENROUTER_API_KEY;
+    if (!key) {
+      process.stderr.write("EVAL_PROVIDER=openrouter needs OPENROUTER_API_KEY in the environment.\n");
+      process.exit(2);
+    }
+    args.push("-e", `OPENROUTER_API_KEY=${key}`);
+  }
+}
+
 // --- running ---------------------------------------------------------------
 
 export interface RunOptions {
   prompt: string;
-  provider: "faux" | "openrouter";
+  provider: "faux" | "openrouter" | "codex";
   modelId: string;
   systemPrompt: string;
   thinkingLevel?: ThinkingLevel;
@@ -201,7 +405,24 @@ const TAIL = process.env.EVAL_TAIL === "1";
  * the console when EVAL_TAIL=1, so a long live run is observable rather than
  * silent until it finishes.
  */
+/**
+ * Podman occasionally refuses a connection when many containers start at once
+ * ("Cannot connect to Podman", exit 125). It is a race in the client, not a
+ * statement about the run — and a self-test that reads it as a failed assertion
+ * reports a broken harness when the harness is fine. Retry a few times.
+ */
+const TRANSIENT_START = /exited 125|Cannot connect to Podman/;
+
 export async function runInSandbox(runtime: string, options: RunOptions): Promise<Trace> {
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const trace = await runInSandboxOnce(runtime, options);
+    if (!trace.error || !TRANSIENT_START.test(trace.error)) return trace;
+    await new Promise((resolve) => setTimeout(resolve, 250 * (attempt + 1)));
+  }
+  return await runInSandboxOnce(runtime, options);
+}
+
+async function runInSandboxOnce(runtime: string, options: RunOptions): Promise<Trace> {
   const job = {
     prompt: options.prompt,
     provider: options.provider,
@@ -220,17 +441,7 @@ export async function runInSandbox(runtime: string, options: RunOptions): Promis
   // only difference on disk is the body of each SKILL.md.
   if (options.shamSkillsDir) args.push("-v", `${options.shamSkillsDir}:/skills:ro`);
 
-  if (options.provider === "faux") {
-    // A deterministic run needs no network. Remove it rather than trust it.
-    args.push("--network=none");
-  } else {
-    const key = process.env.OPENROUTER_API_KEY;
-    if (!key) {
-      process.stderr.write("EVAL_PROVIDER=openrouter needs OPENROUTER_API_KEY in the environment.\n");
-      process.exit(2);
-    }
-    args.push("-e", `OPENROUTER_API_KEY=${key}`);
-  }
+  applyProviderEnv(args, options.provider);
   args.push(IMAGE);
 
   const log = options.logFile ? fs.createWriteStream(options.logFile, { flags: "a" }) : null;

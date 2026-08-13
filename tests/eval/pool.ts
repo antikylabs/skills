@@ -60,14 +60,18 @@ export function concurrency(): number {
   }
 
   // Size to the VM when it can be read, otherwise take a conservative default.
-  // What a live run actually uses, not what a faux one does. 256 was derived
-  // from the faux path and proved too optimistic: real runs were OOM-killed at a
-  // 384m cap when several ran at once. 512 reflects the live path.
   //
-  // On a default 2 GiB podman machine this yields 2. More concurrency needs a
-  // bigger machine, which is the real unlock:
-  //   podman machine stop && podman machine set --memory 8192 && podman machine start
-  const perRunMb = 512;
+  // This used to divide VM memory by 512 MB — the size of one Node process with
+  // the SDK loaded — because every run was its own container. Runs now share a
+  // container and an interpreter, so the marginal cost of another concurrent
+  // agent is its conversation and its seeded workspace copy, not another
+  // runtime. `batchHardening` in container.ts sizes the container to match:
+  // 512 MB of fixed overhead plus 192 MB per agent.
+  //
+  // Dividing by 512 under the new model understated the ceiling by roughly two
+  // and a half times and quietly held a 2 GiB machine at 2.
+  const fixedMb = 512;
+  const perAgentMb = 192;
   let budgetMb = 0;
   try {
     const free = execFileSync("podman", ["machine", "ssh", "free -m"], {
@@ -81,7 +85,22 @@ export function concurrency(): number {
     budgetMb = 0;
   }
 
-  const byMemory = budgetMb > 0 ? Math.floor(budgetMb / perRunMb) : 4;
+  const byMemory = budgetMb > 0 ? Math.floor((budgetMb - fixedMb) / perAgentMb) : 4;
   const byCpu = Math.max(1, os.cpus().length - 2);
-  return Math.max(1, Math.min(byMemory, byCpu, 8));
+  /**
+   * The hard cap.
+   *
+   * This is where the provider gets a say that the arithmetic above cannot see.
+   * Codex refused 57 of 67 runs at a concurrency of 5 on a 2 GiB machine, and
+   * luna over OpenRouter caps at 10 requests per minute whatever the hardware
+   * allows — so past some point more workers just produce more 429s, and the
+   * provider-failure gate turns those into a refused run rather than a number.
+   *
+   * Raised from 4 once the machine grew to 8 GiB: memory had been the binding
+   * constraint and no longer is, so the remaining ceiling is worth finding
+   * empirically rather than assuming. Lower it with EVAL_CONCURRENCY if a
+   * provider starts refusing.
+   */
+  const providerCeiling = 12;
+  return Math.max(1, Math.min(byMemory, byCpu, providerCeiling));
 }

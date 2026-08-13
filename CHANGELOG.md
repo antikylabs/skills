@@ -109,6 +109,47 @@ Gate (is the record well-formed?) and trap are scored separately. It immediately
 — mutation contents covered created files only, so the index's text was unreachable and the
 assertion could tell that the file had been touched but not whether the edit was right. Fixed.
 
+### Harness
+
+Chasing one wrong cost figure turned over most of the measurement layer. Nothing here changes a
+skill; all of it changes whether a number can be believed.
+
+- **Cost is read, not computed.** The harness derived cost from the price table on each model
+  definition, and every one of those declared `cacheRead: 0`. On a cache-heavy run that is the
+  largest column: one run billed 144M cache-read tokens and was reported at $0.69 against roughly
+  $8.50 actually charged. The figure matched `input × price + output × price` to the cent, which is
+  how the cause was found. OpenRouter now returns what it charged and that is what the report says —
+  verified against the account at 1.00×.
+- **Subscription runs report both figures.** A ChatGPT Plus/Pro run is charged nothing per request,
+  so `charged` is honestly $0.00 and useless for comparison; `equivalent` prices the same tokens at
+  list, `cacheRead` included.
+- **One container, many agents.** A container per case cost 512 MB of budget each, so concurrency was
+  VM memory divided by the size of a Node process — 2, regardless of what the work needed. Agents
+  now share a container and an interpreter, each with its own seeded workspace, and the tool layer
+  maps the agent-visible `/workspace` onto it so no prompt or assertion changed. The deterministic
+  suite went from 38s to 3.6s; a full paired live run went from 2-way to 12-way.
+- **Rate limits are waited out** rather than walked into, and a 429 is no longer recorded as an
+  answer.
+- **The Codex subscription is a provider.** Tokens cross the sandbox boundary as an environment
+  variable rather than by mounting a home directory into the container.
+
+Three bugs found by the above, each of which had been quietly producing a plausible number:
+
+- The fetch shim reassigned `globalThis.fetch` once per job. At 12-way concurrency that is twelve
+  nested wrappers, each adding the charged amount — the next metered batch run would have reported
+  **twelve times** what it spent.
+- `expires: 0` told pi every Codex token was stale, so a batch of jobs raced to refresh at once and
+  the provider rejected the storm. The token was valid for another seventeen hours.
+- A bare `catch {}` turned "our decoder hit a gzipped body" into "the model ignores the setting",
+  and survived three rounds of wrong diagnosis before it was made to speak.
+
+Reasoning cannot be forced off on the Codex transport, and `agent-run.ts` records why so nobody
+repeats the search: pi converts `thinkingLevel: "off"` to `undefined` before the branch that would
+send `"none"` can see it, its injectable `fetch` is documented as not affecting WebSocket
+transports, and forcing `transport: "sse"` does reach the shim but the body arrives gzipped. Use
+`EVAL_THINKING=minimal`, which maps to `effort: low` and measures 0.16 reasoning-to-output against
+0.45 at the default.
+
 ### Breaking
 
 A skill's name is part of its public interface, so every existing install needs the new name:

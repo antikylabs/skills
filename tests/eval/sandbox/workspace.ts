@@ -25,31 +25,45 @@ export const WORKSPACE = "/workspace";
 export const SUITES = "/suites";
 
 /**
- * Hashes of every file as it was seeded. The diff is taken against this rather
- * than against a second mount, so the workspace is assembled from many suites
- * without needing a matching pristine tree to compare with.
+ * Hashes of every file as it was seeded, per workspace root.
+ *
+ * The diff is taken against this rather than against a second mount, so the
+ * workspace is assembled from many suites without needing a matching pristine
+ * tree to compare with.
+ *
+ * Keyed by root because one container now runs several agents at once, each with
+ * its own copy of the fixtures. A single module-level baseline was correct while
+ * a container held exactly one run and silently wrong the moment it did not.
  */
-let baseline: Map<string, string> | null = null;
+const baselines = new Map<string, Map<string, string>>();
 
 /**
- * Assemble the writable workspace from every suite's fixtures.
+ * Assemble a writable workspace from every suite's fixtures.
  *
  * Each skill's fixtures land under its own name, so a case addresses
  * /workspace/<skill-name>/... exactly as it did when fixtures were one tree.
- * Called once per run.
+ * With several workers in one container the real directory is per worker and
+ * the tool layer maps the agent-visible prefix onto it, so nothing a case or a
+ * prompt says has to change.
  */
-export function seedWorkspace(): void {
-  fs.mkdirSync(WORKSPACE, { recursive: true });
+export function seedWorkspace(root: string = WORKSPACE): void {
+  fs.mkdirSync(root, { recursive: true });
   if (fs.existsSync(SUITES)) {
     for (const entry of fs.readdirSync(SUITES, { withFileTypes: true })) {
       if (!entry.isDirectory()) continue;
       const from = path.join(SUITES, entry.name, "fixtures");
       if (fs.existsSync(from)) {
-        fs.cpSync(from, path.join(WORKSPACE, entry.name), { recursive: true });
+        fs.cpSync(from, path.join(root, entry.name), { recursive: true });
       }
     }
   }
-  baseline = walk(WORKSPACE);
+  baselines.set(root, walk(root));
+}
+
+/** Drop a worker's workspace and its baseline once its run is finished. */
+export function releaseWorkspace(root: string): void {
+  baselines.delete(root);
+  if (root !== WORKSPACE) fs.rmSync(root, { recursive: true, force: true });
 }
 
 function hashFile(target: string): string {
@@ -91,9 +105,9 @@ export interface Mutations {
  * whether the edit was right. "Touched the right file" is a much weaker claim
  * than the case was making.
  */
-export function collectMutations(maxBytes = 20_000): Mutations {
-  const before = baseline ?? new Map<string, string>();
-  const after = walk(WORKSPACE);
+export function collectMutations(root: string = WORKSPACE, maxBytes = 20_000): Mutations {
+  const before = baselines.get(root) ?? new Map<string, string>();
+  const after = walk(root);
 
   const created: string[] = [];
   const modified: string[] = [];
@@ -104,7 +118,7 @@ export function collectMutations(maxBytes = 20_000): Mutations {
     const prior = before.get(rel);
     if (prior === undefined) {
       created.push(rel);
-      const full = path.join(WORKSPACE, rel);
+      const full = path.join(root, rel);
       try {
         const stat = fs.statSync(full);
         if (stat.size <= maxBytes) contents[rel] = fs.readFileSync(full, "utf-8");
@@ -114,7 +128,7 @@ export function collectMutations(maxBytes = 20_000): Mutations {
       }
     } else if (prior !== hash) {
       modified.push(rel);
-      const full = path.join(WORKSPACE, rel);
+      const full = path.join(root, rel);
       try {
         const stat = fs.statSync(full);
         contents[rel] = stat.size <= maxBytes ? fs.readFileSync(full, "utf-8") : `(${stat.size} bytes, truncated)`;

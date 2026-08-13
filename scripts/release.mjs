@@ -174,8 +174,15 @@ if (SKIP_EVAL) {
   info(`reusing ${runId}`);
 } else {
   const before = fs.existsSync(RUNS) ? new Set(fs.readdirSync(RUNS)) : new Set();
-  info("every case, both arms — this calls a model and costs money");
-  run("npm", ["run", "test:skill-behavior:paired"], {
+  // Luna over the Codex subscription at `minimal`. Chosen on measurement: it is
+  // the only configuration that ran the full paired suite with zero provider
+  // failures, in six minutes, at no per-request charge. The report prices the
+  // same tokens at list so the headline is still comparable to a metered run.
+  //
+  // EVAL_SCRIPT overrides it — `test:skill-behavior:paired` for OpenRouter.
+  const evalScript = process.env.EVAL_SCRIPT ?? "test:skill-behavior:codex";
+  info(`every case, both arms — running ${evalScript}`);
+  run("npm", ["run", evalScript], {
     cwd: TESTS,
     allowFailure: true, // failing cases are a finding, not a release blocker
   });

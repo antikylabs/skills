@@ -115,8 +115,17 @@ Live runs go through OpenRouter. Set `OPENROUTER_API_KEY`. Never Claude pricing.
 
 | Model | in $/M | out $/M | tools |
 | --- | --- | --- | --- |
-| `deepseek/deepseek-v4-flash` (default) | 0.14 | 0.28 | yes |
+| `tencent/hy3` (default) | 0.132 | 0.528 | yes |
+| `deepseek/deepseek-v4-flash` | 0.14 | 0.28 | yes |
 | `openai/gpt-5.6-luna` | 0.10 | 0.60 | yes |
+
+`gpt-5.6-luna` is unusable on this account: OpenRouter applies a **new-account cap of 10 requests
+per minute to that model alone**, and a paired run is several hundred requests. The cap is not a
+spend limit and not account-wide — `deepseek-v4-flash` and `gpt-oss-120b` both answer immediately.
+The error names it: `limit_source: openrouter_new_account`.
+
+The harness now waits out a 429 rather than treating the refusal as an answer, so luna still runs;
+it just runs slowly. `hy3` is the default because it has no such cap here.
 
 pi-ai 0.84 registers providers explicitly rather than shipping a catalog, so both
 model definitions are pinned in `agent-run.ts`. The eval does not depend on a

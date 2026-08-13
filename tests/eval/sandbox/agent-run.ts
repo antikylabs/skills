@@ -25,10 +25,11 @@ import {
   fauxToolCall,
 } from "@earendil-works/pi-ai";
 import { openrouterProvider } from "@earendil-works/pi-ai/providers/openrouter";
+import { openaiCodexProvider } from "@earendil-works/pi-ai/providers/openai-codex";
 import type { Model } from "@earendil-works/pi-ai";
 import { buildTools, type RecordedCall } from "./tools.ts";
 import { loadCatalog, SKILL_INSTRUCTIONS } from "./skills.ts";
-import { seedWorkspace, collectMutations, type Mutations } from "./workspace.ts";
+import { seedWorkspace, collectMutations, releaseWorkspace, WORKSPACE, type Mutations } from "./workspace.ts";
 import type { FauxStep } from "../suites/types.ts";
 
 /** pi's reasoning levels, lowest to highest. */
@@ -37,7 +38,7 @@ export type ThinkingLevel = (typeof THINKING_LEVELS)[number];
 
 interface Job {
   prompt: string;
-  provider: "openrouter" | "faux";
+  provider: "openrouter" | "faux" | "codex";
   modelId: string;
   systemPrompt: string;
   thinkingLevel: ThinkingLevel;
@@ -56,6 +57,15 @@ export interface UsageTotals {
   reasoning: number;
   totalTokens: number;
   costUsd: number;
+  /**
+   * What the same tokens would have cost on a metered provider.
+   *
+   * A subscription run is charged nothing per request, so `costUsd` is zero and
+   * says so honestly — but zero is not comparable to the other models in a
+   * report. This is the equivalent at OpenRouter list prices, which makes a
+   * Codex run readable beside a metered one.
+   */
+  notionalUsd: number;
   turns: number;
 }
 
@@ -76,6 +86,7 @@ const emptyUsage = (): UsageTotals => ({
   reasoning: 0,
   totalTokens: 0,
   costUsd: 0,
+  notionalUsd: 0,
   turns: 0,
 });
 
@@ -165,6 +176,56 @@ const MODELS: Record<string, Model<"openai-completions">> = {
     contextWindow: 1_050_000,
     maxTokens: 32_000,
   } as unknown as Model<"openai-completions">,
+
+  // Added because gpt-5.6-luna carries a new-account cap on this OpenRouter
+  // account — 10 requests per minute, for that model alone. A paired run is
+  // several hundred requests, so the cap made luna impractical here regardless
+  // of how well it scores. hy3 has no such cap on this account and supports
+  // tools, which the eval needs.
+  "tencent/hy3": {
+    id: "tencent/hy3",
+    name: "Tencent HY3",
+    api: "openai-completions",
+    provider: "openrouter",
+    baseUrl: "https://openrouter.ai/api/v1",
+    reasoning: true,
+    compat: { thinkingFormat: "openai" },
+    thinkingLevelMap: {
+      minimal: "minimal",
+      low: "low",
+      medium: "medium",
+      high: "high",
+      xhigh: "high",
+    },
+    input: ["text"],
+    cost: { input: 0.132, output: 0.528, cacheRead: 0, cacheWrite: 0 },
+    contextWindow: 262_144,
+    maxTokens: 32_000,
+  } as unknown as Model<"openai-completions">,
+
+  "nvidia/nemotron-3.5-lightning:nitro": {
+    id: "nvidia/nemotron-3.5-lightning:nitro",
+    name: "NVIDIA Nemotron 3.5 Lightning",
+    api: "openai-completions",
+    provider: "openrouter",
+    baseUrl: "https://openrouter.ai/api/v1",
+    reasoning: true,
+    compat: { thinkingFormat: "openai" },
+    thinkingLevelMap: {
+      minimal: "minimal",
+      low: "low",
+      medium: "medium",
+      high: "high",
+      xhigh: "high",
+    },
+    input: ["text"],
+    cost: { input: 0.1, output: 0.25, cacheRead: 0, cacheWrite: 0 },
+    // Matches the pinned coreweave/bf16 endpoint. DeepInfra caps at 28k and
+    // Venice serves 1M, so the window is a property of the endpoint, not the
+    // model — which is why the endpoint is pinned rather than left to :nitro.
+    contextWindow: 262_144,
+    maxTokens: 32_000,
+  } as unknown as Model<"openai-completions">,
 };
 
 /**
@@ -180,6 +241,11 @@ const OPENROUTER_ROUTING: Record<string, unknown> = {
   // quantized provider, which would make a latency comparison meaningless.
   "openai/gpt-oss-120b:nitro": { only: ["cerebras/fp16"] },
   "inclusionai/ling-3.0-flash:nitro": { only: ["novita"] },
+  // venice/fp4 serves the full million-token window but does no prompt caching:
+  // 4.37M billed input tokens and $0.45 for six cases, against $0.008 on a model
+  // whose cache absorbed most of it. coreweave/bf16 is the same weights at a
+  // smaller window, kept pinned so the endpoint cannot drift under :nitro.
+  "nvidia/nemotron-3.5-lightning:nitro": { only: ["coreweave/bf16"] },
 };
 
 /**
@@ -194,6 +260,74 @@ const OPENROUTER_ROUTING: Record<string, unknown> = {
 /** How many times a 429 is waited out before the request is allowed to fail. */
 const RATE_LIMIT_RETRIES = 6;
 
+/**
+ * Published per-million prices, for pricing a subscription run as if metered.
+ *
+ * `cacheRead` is priced deliberately. Leaving it at zero is what made the
+ * harness report $0.69 for a run the account was charged about $8.50 for — on a
+ * cache-heavy run it is the largest column, not a rounding error.
+ */
+const LIST_PRICES: Record<string, { input: number; output: number; cacheRead: number }> = {
+  // OpenRouter's luna pricing, so a Codex run is comparable to a metered one.
+  "gpt-5.6-luna": { input: 0.1, output: 0.6, cacheRead: 0.01 },
+  "gpt-5.3-codex-spark": { input: 0.2, output: 1.2, cacheRead: 0.02 },
+};
+
+function notionalCost(modelId: string, usage: UsageTotals): number {
+  const price = LIST_PRICES[modelId];
+  if (!price) return 0;
+  return (
+    (usage.input * price.input + usage.output * price.output + usage.cacheRead * price.cacheRead) / 1e6
+  );
+}
+
+/**
+ * Hand pi the Codex subscription tokens.
+ *
+ * pi keeps its own credential store rather than reading Codex CLI's
+ * `~/.codex/auth.json`, and the sandbox cannot see the host filesystem anyway —
+ * that isolation is the point, and mounting a home directory into the eval
+ * container to reach one file would trade it away for nothing. So the tokens
+ * arrive as an environment variable and this store serves them from memory.
+ *
+ * `modify` is deliberately a no-op sink. pi calls it to persist a refreshed
+ * token, and there is nowhere in a read-only container to persist it to; the
+ * refreshed value still flows back through pi's own return path for the life of
+ * the process. A container is one run, so a token that outlives the run is not
+ * something we need.
+ */
+function codexCredentials() {
+  const raw = process.env.CODEX_OAUTH;
+  if (!raw) {
+    throw new Error("EVAL_PROVIDER=codex needs CODEX_OAUTH in the environment (see container.ts)");
+  }
+  const tokens = JSON.parse(raw) as { access: string; refresh: string; expires?: number };
+  let current: { type: "oauth"; access: string; refresh: string; expires: number } = {
+    type: "oauth",
+    access: tokens.access,
+    refresh: tokens.refresh,
+    // Treat an unknown expiry as already stale so pi refreshes before the first
+    // request rather than sending a token that may have lapsed.
+    expires: tokens.expires ?? 0,
+  };
+  return {
+    async read() {
+      return current;
+    },
+    async list() {
+      return [{ providerId: "openai-codex", type: "oauth" as const }];
+    },
+    async modify(_id: string, fn: (c: typeof current | undefined) => Promise<typeof current | undefined>) {
+      const next = await fn(current);
+      if (next) current = next;
+      return current;
+    },
+    async delete() {
+      /* nothing to remove: this store never touched disk */
+    },
+  };
+}
+
 /** Same line shape as the per-run logger, usable from module scope. */
 const logEvent = (record: Record<string, unknown>) => {
   if (process.env.EVAL_LOG === "1") {
@@ -201,22 +335,86 @@ const logEvent = (record: Record<string, unknown>) => {
   }
 };
 
+/**
+ * What OpenRouter actually charged, summed over the run's requests.
+ *
+ * pi derives cost from the price table on the Model definition, and every one of
+ * those declares `cacheRead: 0`. On a cache-heavy run that is not a rounding
+ * error: one nemotron run billed 144M cache-read tokens, and the harness
+ * reported $0.69 for what the account was charged roughly $8.50 for. The figure
+ * matched `input × price + output × price` to the cent, which is how the cause
+ * was found — it was our arithmetic, faithfully executed, on a table that priced
+ * the largest column at zero.
+ *
+ * So the cost is no longer computed. OpenRouter returns what it charged when the
+ * request asks for it, and that number is authoritative: it cannot drift when a
+ * provider changes pricing, and it already accounts for cache tiers and
+ * per-endpoint rates.
+ */
+const billed = { costUsd: 0, requests: 0 };
+
+/**
+ * Config for the fetch shim, set per batch rather than captured per install.
+ *
+ * A batch is homogeneous — same provider, same model, same thinking level — so
+ * one config describes every job in it.
+ */
+let shimConfig: { routing: unknown; onServed: (provider: string) => void; disableReasoning: boolean } = {
+  routing: undefined,
+  onServed: () => {},
+  disableReasoning: false,
+};
+
+/** Whether the wrapper is already in place. See installProviderRouting. */
+let shimInstalled = false;
+
 function installProviderRouting(
   routing: unknown,
   onServed: (provider: string) => void,
   disableReasoning = false,
 ): void {
+  // Install exactly once per process.
+  //
+  // This used to reassign globalThis.fetch on every call, which was harmless
+  // when a container held one job and is not now: twelve concurrent agents meant
+  // twelve nested wrappers, every response unwinding through all of them. The
+  // visible cost was arithmetic — each layer added the charged amount to
+  // `billed`, so a run would have reported twelve times what it spent. It went
+  // unnoticed because every batched run so far has been Codex, where the
+  // subscription path forces the figure to zero before anyone could read it.
+  shimConfig = { routing, onServed, disableReasoning };
+  if (shimInstalled) return;
+  shimInstalled = true;
+
   const original = globalThis.fetch;
   globalThis.fetch = async (input: any, init?: any) => {
     const url =
       typeof input === "string" ? input : input instanceof URL ? input.href : (input?.url ?? "");
     const isCompletion = url.includes("openrouter.ai") && url.includes("/chat/completions");
 
-    if ((routing || disableReasoning) && init?.body && isCompletion) {
+    /**
+     * Reasoning cannot be forced off on the Codex transport.
+     *
+     * Three things were tried and all of them are dead ends, recorded here so
+     * nobody repeats them. pi converts `thinkingLevel: "off"` to `undefined`
+     * before the branch that would send `"none"` can see it
+     * (openai-codex-responses.js:366), so nothing is sent and GPT-5.6 defaults
+     * to *medium*. pi's injectable `fetch` option is documented as not affecting
+     * WebSocket transports. Forcing `transport: "sse"` does put the request back
+     * on this shim — and the body arrives gzipped, so rewriting it means
+     * decompress, edit, recompress on someone else's wire format.
+     *
+     * Use `EVAL_THINKING=minimal` on Codex instead. It maps to `effort: low` and
+     * measures 0.16 reasoning-to-output against 0.45 at the default.
+     */
+    if ((shimConfig.routing || shimConfig.disableReasoning) && init?.body && isCompletion) {
       try {
         const body = JSON.parse(String(init.body));
-        if (routing) body.provider = routing;
-        if (disableReasoning) {
+        if (shimConfig.routing) body.provider = shimConfig.routing;
+        // Ask for the charged amount. Without this the response carries token
+        // counts but no cost, and the only figure available is one we computed.
+        body.usage = { include: true };
+        if (shimConfig.disableReasoning) {
           // pi has no "off" in its thinkingLevelMap, so an off setting sends no
           // reasoning parameter at all — and a model that reasons by default
           // just keeps reasoning. Verified: gpt-5.6-luna at EVAL_THINKING=off
@@ -261,7 +459,19 @@ function installProviderRouting(
         .text()
         .then((text) => {
           const match = /"provider"\s*:\s*"([^"]+)"/.exec(text);
-          if (match?.[1]) onServed(match[1]);
+          if (match?.[1]) shimConfig.onServed(match[1]);
+
+          // The charged amount, straight from the response. Matched loosely
+          // because the field sits inside `usage` on a completion and inside the
+          // final SSE frame on a stream, and both shapes are worth catching.
+          const charged = /"cost"\s*:\s*([0-9.eE+-]+)/.exec(text);
+          if (charged?.[1]) {
+            const value = Number(charged[1]);
+            if (Number.isFinite(value)) {
+              billed.costUsd += value;
+              billed.requests += 1;
+            }
+          }
         })
         .catch(() => {});
     }
@@ -289,22 +499,85 @@ function convertToLlm(messages: AgentMessage[]): Message[] {
   return messages.filter((m: any) => ["user", "assistant", "toolResult"].includes(m.role)) as Message[];
 }
 
-export async function runJob(job: Job): Promise<Trace> {
+/**
+ * Many jobs in one container.
+ *
+ * A container per case cost one Node process and one SDK load each — about
+ * 1.3s, which was never the problem, and 512 MB of budget, which was: the
+ * concurrency ceiling was arithmetic on VM memory rather than anything the work
+ * required. Several agents in one process share the runtime and the SDK, so the
+ * marginal cost of another concurrent agent is its conversation, not another
+ * interpreter.
+ *
+ * Each job still gets its own seeded copy of the fixtures under its own root.
+ * That is the part a shared process gives away for free and has to earn back:
+ * two cases from one suite running at once would otherwise see each other's
+ * writes, and mutation assertions are what several suites turn on.
+ *
+ * Traces stream out as NDJSON keyed by index, so the orchestrator can record a
+ * result the moment it lands rather than waiting for the slowest job.
+ */
+interface Batch {
+  jobs: Job[];
+  concurrency?: number;
+}
+
+export async function runBatch(batch: Batch): Promise<void> {
+  const limit = Math.max(1, batch.concurrency ?? 1);
+  let next = 0;
+
+  const worker = async (slot: number): Promise<void> => {
+    const root = `${WORKSPACE}/w${slot}`;
+    while (true) {
+      const index = next++;
+      if (index >= batch.jobs.length) return;
+      const job = batch.jobs[index]!;
+      let trace: Trace;
+      try {
+        trace = await runJob(job, root, index);
+      } catch (error) {
+        // One job's crash must not take the batch down with it — that is the
+        // isolation a container-per-case used to provide for free.
+        trace = {
+          toolCalls: [],
+          finalText: "",
+          usage: emptyUsage(),
+          mutations: { created: [], modified: [], deleted: [], contents: {} },
+          error: String(error),
+        };
+      } finally {
+        releaseWorkspace(root);
+      }
+      process.stdout.write(JSON.stringify({ index, trace }) + "\n");
+    }
+  };
+
+  await Promise.all(Array.from({ length: Math.min(limit, batch.jobs.length) }, (_, i) => worker(i)));
+}
+
+export async function runJob(job: Job, workspaceRoot: string = WORKSPACE, tag?: number): Promise<Trace> {
   const toolCalls: RecordedCall[] = [];
   const record = (call: RecordedCall) => toolCalls.push(call);
   const usage = emptyUsage();
 
-  // The agent works on a copy. /fixtures stays pristine so the run can be diffed.
-  seedWorkspace();
+  // The agent works on a copy. /suites stays pristine so the run can be diffed.
+  // With several agents in one container each gets its own copy; the tool layer
+  // maps the agent-visible /workspace onto it, so nothing else has to know.
+  seedWorkspace(workspaceRoot);
 
   // Every agent event, as JSONL on stderr. The orchestrator streams this to the
   // run directory and can tail it live. stdout stays clean for the trace.
   const logEvents = process.env.EVAL_LOG === "1";
+  // `job` tags the line with its index so the orchestrator can split one
+  // container's interleaved stderr back into per-case logs. Absent on the
+  // single-job path, where there is nothing to disentangle.
   const logLine = (record: Record<string, unknown>) => {
-    if (logEvents) process.stderr.write(JSON.stringify({ t: Date.now(), ...record }) + "\n");
+    if (logEvents) {
+      process.stderr.write(JSON.stringify({ t: Date.now(), ...(tag === undefined ? {} : { job: tag }), ...record }) + "\n");
+    }
   };
 
-  const models = createModels();
+  const models = createModels(job.provider === "codex" ? { credentials: codexCredentials() } : undefined);
   let model: Model<any>;
 
   if (job.provider === "faux") {
@@ -312,6 +585,22 @@ export async function runJob(job: Job): Promise<Trace> {
     models.setProvider(faux.provider);
     faux.setResponses(scriptToResponses(job.fauxScript ?? [{ kind: "text", text: "(no script)" }]));
     model = faux.getModel();
+  } else if (job.provider === "codex") {
+    // A ChatGPT Plus/Pro subscription rather than metered API credits. There is
+    // no per-request charge to report, so every cost column stays at zero — the
+    // run is not free, it is prepaid, and the report says so rather than
+    // implying the tokens cost nothing.
+    const provider = openaiCodexProvider();
+    models.setProvider(provider);
+    const catalog = provider.getModels();
+    const found = catalog.find((m: { id: string }) => m.id === job.modelId);
+    if (!found) {
+      throw new Error(
+        `unknown codex model: ${job.modelId}. Known: ${catalog.map((m: { id: string }) => m.id).join(", ")}`,
+      );
+    }
+    model = found as Model<any>;
+    logLine({ ev: "provider_auth", provider: "openai-codex", subscription: true });
   } else {
     models.setProvider(openrouterProvider());
     const pinned = MODELS[job.modelId];
@@ -365,7 +654,7 @@ export async function runJob(job: Job): Promise<Trace> {
       // Both arms get the identical tool surface. The only difference is
       // whether the system prompt carries the skill catalog — which is exactly
       // the difference a real deployment has, since activation is a file read.
-      tools: buildTools(record, job.withSkill),
+      tools: buildTools(record, job.withSkill, workspaceRoot),
       messages: [],
       thinkingLevel: job.thinkingLevel,
     },
@@ -434,10 +723,35 @@ export async function runJob(job: Job): Promise<Trace> {
     }
   });
 
+  /**
+   * Replace the computed cost with what the provider charged.
+   *
+   * Only when at least one request reported one — a faux run bills nothing and
+   * must stay at zero rather than inherit a stale figure. `usage.costUsd` is
+   * otherwise pi's arithmetic over our price table, which zeroes cache reads.
+   */
+  const settle = (): typeof usage => {
+    // A subscription has no per-request charge. pi still computes one from the
+    // catalog's price table, and reporting that would invent a bill nobody was
+    // sent — so the column reads zero and the notional figure goes to the log,
+    // where it is a curiosity rather than an accounting claim.
+    if (job.provider === "codex") {
+      const notionalUsd = notionalCost(job.modelId, usage);
+      logEvent({ ev: "billed", subscription: true, costUsd: 0, notionalUsd });
+      return { ...usage, costUsd: 0, notionalUsd };
+    }
+    if (billed.requests > 0) {
+      logEvent({ ev: "billed", requests: billed.requests, costUsd: billed.costUsd, computed: usage.costUsd });
+      // On a metered provider the charged amount is the honest figure for both.
+      return { ...usage, costUsd: billed.costUsd, notionalUsd: billed.costUsd };
+    }
+    return usage;
+  };
+
   try {
     await agent.prompt(job.prompt);
   } catch (error) {
-    return { toolCalls, finalText: chunks.join("\n"), usage, mutations: collectMutations(), error: String(error) };
+    return { toolCalls, finalText: chunks.join("\n"), usage: settle(), mutations: collectMutations(workspaceRoot), error: String(error) };
   }
   if (emptyTurns > 0 && !chunks.length) {
     // No text at all and at least one refused turn: the model never answered.
@@ -446,12 +760,12 @@ export async function runJob(job: Job): Promise<Trace> {
     return {
       toolCalls,
       finalText: "",
-      usage,
-      mutations: collectMutations(),
+      usage: settle(),
+      mutations: collectMutations(workspaceRoot),
       error: `provider returned ${emptyTurns} empty turn(s) and no text — throttled or truncated, not a skill result`,
     };
   }
-  return { toolCalls, finalText: chunks.join("\n"), usage, mutations: collectMutations() };
+  return { toolCalls, finalText: chunks.join("\n"), usage: settle(), mutations: collectMutations(workspaceRoot) };
 }
 
 function inContainer(): boolean {
@@ -469,13 +783,20 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     );
     process.exit(2);
   }
-  const job: Job = JSON.parse(fs.readFileSync(0, "utf-8"));
-  runJob(job)
-    .then((trace) => process.stdout.write(JSON.stringify(trace) + "\n"))
-    .catch((error) => {
-      process.stdout.write(
-        JSON.stringify({ toolCalls: [], finalText: "", error: String(error) }) + "\n",
-      );
+  const input = JSON.parse(fs.readFileSync(0, "utf-8")) as Job | Batch;
+  if ("jobs" in input) {
+    runBatch(input).catch((error) => {
+      process.stderr.write(`batch failed: ${String(error)}\n`);
       process.exitCode = 1;
     });
+  } else {
+    runJob(input)
+      .then((trace) => process.stdout.write(JSON.stringify(trace) + "\n"))
+      .catch((error) => {
+        process.stdout.write(
+          JSON.stringify({ toolCalls: [], finalText: "", error: String(error) }) + "\n",
+        );
+        process.exitCode = 1;
+      });
+  }
 }

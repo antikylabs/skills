@@ -18,6 +18,7 @@ export interface UsageTotals {
   reasoning: number;
   totalTokens: number;
   costUsd: number;
+  notionalUsd?: number;
   turns: number;
 }
 
@@ -49,7 +50,7 @@ export interface CaseResult {
 
 export const zeroUsage = (): UsageTotals => ({
   input: 0, output: 0, cacheRead: 0, cacheWrite: 0,
-  reasoning: 0, totalTokens: 0, costUsd: 0, turns: 0,
+  reasoning: 0, totalTokens: 0, costUsd: 0, notionalUsd: 0, turns: 0,
 });
 
 export function sumUsage(items: (UsageTotals | undefined)[]): UsageTotals {
@@ -63,6 +64,7 @@ export function sumUsage(items: (UsageTotals | undefined)[]): UsageTotals {
     total.reasoning += u.reasoning;
     total.totalTokens += u.totalTokens;
     total.costUsd += u.costUsd;
+    total.notionalUsd = (total.notionalUsd ?? 0) + (u.notionalUsd ?? 0);
     total.turns += u.turns;
   }
   return total;
@@ -202,6 +204,16 @@ export function renderReport(input: ReportInput): string {
       }
     } else {
       out.push(`  ${pad("run total", 14)}${padStart(usd(withUsage.costUsd), 14)}`);
+    }
+
+    // A subscription is charged nothing per request, so the figures above are
+    // honestly zero and useless for comparison. Price the same tokens at list
+    // so the run can be read beside a metered one.
+    const notional = (withUsage.notionalUsd ?? 0) + (withoutUsage.notionalUsd ?? 0);
+    if (withUsage.costUsd === 0 && notional > 0) {
+      out.push("");
+      out.push(`  ${pad("charged", 14)}${padStart(usd(0), 14)}  subscription — no per-request charge`);
+      out.push(`  ${pad("equivalent", 14)}${padStart(usd(notional), 14)}  same tokens at list price`);
     }
   } else if (input.provider !== "faux") {
     out.push("", "TOKENS", "  no usage reported by the provider");
