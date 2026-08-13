@@ -351,6 +351,8 @@ export async function runJob(job: Job): Promise<Trace> {
   });
 
   const chunks: string[] = [];
+  /** Assistant turns the provider returned with no tokens at all. See below. */
+  let emptyTurns = 0;
   agent.subscribe((event: any) => {
     switch (event.type) {
       case "tool_execution_start":
@@ -376,6 +378,17 @@ export async function runJob(job: Job): Promise<Trace> {
     // Usage is per assistant turn. A tool-using run has several, so they sum.
     const u = event.message.usage;
     if (u) {
+      // A turn that consumed nothing and produced nothing is the provider
+      // declining to answer — a 429, a truncation, an empty completion. pi ends
+      // the run cleanly and the trace looks like a well-behaved agent that
+      // simply stopped early, so the case fails on its own assertion and the
+      // report blames the skill.
+      //
+      // This shipped a release. A throttled burst produced 131 empty final turns
+      // out of 134 runs and the headline read "7/67 with the skills, 5/67
+      // without" — a plausible number that measured nothing but rate limiting.
+      // Count them so the run can refuse to be reported.
+      if (!u.input && !u.output && !u.cacheRead && !u.cacheWrite) emptyTurns += 1;
       usage.input += u.input ?? 0;
       usage.output += u.output ?? 0;
       usage.cacheRead += u.cacheRead ?? 0;
@@ -397,6 +410,18 @@ export async function runJob(job: Job): Promise<Trace> {
     await agent.prompt(job.prompt);
   } catch (error) {
     return { toolCalls, finalText: chunks.join("\n"), usage, mutations: collectMutations(), error: String(error) };
+  }
+  if (emptyTurns > 0 && !chunks.length) {
+    // No text at all and at least one refused turn: the model never answered.
+    // An error here is honest — the alternative is a verdict about a skill,
+    // derived from a response that was never produced.
+    return {
+      toolCalls,
+      finalText: "",
+      usage,
+      mutations: collectMutations(),
+      error: `provider returned ${emptyTurns} empty turn(s) and no text — throttled or truncated, not a skill result`,
+    };
   }
   return { toolCalls, finalText: chunks.join("\n"), usage, mutations: collectMutations() };
 }

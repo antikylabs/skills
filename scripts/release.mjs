@@ -211,6 +211,21 @@ if (!data.paired) {
   );
 }
 
+// v0.3.0 shipped a headline of "7/67 with the skills, 5/67 without". OpenRouter
+// had throttled the burst; 131 of 134 runs came back empty. The trace of a
+// refused request looks exactly like an agent that answered briefly and stopped,
+// so nothing upstream noticed and the number read as a real result.
+const refused = data.providerFailures ?? data.cases.filter((c) => c.withSkill.error).length;
+if (refused > 0) {
+  die(
+    `run ${runId} has ${refused}/${data.cases.length} runs the provider did not answer`,
+    "  Rate limiting, truncation, or an outage. Those cases measured nothing, and a\n" +
+      "  pass rate computed over them is not a result — it is the shape of the failure.\n\n" +
+      "  Wait for the limit to clear and re-run. Lower concurrency with EVAL_CONCURRENCY\n" +
+      "  if it keeps happening.",
+  );
+}
+
 const total = data.cases.length;
 const withPass = data.cases.filter((c) => c.withSkill.passed).length;
 const withoutPass = data.cases.filter((c) => c.withoutSkill?.passed).length;

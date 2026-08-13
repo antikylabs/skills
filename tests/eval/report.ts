@@ -121,6 +121,17 @@ export function renderReport(input: ReportInput): string {
 
   // --- results -------------------------------------------------------------
 
+  const refused = results.filter((r) => r.withSkill.error);
+  if (refused.length > 0) {
+    out.push("", "PROVIDER FAILURES");
+    out.push(`  ${refused.length}/${total} runs carry an error and did not measure anything.`);
+    out.push("  Treat every number below as void until this is zero.");
+    for (const r of refused.slice(0, 5)) {
+      out.push(`    ${r.testCase.id}: ${String(r.withSkill.error).slice(0, 110)}`);
+    }
+    if (refused.length > 5) out.push(`    … and ${refused.length - 5} more`);
+  }
+
   out.push("", "RESULTS");
   const shamRuns = results.filter((r) => r.sham);
   const shamPass = results.filter((r) => r.sham?.verdict.passed).length;
@@ -470,6 +481,9 @@ export function writeReportFiles(dir: string, input: ReportInput, text: string):
         runtime: input.runtime,
         paired: input.paired,
         durationMs: input.durationMs,
+        // A run where the provider stopped answering is not a measurement.
+        // The release gate reads this; see scripts/release.mjs.
+        providerFailures: input.results.filter((r) => r.withSkill.error).length,
         totals: {
           withSkill: sumUsage(input.results.map((r) => r.withSkill.usage)),
           withoutSkill: sumUsage(input.results.map((r) => r.withoutSkill?.usage)),
