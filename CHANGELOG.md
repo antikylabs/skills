@@ -32,6 +32,16 @@ a skill result and printed a plausible number.
 The discriminator is clean rather than merely plausible: **0 of 201 logs** in the last healthy run
 carry a zero-token turn, against **132 of 134** in the throttled ones.
 
+Detection alone would only have turned a false number into a blocked release, and it did: cutting
+0.3.1 failed the new gate at 66/67. Asking OpenRouter directly gave the cause —
+`x-ratelimit-limit: 10`, `x-ratelimit-remaining: 0`. The limit is on **requests**, not spend, and a
+paired run is several hundred of them, so the harness walked into the wall every time. Lowering
+concurrency did not help; the rate is the constraint, not the parallelism.
+
+The fetch shim now waits out a 429 and retries — up to six times, honouring `x-ratelimit-reset`
+where it is present and falling back to exponential backoff where it is not. Retries are logged as
+`rate_limited` so a slow run is legible rather than mysterious.
+
 ## [0.3.0] — 2026-08-12
 
 Six new skills, and the split that made them possible: what a thing *is* is portable, and where it

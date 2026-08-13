@@ -191,6 +191,16 @@ const OPENROUTER_ROUTING: Record<string, unknown> = {
  * hook in the SDK, not a general request interceptor — if pi grows an
  * extra-body option, delete this and pass the field properly.
  */
+/** How many times a 429 is waited out before the request is allowed to fail. */
+const RATE_LIMIT_RETRIES = 6;
+
+/** Same line shape as the per-run logger, usable from module scope. */
+const logEvent = (record: Record<string, unknown>) => {
+  if (process.env.EVAL_LOG === "1") {
+    process.stderr.write(JSON.stringify({ t: Date.now(), ...record }) + "\n");
+  }
+};
+
 function installProviderRouting(
   routing: unknown,
   onServed: (provider: string) => void,
@@ -222,7 +232,25 @@ function installProviderRouting(
       }
     }
 
-    const response = await original(input, init);
+    // OpenRouter rate-limits by request, not by spend, and the limit is small:
+    // a 429 carries `x-ratelimit-limit: 10` with `remaining: 0`. A paired run is
+    // several hundred requests, so without backoff a run walks straight into the
+    // wall — and pi surfaces the rejection as an empty turn, which reads like an
+    // agent that answered briefly and stopped. That is how v0.3.0 shipped a
+    // headline computed over 131 refused requests.
+    //
+    // Honour the reset header when it is present, since it is exact, and fall
+    // back to exponential backoff when it is not.
+    let response = await original(input, init);
+    for (let attempt = 0; response.status === 429 && attempt < RATE_LIMIT_RETRIES; attempt++) {
+      const resetAt = Number(response.headers.get("x-ratelimit-reset") ?? 0);
+      const fromHeader = resetAt > 0 ? resetAt - Date.now() : 0;
+      const backoff = 1000 * 2 ** attempt;
+      const waitMs = Math.min(Math.max(fromHeader, backoff), 30_000);
+      logEvent({ ev: "rate_limited", attempt: attempt + 1, waitMs });
+      await new Promise((resolve) => setTimeout(resolve, waitMs));
+      response = await original(input, init);
+    }
 
     // Record the endpoint that actually served the call. With unpinned routing
     // the price varies by endpoint, so the reported cost is only checkable if we
