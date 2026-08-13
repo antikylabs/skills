@@ -54,6 +54,17 @@ Antiky repository — where a file goes, which script generates it, what the hou
 | [`general-write-objectives`](skills/general-write-objectives/) | Ready | Run objectives end to end: scaffold, research, plan, goals, execute, audit, archive. |
 | [`general-brometal-patching`](skills/general-brometal-patching/) | Ready | Consume BroMetal as a patched dependency and upstream the fixes. |
 | [`general-simplified-technical-english`](skills/general-simplified-technical-english/) | Ready | Write, audit, and fix text against ASD-STE100 Issue 9. Carries a deterministic linter and the controlled vocabulary. |
+| [`general-write-docs`](skills/general-write-docs/) | Ready | Write and audit user-facing documentation with Diátaxis. Covers each page type and the way it fails. |
+| [`general-engineering`](skills/general-engineering/) | Ready | A principal-engineer sidekick for judgement. Gut-check, talk out, plan, or grill. Read-only. |
+| [`general-wait-what`](skills/general-wait-what/) | Ready | Re-pitch something that did not land. Human-invoked only — it stays out of the model's catalog. |
+| [`repo-write-adrs`](skills/repo-write-adrs/) | Ready | Antiky ADR conventions: areas, per-area numbering, the index, the AIP link, the writing standard. |
+| [`repo-write-objectives`](skills/repo-write-objectives/) | Ready | Antiky objective conventions: the layout, file naming, required reading, archiving. |
+| [`repo-write-docs`](skills/repo-write-docs/) | Ready | Antiky documentation standards: where pages live, what is generated, ownership suffixes, the contract test. |
+
+The `general-` and `repo-` pairs are meant to be used together. The `general-` skill carries the
+craft, which is portable to any repository; the `repo-` skill carries only what is true here. A
+repository's `AGENTS.md` points at the `repo-` skill rather than restating the convention, so an
+unrelated session does not pay for it.
 
 Stub skills contain frontmatter only. They are placeholders and do not yet give an agent useful
 instructions.
@@ -75,6 +86,9 @@ table; each command has its own playbook under `reference/`.
 | `general-write-adrs` | `write`, `suggest` |
 | `general-brometal-patching` | `update`, `patch`, `pr` |
 | `general-write-objectives` | `init`, `create-research`, `create-plan`, `create-goals`, `execute`, `audit`, `complete-goal`, `complete-objective` |
+| `general-write-docs` | `classify`, `write`, `audit`, `split` |
+| `general-engineering` | `gut-check`, `talk-it-out`, `plan-it`, `grill-it` |
+| `general-wait-what` | *(bare)*, `init` |
 
 ## Repository layout
 
@@ -87,7 +101,7 @@ skills/
 ```
 
 The CLI discovers skills in `skills/` up to three directory levels deep, so category folders such as
-`skills/team/general-write-adrs/SKILL.md` also work.
+`skills/general/general-write-adrs/SKILL.md` also work. This repository keeps them flat.
 
 ## Add a skill
 

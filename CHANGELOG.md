@@ -9,10 +9,46 @@ version, not a patch.
 
 ## [Unreleased]
 
-- refactor `team-` to `general-`
-- refactor tests to `suites` with contained eval & fixture per suite
-- suites now reflect the name of the skill for easy correlation
-- added `GOOD_ENGINEERING_H.md` which is part of our standard engineering principles
+## [0.3.0] — 2026-08-12
+
+Six new skills, and the split that made them possible: what a thing *is* is portable, and where it
+goes in an Antiky repository is not. `general-write-adrs` and `general-write-objectives` carried both
+and could not be installed anywhere else without dragging our directory layout along. They now carry
+only the craft.
+
+The measurement changed too, and not flatteringly — see **Eval methodology** below.
+
+### Added
+
+| Skill | What it carries |
+| --- | --- |
+| `general-write-docs` | Diátaxis: the four page types, choosing one, drafting, auditing, splitting. Each type is given with the way it fails, because the definitions are the easy part |
+| `general-engineering` | A principal-engineer sidekick — `gut-check`, `talk-it-out`, `plan-it`, `grill-it`. Read-only by construction, so "gut-check this" cannot become an unrequested refactor |
+| `general-wait-what` | Re-pitch something that did not land. Human-invoked only: `disable-model-invocation: true` keeps it out of the model's catalog |
+| `repo-write-adrs` | Antiky ADR conventions — areas and their separate sequences, the ownership suffix, the index, the AIP link, the writing standard |
+| `repo-write-objectives` | Antiky objective conventions — the layout, file naming, required reading, archiving |
+| `repo-write-docs` | Antiky documentation standards — placement, what is generated, ownership suffixes, banned planning vocabulary, the contract test |
+
+A `repo-` skill **is** the convention rather than a summary of one kept elsewhere. A repository's
+`AGENTS.md` points at the skill instead of restating it, so an unrelated session does not pay for a
+procedure it will never run. Two copies of a convention is worse than either home alone.
+
+### Changed
+
+- `general-write-adrs` and `general-write-objectives` now read correctly in a foreign repository.
+  Removed: `docs/adr/{framework,cli,studio}` paths, the `_H` suffix, `tag-hash.sh`, the AIP link,
+  the hardcoded ASD-STE100 requirement, `docs/objectives/` layout, `VISION_DIRECTION_H.md`, and the
+  `demo-refining` exemplar. All of it moved to the matching `repo-` skill.
+- `AGENTS.md` documents the `antiky-` / `repo-` distinction, which is the one people get wrong:
+  `antiky-` is for someone *using* Antiky, `repo-` for someone *working inside* an Antiky repository.
+- Added `docs/GOOD_ENGINEERING_H.md`. `general-engineering` keeps its own copy as the source of
+  truth, with a unit test that fails on drift.
+
+### Tests
+
+- Suites reorganised to `tests/eval/suites/<skill-name>/{cases,fixtures}/`, named exactly for the
+  skill, so a skill and everything that measures it stay together.
+- 67 cases across nine suites, up from 45.
 
 ### Eval methodology
 
@@ -34,17 +70,15 @@ them. Credits in `tests/README.md`.
   and "wrote the record, then read the area" contain the same calls and are not the same behaviour.
   From impeccable's `loadedBeforeImplementationWrite`.
 
-### Added
+Also added `repoadrs-index-unnamed`, a trap case after ponytail's `trace-transfer`: the prompt asks
+only for a record to be filed and the assertion checks the index, which the prompt never mentions.
+Gate (is the record well-formed?) and trap are scored separately. It immediately found a harness gap
+— mutation contents covered created files only, so the index's text was unreachable and the
+assertion could tell that the file had been touched but not whether the edit was right. Fixed.
 
-- `repoadrs-index-unnamed`, a trap case after ponytail's `trace-transfer`: the prompt asks only for
-  a record to be filed and the assertion checks the index, which the prompt never mentions. Gate
-  (is the record well-formed?) and trap are scored separately.
-- Mutation contents now cover modified files, not only created ones. The trap case found this —
-  the index is modified, so its text was unreachable and the assertion could tell that the file had
-  been touched but not whether the edit was right.
+### Breaking
 
-**This is breaking.** A skill's name is part of its public interface, so the next release is a minor
-bump and every existing install needs the new name:
+A skill's name is part of its public interface, so every existing install needs the new name:
 
 | Old | New |
 | --- | --- |
@@ -55,6 +89,9 @@ bump and every existing install needs the new name:
 
 `team-brometal` also gained its task: the naming rule is prefix plus task, and a subject alone does
 not say what the skill does with it.
+
+The `team-` prefix is gone. Working practice not tied to Antiky is `general-`; working inside an
+Antiky repository is `repo-`.
 
 ## [0.2.3] — 2026-08-12
 
