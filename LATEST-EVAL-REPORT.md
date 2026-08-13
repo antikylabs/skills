@@ -27,7 +27,7 @@ until the assertions have been shown capable of failing.
 | `repo-write-objectives` | 3/3 | 1/3 | **+2** |
 | **Total** | **50/67** | **29/67** | **+21** |
 
-Run cost, both arms: **$0.0000**.
+Run cost, both arms: **$0.3718** (equivalent at list price; subscription run, nothing charged).
 
 ## How to read this
 

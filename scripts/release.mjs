@@ -236,7 +236,18 @@ if (refused > 0) {
 const total = data.cases.length;
 const withPass = data.cases.filter((c) => c.withSkill.passed).length;
 const withoutPass = data.cases.filter((c) => c.withoutSkill?.passed).length;
-const cost = (data.totals.withSkill.costUsd + data.totals.withoutSkill.costUsd).toFixed(4);
+const charged = data.totals.withSkill.costUsd + data.totals.withoutSkill.costUsd;
+const notional = (data.totals.withSkill.notionalUsd ?? 0) + (data.totals.withoutSkill.notionalUsd ?? 0);
+/**
+ * What the release headline quotes.
+ *
+ * A subscription run is charged nothing, so `charged` is honestly zero and tells
+ * a reader nothing about how much work the run was. Fall back to the same tokens
+ * priced at list, labelled so the two are never confused.
+ */
+const usingNotional = charged === 0 && notional > 0;
+const cost = (usingNotional ? notional : charged).toFixed(4);
+const costLabel = usingNotional ? " (equivalent at list price; subscription run, nothing charged)" : "";
 const delta = withPass - withoutPass;
 
 const bySuite = {};
@@ -285,7 +296,7 @@ until the assertions have been shown capable of failing.
 ${suiteRows}
 | **Total** | **${withPass}/${total}** | **${withoutPass}/${total}** | **${delta >= 0 ? "+" : ""}${delta}** |
 
-Run cost, both arms: **$${cost}**.
+Run cost, both arms: **$${cost}**${costLabel}.
 
 ## How to read this
 
@@ -349,7 +360,7 @@ const message = `${version}
 
 ${summary || "See CHANGELOG.md."}
 
-Eval: ${withPass}/${total} with the skills against ${withoutPass}/${total} without (${delta >= 0 ? "+" : ""}${delta} cases), run cost $${cost}, model ${data.model}.
+Eval: ${withPass}/${total} with the skills against ${withoutPass}/${total} without (${delta >= 0 ? "+" : ""}${delta} cases), run cost $${cost}${costLabel}, model ${data.model}.
 Full report in LATEST-EVAL-REPORT.md, including known defects.`;
 
 if (DRY_RUN) {
@@ -377,7 +388,7 @@ if (DRY_RUN || NO_PUSH) {
 
 process.stdout.write(
   `\n${bold(DRY_RUN ? `Dry run complete — ${version} not cut` : `${version} released`)}\n` +
-    `    ${withPass}/${total} with the skills, ${withoutPass}/${total} without, $${cost}\n` +
+    `    ${withPass}/${total} with the skills, ${withoutPass}/${total} without, $${cost}${costLabel}\n` +
     (DRY_RUN || NO_PUSH ? "" : `    https://github.com/antikylabs/skills/releases/tag/${version}\n`) +
     "\n",
 );
