@@ -9,6 +9,29 @@ version, not a patch.
 
 ## [Unreleased]
 
+## [0.3.1] — 2026-08-13
+
+**The eval number in v0.3.0 is void.** Its `LATEST-EVAL-REPORT.md` reads *"7/67 with the skills,
+5/67 without, +2"*. That measured OpenRouter throttling. 131 of 134 runs came back with an empty
+zero-token turn and two carried an explicit `429`, in 78 seconds — a suite that legitimately takes
+around 500. The key was not near its cap; three full multi-arm runs back to back tripped a burst
+limit. The skills and tests in that tag are correct; only the headline is wrong.
+
+### Fixed
+
+Nothing caught it, which is the actual defect. pi ends a refused run cleanly, so the trace was
+indistinguishable from an agent that answered briefly and stopped, and every layer above read it as
+a skill result and printed a plausible number.
+
+- `agent-run.ts` counts assistant turns the provider returned with no tokens at all. No text plus at
+  least one refused turn now returns an explicit error instead of an empty success.
+- The report prints a `PROVIDER FAILURES` block and carries `providerFailures` in JSON.
+- `release.mjs` refuses to cut a release when that count is non-zero, beside the existing faux and
+  unpaired gates.
+
+The discriminator is clean rather than merely plausible: **0 of 201 logs** in the last healthy run
+carry a zero-token turn, against **132 of 134** in the throttled ones.
+
 ## [0.3.0] — 2026-08-12
 
 Six new skills, and the split that made them possible: what a thing *is* is portable, and where it
