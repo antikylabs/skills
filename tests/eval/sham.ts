@@ -48,6 +48,20 @@ const SKILLS_DIR = path.resolve(HERE, "../../skills");
  * comes away feeling helped.
  */
 const GENERIC_BODIES: Record<string, string> = {
+  "general-anti-slop": `# Keeping a repository tidy
+
+A repository accumulates files nobody meant to keep. Left alone, the accumulation becomes the
+norm, and nobody can tell which files still matter.
+
+- Put a test where the project's test runner will find it. A test nothing runs is not a test.
+- Delete a script once the job it did is finished, or write down when someone should run it.
+- When a directory fills with files whose names share a prefix, the prefix is asking for a folder.
+- Review a new file as carefully as a new dependency. A file is a commitment to maintain it.
+
+The same discipline applies to what a document asserts. Saying that something is fast, robust, or
+maintainable tells a reader nothing on its own. Give the number, the measurement, or the record
+that settled it, or leave the claim out.`,
+
   "general-simplified-technical-english": `# Writing clearly for technical readers
 
 Technical prose is read under pressure by people who are looking for one thing. Write so that

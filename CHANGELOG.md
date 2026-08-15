@@ -9,6 +9,76 @@ version, not a patch.
 
 ## [Unreleased]
 
+## [0.4.0] — 2026-08-14
+
+A new skill, `general-anti-slop`, and the eval suite that measures it.
+
+The question it came from was "can an ADR become a lint". The answer that survived research is that
+the framing was wrong: no discipline that makes decisions stick verifies rationale either. Aviation
+does not verify that a deferred repair is safe. They require a declaration and diff the declaration.
+What is checkable is the ceremony around the reasoning — that it exists, that its scope resolves,
+that deviations are named and dated. The reasoning is kept in
+[`docs/architecture-lint-research.md`](docs/architecture-lint-research.md); the objective that
+produced it is archived at `docs/objectives/_archives/architecture-life-summary.md`.
+
+The skill rejects one thing: **anything shaped like evidence that is not evidence.** A test that
+cannot fail, a test committed switched off, a caught error nobody reads, a stub with a finished
+signature, a suppression with no reason, a script nothing invokes, a test the runner never collects,
+and a sentence asserting a system is robust with nothing a reader could check.
+
+### Added
+
+- **`general-anti-slop`** — 28 rules across four checkers, four commands, five reference playbooks.
+  - Five Oxlint rules written here: `no-tautological-assertion`, `no-disabled-test`,
+    `no-swallowed-error`, `no-placeholder-body`, `require-suppression-reason`.
+  - Fifteen rules **vendored verbatim** from [`dmmulroy/anti-slop`](https://github.com/dmmulroy/anti-slop)
+    (MIT, © 2026 Dillon Mulroy), with its licence, its upstream commit recorded, and its own twelve
+    test files running in our suite. Both projects are MIT; nothing is forked and nothing under
+    `vendor/` is edited.
+  - Four structure rules — `no-uncollected-test`, `no-orphan-script`, `no-folder-in-filenames`,
+    `no-redundant-prefix` — that derive their expectations from the project's own configuration.
+  - Four prose rules plus ten editable patterns: `no-unsupported-claim`, `no-time-estimate`,
+    `no-empty-metaphor`, `no-ai-tell`. Adding a word is a data change with a `--self-test` loop.
+- **`tests/eval/suites/general-anti-slop/`** — 11 cases across trigger, audit, reporting, and fix.
+- **`run_prose_lint` and `run_structure_lint`** in the sandbox tool surface. Without them, "ran the
+  checker rather than guessing" is not an assertion anyone can make about a checker-bearing skill.
+
+### Changed
+
+- Every rule declares its **oracle**. `derived` was read from the project's own configuration and is
+  a fact; `heuristic` prints `(proxy)` and is arguable. A proxy dressed as a proof is worse than no
+  check, and the output says which it is.
+- Every rule carries **`Do:`** and **`Never:`** — the correction, and the cheap fix that would hide
+  the finding. A unit test fails if either is missing.
+- Every rule ships a fixture that makes it fire and one that keeps it quiet, or it does not load.
+- `structure_lint.mjs` skips `vendor/`, `third_party/`, and fixture trees. Vendored code ships its
+  own layout and its own tests, and neither is ours to judge.
+- `tests/tsconfig.json` excludes `eval/suites/*/fixtures/**`. A fixture is sample code under test; one
+  written for a type-safety rule has to be able to fail a typecheck.
+- `general-write-docs/reference/split.md` and `general-wait-what/reference/artifact.md` lost four
+  metaphors that stood in for mechanisms — found by running the new prose checker over this
+  repository. `split.md` already defined "seam" in its own next sentence, so the definition became
+  the heading.
+- `tests/README.md` documents adding a whole **suite**, not just a case: the four registrations that
+  each fail the build separately.
+
+### Measured
+
+Paired live runs on `deepseek/deepseek-v4-flash-0731`, both routings, `EVAL_THINKING=high`, at
+`EVAL_REPEAT=1`. Two findings held across every arm of both runs:
+
+- `separates-machine-from-judgement` is carried by the skill.
+- `does-not-claim-clean-from-a-clean-run` **fails in all four arms.** That is the first rule
+  `SKILL.md` states, and on this model it has no measurable effect. It is the clearest open defect
+  in the skill and it is recorded here rather than smoothed over.
+
+Three of eleven cases flipped between the two routings, including a regression that did not
+reproduce. Single samples at this scale are noise; the per-suite number in the release report should
+be read with that in mind, and `EVAL_REPEAT` raised before anything is concluded from it.
+
+Six to seven cases pass in both arms every time. They are regression guards, not evidence, and the
+report says so.
+
 ## [0.3.1] — 2026-08-13
 
 **The eval number in v0.3.0 is void.** Its `LATEST-EVAL-REPORT.md` reads *"7/67 with the skills,

@@ -15,5 +15,7 @@
     "allowJs": true,
     "checkJs": false
   },
-  "include": ["**/*.ts"]
+  "include": ["**/*.ts"],
+  "//": "Fixtures are sample code under test, not code we compile. A fixture for a type-safety rule has to be able to fail a typecheck, so compiling them here would be backwards.",
+  "exclude": ["node_modules", "eval/suites/*/fixtures/**"]
 }

@@ -68,6 +68,9 @@ const LintSchema = Type.Object({
     Type.Union([Type.Literal("auto"), Type.Literal("procedural"), Type.Literal("descriptive")]),
   ),
 });
+const PathOnlySchema = Type.Object({
+  path: Type.String({ description: "Absolute path of the file or directory to check" }),
+});
 const EditSchema = Type.Object({
   path: Type.String(),
   old_string: Type.String(),
@@ -157,6 +160,47 @@ export function buildTools(
     },
   };
 
+  /** Run one of the anti-slop checkers and return its findings verbatim. */
+  const antiSlopChecker = (
+    name: string,
+    label: string,
+    script: string,
+    description: string,
+  ): AgentTool<typeof PathOnlySchema> => ({
+    name,
+    label,
+    description,
+    parameters: PathOnlySchema,
+    execute: async (_id, params) => {
+      record({ name, args: { path: params.path }, blocked: false });
+      const resolved = assertReadable(params.path);
+      const result = spawnSync(
+        process.execPath,
+        [`/skills/general-anti-slop/scripts/${script}`, "--fail-on", "never", resolved],
+        { encoding: "utf-8", timeout: 30_000 },
+      );
+      const text = [result.stdout, result.stderr].filter(Boolean).join("\n").trim();
+      return {
+        content: [{ type: "text", text: text || "(no findings)" }],
+        details: { path: resolved, status: result.status },
+      };
+    },
+  });
+
+  const runProseLint = antiSlopChecker(
+    "run_prose_lint",
+    "Run Prose Checker",
+    "prose_lint.mjs",
+    "Run the anti-slop prose checker over a document and return its findings. It decides claims with no referent, time estimates, empty metaphors, and structural tics. It does not judge anything else, and it must not be answered from memory.",
+  );
+
+  const runStructureLint = antiSlopChecker(
+    "run_structure_lint",
+    "Run Structure Checker",
+    "structure_lint.mjs",
+    "Run the anti-slop structure checker over a repository root and return its findings. It decides uncollected tests, orphan scripts, and directory shape, and prints any rule it could not check. It must not be answered from memory.",
+  );
+
   // Real implementations, scoped to /workspace. The container is the boundary,
   // so a writable scratch inside it lets a case assert on what the agent DID
   // rather than on what it said it would do. Writes outside /workspace throw,
@@ -208,5 +252,5 @@ export function buildTools(
     },
   };
 
-  return [readFile, listDir, runSteLint, editFile, writeFile, moveFile] as AgentTool[];
+  return [readFile, listDir, runSteLint, runProseLint, runStructureLint, editFile, writeFile, moveFile] as AgentTool[];
 }

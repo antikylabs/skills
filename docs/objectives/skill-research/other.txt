@@ -1,0 +1,5 @@
+https://github.com/Donchitos/Claude-Code-Game-Studios
+https://github.com/gamedev-skills/awesome-gamedev-agent-skill
+https://github.com/PlayableIntelligence/game-creator
+https://github.com/LVTD-LLC/skills
+https://github.com/fagemx/gstack-game

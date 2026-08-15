@@ -69,7 +69,8 @@ export type Suite =
   | "repo-write-docs"
   | "general-engineering"
   | "repo-write-adrs"
-  | "repo-write-objectives";
+  | "repo-write-objectives"
+  | "general-anti-slop";
 
 export interface EvalCase {
   id: string;
@@ -246,6 +247,7 @@ export const SKILLS = {
   engineering: "general-engineering",
   repoAdrs: "repo-write-adrs",
   repoObjectives: "repo-write-objectives",
+  antiSlop: "general-anti-slop",
 } as const;
 
 // --- fixture paths ---------------------------------------------------------

@@ -78,7 +78,7 @@ tests/
     Dockerfile        the sandbox image
     sandbox/
       agent-run.ts    runs ONLY inside the container
-      tools.ts        the read-only tool surface
+      tools.ts        the tool surface: reads, the checkers, and the writable workspace
       skills.ts       discovery via pi's own loadSkills()
       workspace.ts    assembles /workspace from every suite's fixtures
 ```
@@ -204,6 +204,23 @@ observable — which is the entire ownership case.
    self-test feeds each one to its own assertion. An assertion with no counter-example is not a
    test.
 5. `EVAL_REBUILD=1 npm run test:skill-behavior` to pick up skill changes.
+
+### Adding a whole suite
+
+A new skill needs four registrations, and the build fails on each one in turn if you miss it:
+
+1. `eval/suites/types.ts` — add the skill to the `Suite` union and to `SKILLS`.
+2. `eval/suites/index.ts` — import the suite's cases and add them to `SUITES`.
+3. `eval/sham.ts` — add a generic body. The sham arm must cover every skill, or the catalog it
+   presents is not the catalog the with-skill arm presents.
+4. `tsconfig.json` — nothing, unless the fixtures are source files. Fixtures are sample code *under
+   test*: a fixture for a type-safety rule has to be able to fail a typecheck, so
+   `eval/suites/*/fixtures/**` is excluded from compilation.
+
+If the skill ships a checker, give the agent a tool that runs it — `sandbox/tools.ts`, and the
+matching line in the system prompt in `container.ts`. Without one, "ran the checker rather than
+guessing" is not an assertion anyone can make, and a stale container image will fail those cases
+until you pass `EVAL_REBUILD=1`.
 
 ### Make the control a near miss
 

@@ -123,6 +123,25 @@ const MODELS: Record<string, Model<"openai-completions">> = {
     contextWindow: 1_048_576,
     maxTokens: 8192,
   } as unknown as Model<"openai-completions">,
+  // The same snapshot with :nitro, which pins OpenRouter to a high-throughput
+  // endpoint. Cost is the listed nitro price, $0.0798/$0.1596 per M, taken from
+  // the OpenRouter listing while a 43% discount was running — so it sits below
+  // the entry above rather than at its $0.08/$0.18. Re-check it when the
+  // discount ends; the cost report is only honest at the rate actually billed.
+  "deepseek/deepseek-v4-flash-0731:nitro": {
+    id: "deepseek/deepseek-v4-flash-0731:nitro",
+    name: "DeepSeek V4 Flash (0731, nitro)",
+    api: "openai-completions",
+    provider: "openrouter",
+    baseUrl: "https://openrouter.ai/api/v1",
+    reasoning: true,
+    compat: { requiresReasoningContentOnAssistantMessages: true, thinkingFormat: "deepseek" },
+    thinkingLevelMap: { minimal: null, low: null, medium: null, high: "high", xhigh: "max" },
+    input: ["text"],
+    cost: { input: 0.0798, output: 0.1596, cacheRead: 0.01596, cacheWrite: 0 },
+    contextWindow: 1_048_576,
+    maxTokens: 8192,
+  } as unknown as Model<"openai-completions">,
   // Routed to Cerebras at fp16 — see OPENROUTER_ROUTING. Pricing here is
   // Cerebras's ($0.35/$0.75), not gpt-oss-120b's default-routing price
   // ($0.03/$0.17): the fast provider costs about ten times the input rate, and

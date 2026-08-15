@@ -519,7 +519,7 @@ export function systemPrompt(withSkill = true): string {
   // contradicting itself rather than the skill failing.
   const base = `You are a documentation engineer working in a repository.
 
-The repository is at /workspace and you can read and write it: read_file, list_dir, write_file, edit_file, and move_file all work there. run_ste_lint runs the STE checker over a file.
+The repository is at /workspace and you can read and write it: read_file, list_dir, write_file, edit_file, and move_file all work there. run_ste_lint runs the STE checker over a file. run_prose_lint and run_structure_lint run the anti-slop checkers over a file and over a repository root.
 
 /skills is read-only — you can read a skill and its playbooks, but not change them. There is no shell.
 

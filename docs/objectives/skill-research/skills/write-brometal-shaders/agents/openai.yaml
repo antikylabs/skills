@@ -1,0 +1,4 @@
+interface:
+  display_name: "Write BroMetal Shaders"
+  short_description: "Build typed WebGPU rendering with BroMetal"
+  default_prompt: "Use $write-brometal-shaders to implement rendering with BroMetal."

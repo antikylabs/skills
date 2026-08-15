@@ -52,5 +52,5 @@ with the diagnosis, and that disagreement is cheap now and expensive after an ed
 
 - Do not edit the file. Not even the obvious typo — an edit signals the diagnosis was accepted.
 - Do not reach for the writing skill first because prose is visible and structure is not.
-- Do not produce a list of every small thing. One diagnosis, the load-bearing one.
+- Do not produce a list of every small thing. One diagnosis: the one the others follow from.
 - Do not say "this could be clearer". That is the complaint, not the diagnosis.

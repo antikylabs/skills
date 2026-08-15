@@ -1,0 +1,4 @@
+interface:
+  display_name: "Source Game Assets"
+  short_description: "Find reusable assets with clear provenance"
+  default_prompt: "Use $source-game-assets to find safe reusable assets for this game."

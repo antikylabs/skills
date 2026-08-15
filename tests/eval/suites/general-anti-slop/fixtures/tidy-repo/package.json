@@ -1,0 +1,5 @@
+{
+  "name": "billing-service",
+  "private": true,
+  "scripts": { "test": "vitest run", "release": "sh scripts/release.sh" }
+}

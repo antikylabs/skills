@@ -20,6 +20,7 @@ import { REPO_WRITE_DOCS_CASES } from "./repo-write-docs/cases/index.ts";
 import { GENERAL_ENGINEERING_CASES } from "./general-engineering/cases/index.ts";
 import { REPO_WRITE_ADRS_CASES } from "./repo-write-adrs/cases/index.ts";
 import { REPO_WRITE_OBJECTIVES_CASES } from "./repo-write-objectives/cases/index.ts";
+import { ANTI_SLOP_CASES } from "./general-anti-slop/cases/index.ts";
 
 export * from "./types.ts";
 
@@ -33,6 +34,7 @@ export const SUITES = {
   "general-engineering": GENERAL_ENGINEERING_CASES,
   "repo-write-adrs": REPO_WRITE_ADRS_CASES,
   "repo-write-objectives": REPO_WRITE_OBJECTIVES_CASES,
+  "general-anti-slop": ANTI_SLOP_CASES,
 } satisfies Record<Suite, EvalCase[]>;
 
 export const SUITE_NAMES = Object.keys(SUITES) as Suite[];

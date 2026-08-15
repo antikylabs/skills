@@ -1,0 +1,5 @@
+{
+  "name": "checkout-service",
+  "private": true,
+  "scripts": { "test": "vitest run", "build": "tsc -p ." }
+}

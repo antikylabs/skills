@@ -31,21 +31,21 @@ Run [classify.md](classify.md) on each half. A split almost always produces two 
 that is usually what went wrong in the first place. Two halves of the same type suggests the page
 just needs reorganising.
 
-### 3. Find the seam
+### 3. Find where the reader changes
 
-The seam is where the reader changes, and it is usually visible: a heading where the tone shifts
-from doing to explaining, or where the assumed knowledge jumps.
+That point is usually visible: a heading where the tone shifts from doing to explaining, or where
+the assumed knowledge jumps.
 
-Content that belongs to both halves is the hard part. **Put it where it is load-bearing and link
-from the other.** Do not duplicate it — two copies diverge, and the reader who finds the stale one
-has no way to know.
+Content that belongs to both halves is the hard part. **Put it on the page that cannot be understood
+without it, and link from the other.** Do not duplicate it — two copies diverge, and the reader who
+finds the stale one has no way to know.
 
 ### 4. Propose
 
 State:
 
 - the two pages, each with its type, its reader, and a title in the reader's words;
-- where the seam falls, quoted;
+- where the page divides, quoted;
 - what content is shared, which page owns it, and where the link goes;
 - what is lost by splitting — usually the reader who genuinely wanted both, and how the links
   address them;

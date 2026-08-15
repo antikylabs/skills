@@ -56,6 +56,7 @@ Antiky repository — where a file goes, which script generates it, what the hou
 | [`general-simplified-technical-english`](skills/general-simplified-technical-english/) | Ready | Write, audit, and fix text against ASD-STE100 Issue 9. Carries a deterministic linter and the controlled vocabulary. |
 | [`general-write-docs`](skills/general-write-docs/) | Ready | Write and audit user-facing documentation with Diátaxis. Covers each page type and the way it fails. |
 | [`general-engineering`](skills/general-engineering/) | Ready | A principal-engineer sidekick for judgement. Gut-check, talk out, plan, or grill. Read-only. |
+| [`general-anti-slop`](skills/general-anti-slop/) | Ready | Reject what looks like evidence and is not: tests that cannot fail, discarded errors, stubs, orphan scripts, claims with no referent. Ships an Oxlint plugin, the vendored anti-slop rule set, and two Node-only linters. |
 | [`general-wait-what`](skills/general-wait-what/) | Ready | Re-pitch something that did not land. Human-invoked only — it stays out of the model's catalog. |
 | [`repo-write-adrs`](skills/repo-write-adrs/) | Ready | Antiky ADR conventions: areas, per-area numbering, the index, the AIP link, the writing standard. |
 | [`repo-write-objectives`](skills/repo-write-objectives/) | Ready | Antiky objective conventions: the layout, file naming, required reading, archiving. |
@@ -88,6 +89,7 @@ table; each command has its own playbook under `reference/`.
 | `general-write-objectives` | `init`, `create-research`, `create-plan`, `create-goals`, `execute`, `audit`, `complete-goal`, `complete-objective` |
 | `general-write-docs` | `classify`, `write`, `audit`, `split` |
 | `general-engineering` | `gut-check`, `talk-it-out`, `plan-it`, `grill-it` |
+| `general-anti-slop` | `install`, `code`, `prose`, `structure` |
 | `general-wait-what` | *(bare)*, `init` |
 
 ## Repository layout
@@ -122,3 +124,8 @@ sets `INSTALL_INTERNAL_SKILLS=1`.
 its rules. ASD-STE100 is the property of ASD and its name is an EU registered trade mark. See
 [the skill's notice](skills/general-simplified-technical-english/NOTICE.md) for what is and is not
 included, and get the standard itself, free, from <https://www.asd-ste100.org>.
+
+`general-anti-slop` vendors [`dmmulroy/anti-slop`](https://github.com/dmmulroy/anti-slop) by Dillon
+Mulroy — MIT, Copyright (c) 2026 — verbatim, with its licence, its provenance, and its own test
+suite, which runs in ours. This repository is MIT too. The skill adds five rules of its own beside
+it, covering a different failure class. See [the skill's notice](skills/general-anti-slop/NOTICE.md).

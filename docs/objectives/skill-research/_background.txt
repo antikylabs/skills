@@ -1,0 +1,6 @@
+This was copied direclty from antiky project as skill research and development should happen here.
+
+Also add the following repos to corpus of skill research directions:
+
+- https://github.com/thrixel/goal-to-game
+- https://github.com/gamedev-skills/awesome-gamedev-agent-skills

@@ -154,7 +154,7 @@ export const CLASSIFY_CASES: EvalCase[] = [
       text(
         "Two pages. A tutorial for a first-timer with one path and no branches, and a how-to for " +
           "someone who already has a project and wants the dev server running. The branching is " +
-          "the seam.",
+          "where the reader changes.",
       ),
     ],
     negativeControl: {
