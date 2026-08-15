@@ -1,6 +1,6 @@
 ---
 name: general-anti-slop
-description: Find and remove AI slop — tests that cannot fail, tests committed switched off, errors caught and discarded, placeholder bodies shipped as finished, suppressions with no stated reason, scripts nothing invokes, and prose that asserts a system is robust or scalable with nothing a reader could check. Use when reviewing an agent's changes, before committing generated code, when a repository feels untidy, or when a document reads as confident and says nothing. Ships an Oxlint plugin, the vendored anti-slop rule set, and two deterministic checkers that need nothing but Node.
+description: Find and remove AI slop — tests that cannot fail, tests committed switched off, errors caught and discarded, placeholder bodies shipped as finished, suppressions with no stated reason, scripts nothing invokes, and prose that asserts a system is robust or scalable with nothing a reader could check. Use when reviewing an agent's changes, before committing generated code, when a repository feels untidy, or when a document reads as confident and says nothing. Ships a twenty-rule Oxlint plugin and two deterministic checkers that need nothing but Node.
 ---
 
 # anti-slop
@@ -49,7 +49,7 @@ node <skill-dir>/scripts/structure_lint.mjs .         # a repository root
 ```
 
 The code rules are an **Oxlint plugin**, so they run inside the linter the project already has.
-They are vendored into the target repository rather than installed as a dependency — see
+They are copied into the target repository rather than installed as a dependency — see
 [reference/install.md](reference/install.md).
 
 Both accept `--json` and `--fail-on {error,warning,info,never}`. Exit 1 means findings at
@@ -79,8 +79,8 @@ propose the change and let the user decide.
 
 ## The rules
 
-Twenty-eight, each independently toggleable, each named for the defect. Thirteen are ours;
-fifteen more come from the vendored upstream plugin.
+Twenty-eight, each independently toggleable, each named for the defect. Twenty run in Oxlint;
+eight need only Node.
 
 | Rule | Catches | Where |
 | --- | --- | --- |
@@ -98,11 +98,16 @@ fifteen more come from the vendored upstream plugin.
 | `no-empty-metaphor` | A metaphor standing in for a mechanism — `load-bearing`, `seam`, `smoking gun` | `prose_lint.mjs` |
 | `no-ai-tell` | A structural tic that carries no information | `prose_lint.mjs` |
 
-Plus **fifteen TypeScript rules from [`dmmulroy/anti-slop`](https://github.com/dmmulroy/anti-slop)**,
-vendored verbatim under `scripts/oxlint/vendor/anti-slop/` and enabled the same way: chained type
-assertions, `unknown` returns and parameters, known-value widening, unsafe dictionary contracts,
-`Reflect` access, module mocking. That project is MIT and so is this one; its licence travels with
-the copy, and its own test suite runs in ours. See [NOTICE.md](NOTICE.md).
+Plus **fifteen TypeScript rules** in the same plugin, whose names and intent come from
+[`dmmulroy/anti-slop`](https://github.com/dmmulroy/anti-slop) and whose implementations are ours:
+`no-chained-type-assertions`, `no-unknown-returns`, `no-unknown-parameters`,
+`no-unknown-type-aliases`, `no-unsafe-dictionary-type`, `no-known-value-widening`,
+`no-widen-then-assert`, `no-runtime-typeof`, `no-object-parameters`, `no-module-mocking`,
+`no-reflect-apply`, `no-reflect-get`, `no-conditional-empty-object-spread`,
+`no-shape-in-symbol-names`, `require-safety-comment-for-type-assertion`.
+
+They carry no dependency beyond Oxlint itself, and they ship the same `Do:`/`Never:` messages and
+fixture pairs as every other rule here. See [NOTICE.md](NOTICE.md).
 
 Every rule ships a fixture that makes it fire and one that keeps it quiet, and the test suite fails
 if either is missing. A rule that has never been shown to fire is not a check.
@@ -154,4 +159,4 @@ of evidencing it. **Follow `Do:`, or argue that the finding is wrong. Do not tak
 | [reference/adopting.md](reference/adopting.md) | Introducing this into a repository that already has findings |
 | `scripts/oxlint/` | The plugin: one file per rule, plus a fixture pair for each |
 | `scripts/prose_lint.mjs`, `scripts/structure_lint.mjs` | The two checkers. Node standard library only |
-| `scripts/oxlint/vendor/anti-slop/` | Upstream's fifteen rules, verbatim, with their licence and their tests |
+| `scripts/oxlint/rules/` | Twenty rules, one file each, with a fixture pair beside every one |

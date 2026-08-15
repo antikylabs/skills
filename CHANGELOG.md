@@ -9,6 +9,44 @@ version, not a patch.
 
 ## [Unreleased]
 
+## [0.5.0] — 2026-08-14
+
+The fifteen TypeScript rules v0.4.0 vendored are now implemented here. Same names, our code, one
+plugin.
+
+v0.4.0 shipped `dmmulroy/anti-slop` as a verbatim copy under `scripts/oxlint/vendor/`. That was
+licence-correct and structurally wrong: three quarters of the rules sat two directories deeper than
+the rest, outside this skill's own conventions, in a tree nobody was allowed to edit. The rule set
+was what we wanted; the fork was not.
+
+### Changed
+
+- **All twenty rules now live in `scripts/oxlint/rules/`**, one file each, with a fixture pair
+  beside every one. The vendored tree is removed.
+- The fifteen type rules keep their upstream names exactly, so a project can run both plugins or
+  move between them without relearning anything. Upstream remains the reference implementation, and
+  `NOTICE.md` says to report corner-case disagreements there rather than here.
+- **One fewer dependency.** Upstream needs `@oxlint/plugins` at runtime and Node type stripping for
+  its TypeScript sources. These are plain `.mjs` against the ESLint-compatible API — `getScope`,
+  `scopeManager`, and `getDeclaredVariables` are all reachable from it, which is what lets
+  `no-known-value-widening`, `no-widen-then-assert`, and `no-runtime-typeof` work without either. A
+  target project installs `oxlint` and nothing else, and registers one `jsPlugins` entry instead of
+  two.
+- `no-redundant-prefix` now requires the prefix to echo the directory's own name. It was firing on
+  this skill's own `rules/` folder, where `no-` is each rule's public identifier in an oxlint config
+  and renaming the files would break the link to the id. `fns/fn-add.ts` still fires; a lint plugin
+  no longer does. Its passing fixture is a real plugin layout.
+
+### Fixed
+
+- The v0.4.0 entry records `separates-machine-from-judgement` as carried by the skill. That held on
+  both DeepSeek routings and **not** on Luna, where it failed in both arms. One case measured across
+  three configurations is not a stable result, and the entry should have said so.
+
+The finding that has survived every arm of every run stands: `does-not-claim-clean-from-a-clean-run`
+fails everywhere. The first rule `SKILL.md` states still has no measurable effect on any model
+tested, and it is still the clearest open defect in the skill.
+
 ## [0.4.0] — 2026-08-14
 
 A new skill, `general-anti-slop`, and the eval suite that measures it.

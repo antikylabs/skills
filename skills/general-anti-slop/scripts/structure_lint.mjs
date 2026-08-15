@@ -430,6 +430,20 @@ export function directoryStats(files) {
   return stats;
 }
 
+/**
+ * Does the prefix repeat the directory's own name?
+ *
+ * `fns/fn-add.ts` does; `rules/no-unknown-returns.mjs` does not — there `no-` is
+ * the rule's public identifier, and renaming the file would break the link
+ * between it and the id a config enables. Without this the rule fires on every
+ * lint plugin ever written, which is how it was found.
+ */
+export function echoesDirectory(dir, prefix) {
+  const name = dir.slice(dir.lastIndexOf("/") + 1).toLowerCase();
+  const token = prefix.toLowerCase();
+  return name.startsWith(token) || token.startsWith(name) || name.replace(/s$/, "") === token;
+}
+
 export function checkDirectoryShape(files, rules) {
   const findings = [];
   const split = rules.get("no-folder-in-filenames");
@@ -451,7 +465,12 @@ export function checkDirectoryShape(files, rules) {
           "heuristic",
         ),
       );
-    } else if (s.clusters === 1 && s.coverage >= t.prefixCoverage && s.files >= t.minFiles) {
+    } else if (
+      s.clusters === 1 &&
+      s.coverage >= t.prefixCoverage &&
+      s.files >= t.minFiles &&
+      echoesDirectory(s.dir, s.clusterNames[0])
+    ) {
       findings.push(
         new Finding(
           `${s.dir}/`, 1, 1, prefix.severity, prefix.id,

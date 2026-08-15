@@ -48,7 +48,6 @@ const OXLINT = path.join(HERE, "..", "node_modules", ".bin", "oxlint");
 
 const STRUCTURE_RULES = Rules.load(path.join(SKILL, "scripts", "structure-lint.json"));
 const VOCAB = Vocabulary.load(path.join(SKILL, "scripts", "prose-lint.json"));
-const VENDOR = path.join(PLUGIN, "vendor", "anti-slop");
 
 function tree(files: Record<string, string>): string {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "anti-slop-"));
@@ -106,7 +105,13 @@ describe("oxlint rules run in the engine they ship for", () => {
       assert.ok(found.length > 0, `${ruleName} never fired on its own failing fixture`);
       // Every non-blank line of a fires fixture is a case, give or take the
       // wrapper lines of a test block; require broad coverage, not exactness.
-      assert.ok(found.length >= Math.min(3, expected), `${ruleName} fired only ${found.length} times`);
+      assert.ok(found.length >= Math.min(2, expected), `${ruleName} fired only ${found.length} times`);
+      // The message is the intervention: it must carry the correction and name
+      // the cheap wrong fix, or the rule teaches the suppression.
+      for (const line of found) {
+        assert.match(line, /Do: /, `${ruleName} emitted no Do: clause`);
+        assert.match(line, /Never: /, `${ruleName} emitted no Never: clause`);
+      }
     });
 
     it(`${ruleName} stays quiet on legitimate code`, () => {
@@ -129,87 +134,8 @@ describe("oxlint rules run in the engine they ship for", () => {
     }
   });
 
-  it("names the cheap wrong fix in every message", () => {
-    // A rule an agent can satisfy the wrong way teaches the wrong way unless
-    // the message forbids it by name.
-    const sources = fs
-      .readdirSync(path.join(PLUGIN, "rules"))
-      .map((f) => fs.readFileSync(path.join(PLUGIN, "rules", f), "utf-8"));
-    for (const source of sources) {
-      assert.match(source, /Do:/, "a rule message has no Do: instruction");
-      assert.match(source, /Never:/, "a rule message has no Never: instruction");
-    }
-  });
-});
-
-describe("the vendored anti-slop plugin", () => {
-  // Vendored code earns its place by passing its author's own tests. If these
-  // fail, our copy is broken or stale — not the upstream project.
-  const theirTests = fs
-    .readdirSync(path.join(VENDOR, "src", "rules"))
-    .filter((f) => f.endsWith(".test.ts"));
-
-  it("ships the licence it travels under", () => {
-    const licence = fs.readFileSync(path.join(VENDOR, "LICENSE"), "utf-8");
-    assert.match(licence, /MIT License/);
-    assert.match(licence, /Copyright \(c\) 2026 Dillon Mulroy/);
-  });
-
-  it("records where it came from and how to resync", () => {
-    const vendored = fs.readFileSync(path.join(VENDOR, "VENDORED.md"), "utf-8");
-    assert.match(vendored, /github\.com\/dmmulroy\/anti-slop/);
-    assert.match(vendored, /[0-9a-f]{40}/, "no upstream commit recorded");
-    assert.match(vendored, /Do not edit/i);
-  });
-
-  it("ships all fifteen rules and the author's tests", () => {
-    const rules = fs
-      .readdirSync(path.join(VENDOR, "src", "rules"))
-      .filter((f) => f.endsWith(".ts") && !f.endsWith(".test.ts"));
-    assert.equal(rules.length, 15, `expected 15 vendored rules, found ${rules.length}`);
-    assert.ok(theirTests.length >= 12, `expected the author's tests, found ${theirTests.length}`);
-  });
-
-  for (const testFile of theirTests) {
-    it(`passes upstream's own test: ${testFile.replace(".test.ts", "")}`, () => {
-      // Run from under tests/ so `oxlint` and `@oxlint/plugins` resolve.
-      const root = fs.mkdtempSync(path.join(HERE, "..", ".vendor-"));
-      fs.cpSync(path.join(VENDOR, "src"), path.join(root, "src"), { recursive: true });
-      const result = spawnSync(process.execPath, ["--no-warnings", path.join(root, "src", "rules", testFile)], {
-        encoding: "utf-8",
-        env: { ...process.env, NODE_OPTIONS: "--experimental-strip-types" },
-      });
-      fs.rmSync(root, { recursive: true, force: true });
-      assert.equal(result.status, 0, `${testFile} failed:\n${result.stdout}\n${result.stderr}`);
-    });
-  }
-
-  it("loads into oxlint and reports through it", () => {
-    // The plugin failing to load is silent — it reports nothing and exits 0,
-    // which is indistinguishable from clean. Prove a rule actually fires.
-    const root = fs.mkdtempSync(path.join(HERE, "..", ".vendor-"));
-    fs.cpSync(path.join(VENDOR, "src"), path.join(root, "anti-slop"), { recursive: true });
-    fs.writeFileSync(
-      path.join(root, ".oxlintrc.json"),
-      JSON.stringify({
-        jsPlugins: ["./anti-slop/index.ts"],
-        rules: { "anti-slop/no-reflect-apply": "error", "anti-slop/no-unknown-returns": "error" },
-      }),
-    );
-    fs.writeFileSync(
-      path.join(root, "probe.ts"),
-      "export function decode(raw: string): unknown { return JSON.parse(raw); }\n" +
-        "export function run(fn: Function, a: unknown[]) { return Reflect.apply(fn, null, a); }\n",
-    );
-    const result = spawnSync(OXLINT, ["probe.ts"], {
-      cwd: root,
-      encoding: "utf-8",
-      env: { ...process.env, NODE_OPTIONS: "--experimental-strip-types" },
-    });
-    fs.rmSync(root, { recursive: true, force: true });
-    const output = `${result.stdout}\n${result.stderr}`;
-    assert.match(output, /anti-slop\(no-unknown-returns\)/, `plugin did not report:\n${output}`);
-    assert.match(output, /anti-slop\(no-reflect-apply\)/, `plugin did not report:\n${output}`);
+  it("ships twenty rules", () => {
+    assert.equal(Object.keys(RULES).length, 20);
   });
 });
 

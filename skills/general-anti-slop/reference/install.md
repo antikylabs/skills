@@ -1,9 +1,9 @@
-# `install` — vendoring the Oxlint plugin
+# `install` — putting the Oxlint plugin into a project
 
 This is the only command that writes files. It puts the plugin into the target project and wires its
 config. Nothing else in this skill modifies the project.
 
-## Why vendored rather than a dependency
+## Why copied in rather than installed as a dependency
 
 The plugin is copied into the target repository, not installed from a registry. Three reasons, and
 the third is the one that matters:
@@ -13,8 +13,8 @@ the third is the one that matters:
 3. **The rules are visible in the repository that they govern.** A rule nobody can read is a rule
    nobody will argue with, and an unarguable rule gets routed around rather than fixed.
 
-The cost is real: a vendored copy does not update. Record where it came from, so a later reader can
-tell. That is what the header comment in `index.mjs` is for.
+The cost is real: a copy does not update. Record where it came from, so a later reader can tell.
+That is what the header comment in `index.mjs` is for.
 
 ## Steps
 
@@ -29,30 +29,26 @@ If Oxlint is absent, say so and stop. Do not install a linter into someone's pro
 do not fall back to judging the code by eye — that is exactly the substitution this skill exists to
 avoid.
 
-**2. Copy both plugins.** Somewhere the project already keeps local tooling — `tools/`, `config/`,
-or `.oxlint/`. Take the whole `oxlint` directory: it carries our rules, their fixtures, and the
-vendored upstream set with its licence.
+**2. Copy the plugin.** Somewhere the project already keeps local tooling — `tools/`, `config/`, or
+`.oxlint/`. Take the whole `oxlint` directory including `fixtures/`; the fixtures are how the next
+person checks a rule still does what it claims.
 
 ```bash
 cp -R <skill-dir>/scripts/oxlint <project>/tools/anti-slop
 ```
 
-The upstream rules are TypeScript and need `@oxlint/plugins`, plus Node type stripping — on by
-default from Node 22.18, and `NODE_OPTIONS=--experimental-strip-types` on older Node 22.
+The rules are plain `.mjs` against the ESLint-compatible API, so the project needs Oxlint and
+nothing else:
 
 ```bash
-npm i -D oxlint @oxlint/plugins
+npm i -D oxlint
 ```
 
-**3. Register both.** In `.oxlintrc.json` or `oxlint.config.ts`. They share the `anti-slop/`
-namespace and do not overlap:
+**3. Register it.** In `.oxlintrc.json` or `oxlint.config.ts`:
 
 ```json
 {
-  "jsPlugins": [
-    "./tools/anti-slop/index.mjs",
-    "./tools/anti-slop/vendor/anti-slop/src/index.ts"
-  ],
+  "jsPlugins": ["./tools/anti-slop/index.mjs"],
   "rules": {
     "anti-slop/no-tautological-assertion": "error",
     "anti-slop/no-disabled-test": "error",
@@ -80,8 +76,8 @@ namespace and do not overlap:
 ```
 
 **No rule is on until it is named.** Turn on the ones the project wants and leave the rest out.
-The vendored set is only worth taking on a TypeScript project; on plain JavaScript most of it has
-nothing to match.
+The fifteen type rules are only worth turning on in a TypeScript project; on plain JavaScript most
+of them have nothing to match.
 
 **4. Run it before you claim it works.**
 
@@ -109,17 +105,17 @@ The other four start as `error`. Each has near-zero legitimate use: an assertion
 test switched off, a discarded error, and a stub with a finished signature are all defects wherever
 they appear.
 
-## Taking upstream directly instead
+## Taking upstream as well
 
-The vendored copy is a convenience, not a fork. A project that would rather track the source can
-install it straight from the author and register only our five rules from here:
+The fifteen type rules are a reimplementation, and upstream is the reference. A project that would
+rather track the original can install it alongside — the rule names are identical, so turn ours off
+by name where they overlap:
 
 ```bash
 npx skills add dmmulroy/anti-slop --skill install-anti-slop
 ```
 
-Either way the rule names are identical, so a project can move between them without touching
-anything but the `jsPlugins` path.
+Where the two disagree in a corner case, upstream is the one to report it to.
 
 ## Where to run it
 

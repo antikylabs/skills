@@ -1,48 +1,37 @@
 # Notice
 
-## dmmulroy/anti-slop — vendored
+## dmmulroy/anti-slop
 
-`scripts/oxlint/vendor/anti-slop/` is a verbatim copy of
-[`dmmulroy/anti-slop`](https://github.com/dmmulroy/anti-slop) by Dillon Mulroy.
+Fifteen of this skill's twenty Oxlint rules take their **names and their intent** from
+[`dmmulroy/anti-slop`](https://github.com/dmmulroy/anti-slop) by Dillon Mulroy — MIT, Copyright (c)
+2026 — which is where the idea of linting for low-evidence TypeScript came from, and which is worth
+reading and installing in its own right.
 
-> MIT License
-> Copyright (c) 2026 Dillon Mulroy
+**The implementations here are ours.** They were written against the
+[Oxlint JS plugin API](https://oxc.rs/docs/guide/usage/linter/writing-js-plugins.html) directly,
+against the semantics of each rule rather than against its source. The names are kept deliberately
+identical so a project can move between the two, or run both, without relearning anything.
 
-The full licence text ships with the copy, at
-[`scripts/oxlint/vendor/anti-slop/LICENSE`](scripts/oxlint/vendor/anti-slop/LICENSE), and must stay
-with it in any redistribution. That is the only condition MIT attaches, and this repository is MIT
-too, so the two compose without friction.
+That project is MIT and so is this one, so a verbatim copy would have been permitted. We took the
+rule set rather than the code for two practical reasons:
 
-[`VENDORED.md`](scripts/oxlint/vendor/anti-slop/VENDORED.md) records the upstream commit, the date it
-was taken, and the command to resync. **Nothing under `vendor/` is edited.** A local change turns
-every future resync into a merge, and there is no reason to fork rules somebody else is maintaining.
-A rule that is wrong for a project gets turned off in that project's config; a rule that is wrong in
-general gets a pull request upstream.
+- **One fewer dependency.** Upstream needs `@oxlint/plugins` at runtime for `defineRule` and
+  `eslintCompatPlugin`, and its TypeScript sources need Node type stripping. These are plain `.mjs`
+  against the ESLint-compatible API, so a target project installs `oxlint` and nothing else.
+- **One house style.** Every rule here carries a `Do:` and a `Never:` clause, and ships a fixture
+  pair proving it can fire and can stay quiet. A vendored tree would have sat outside both rules and
+  drifted from them.
 
-**Their tests run in our suite.** All twelve of the author's own test files execute against our copy
-on every `npm run test:unit`. That is what makes the copy trustworthy: it is verified by the people
-who wrote it, not by us re-deriving what it should do.
+Where the two disagree in a corner case, upstream is the reference implementation and this is the
+reimplementation. Report the disagreement there, not here.
 
-The fifteen rules cover low-evidence *type* patterns — chained type assertions, `unknown` returns
-and parameters, known-value widening, unsafe dictionary contracts, `Reflect` access, module mocking,
-and assertions with no safety comment.
-
-### Running them
-
-They are TypeScript and load through Node's type stripping, which is on by default from Node 22.18.
-On older Node 22, set `NODE_OPTIONS=--experimental-strip-types`. The target project supplies
-`oxlint` and `@oxlint/plugins`.
-
-### Our own rules are separate
-
-`scripts/oxlint/rules/` holds five rules written here — `no-tautological-assertion`,
-`no-disabled-test`, `no-swallowed-error`, `no-placeholder-body`, `require-suppression-reason`. They
-address a different failure class from anything upstream and are deliberately kept out of the
-vendored tree so the boundary stays obvious. Register both plugins; they do not overlap.
+The five rules that are entirely ours — `no-tautological-assertion`, `no-disabled-test`,
+`no-swallowed-error`, `no-placeholder-body`, `require-suppression-reason` — cover a failure class
+that project does not address.
 
 ## Oxlint
 
-Both plugins target the ESLint-compatible JS plugin API provided by [Oxlint](https://oxc.rs)
+The plugin targets the ESLint-compatible JS plugin API provided by [Oxlint](https://oxc.rs)
 (`oxc-project/oxc`, MIT). Oxlint is not vendored here and is not a dependency of this skill; the
 target project supplies it.
 

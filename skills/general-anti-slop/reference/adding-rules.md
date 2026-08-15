@@ -4,8 +4,9 @@ Everything in this file is a data change. No code, no rebuild, no install.
 
 This covers the **prose** rules. A TypeScript rule is code, not data: write it against the
 [Oxlint plugin API](https://oxc.rs/docs/guide/usage/linter/writing-js-plugins.html) in
-`scripts/oxlint/rules/`, with a fixture pair beside it. Never add one to the vendored upstream set
-under `scripts/oxlint/vendor/` — send that upstream instead.
+`scripts/oxlint/rules/`, with a fixture pair beside it in `scripts/oxlint/fixtures/`. The suite
+discovers both: a rule with no fixture pair fails the build, and a fixture pair with no rule fails
+it too.
 
 Word and phrase rules live in the `patterns` array of
 [`scripts/prose-lint.json`](../scripts/prose-lint.json). Add an object, run the self-test, done.
