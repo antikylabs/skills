@@ -1,6 +1,6 @@
 {
   "name": "@antikylabs/skills",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "private": true,
   "type": "module",
   "description": "Agent skills used by the Antiky Framework, BroMetal, Antiky Studio, and the Antiky team.",
