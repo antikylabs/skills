@@ -39,6 +39,10 @@ was what we wanted; the fork was not.
 
 ### Fixed
 
+- **`release.mjs --skip-eval` could never succeed.** It reused "the newest run", but stage 2 writes a
+  deterministic run seconds earlier, so it always selected that one and died on the faux gate that
+  exists to stop exactly this. It now picks the newest run that is live and paired — one a release
+  could legitimately have been cut from.
 - The v0.4.0 entry records `separates-machine-from-judgement` as carried by the skill. That held on
   both DeepSeek routings and **not** on Luna, where it failed in both arms. One case measured across
   three configurations is not a stable result, and the entry should have said so.

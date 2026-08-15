@@ -168,9 +168,30 @@ step("Measure — paired live eval");
 
 let runId;
 if (SKIP_EVAL) {
+  // The newest run is not the newest *usable* one: stage 2 runs the
+  // deterministic eval, which writes a faux run directory seconds before this
+  // looks. Taking the newest by name always found that one and died on the faux
+  // gate below, which made this flag impossible to use. Filter to runs that
+  // could pass the gates.
   const existing = fs.existsSync(RUNS) ? fs.readdirSync(RUNS).sort() : [];
-  runId = existing.filter((d) => fs.existsSync(path.join(RUNS, d, "report.md"))).pop();
-  if (!runId) die("--skip-eval given, but no completed run exists under tests/eval/runs/");
+  const usable = existing.filter((d) => {
+    const json = path.join(RUNS, d, "report.json");
+    if (!fs.existsSync(path.join(RUNS, d, "report.md")) || !fs.existsSync(json)) return false;
+    try {
+      const report = JSON.parse(fs.readFileSync(json, "utf-8"));
+      return report.provider !== "faux" && report.paired === true;
+    } catch {
+      return false;
+    }
+  });
+  runId = usable.pop();
+  if (!runId) {
+    die(
+      "--skip-eval given, but no live paired run exists under tests/eval/runs/",
+      "  A reusable run has to be one a release could have been cut from: live, and\n" +
+        "  with a baseline arm. Drop --skip-eval to measure now.",
+    );
+  }
   info(`reusing ${runId}`);
 } else {
   const before = fs.existsSync(RUNS) ? new Set(fs.readdirSync(RUNS)) : new Set();
