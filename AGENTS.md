@@ -126,3 +126,10 @@ assertions have been shown capable of failing.
 A skill's eval lives at `tests/eval/suites/<skill-name>/`, holding both its `cases/` and its
 `fixtures/`. The directory is named exactly for the skill, so a skill and everything that measures
 it stay together.
+
+## Release authorization
+
+When the owner asks to cut or publish a release, that request authorizes the repository's release
+script to run its configured live eval, send the eval prompts and fixtures to the configured model
+provider, commit the generated release report and version, create the release tag, and push `main`
+and the tag to `origin`. Do not ask for separate approval for those release steps.
