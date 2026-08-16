@@ -1,0 +1,76 @@
+# Goal 07: Audit the library and cut the continuation queue
+
+## Prerequisites
+
+- [Goal 00](execute-goal-00.md), [Goal 01](execute-goal-01.md), [Goal 02](execute-goal-02.md), [Goal 03](execute-goal-03.md), [Goal 04](execute-goal-04.md), [Goal 05](execute-goal-05.md), and [Goal 06](execute-goal-06.md) are complete.
+- Harvest outcomes 05 through 07, wave plans 08 and 10, and wave outcomes 09 and 11 are available.
+- Read every published pipeline page, the current pipeline index, and the concise target queue.
+- Read [`../02-recursive-target-harvest.md`](../02-recursive-target-harvest.md), especially the execution sequence and completion definition.
+- This goal has exclusive write ownership of `docs/pipelines/**`, `targets.md`, and its audit outcome while it runs.
+
+### Needed from the owner before starting
+
+Nothing.
+
+## /goal objective
+
+Audit the generated library as one corpus, repair or withdraw unsupported material, and leave a ranked, evidence-backed queue for the next recursive objective instead of continuing indefinitely.
+
+Plan source: [`02-recursive-target-harvest.md`, lines 65, 75–78, and 141–146](../02-recursive-target-harvest.md#L65).
+
+## Required outcome
+
+Produce `docs/objectives/skill-process/research/12-library-audit-and-continuation.md` containing:
+
+- A page-by-page contract and source-fidelity audit.
+- A corpus-level duplicate, overlap, vocabulary, evidence-label, and index audit.
+- Every correction or withdrawal made and the evidence that required it.
+- A deduplicated continuation graph from unharvested direct children and deferred candidates.
+- A ranked next-wave recommendation with exact URLs, parent edges, expected workflow contribution, known risks, and a clear continue/stop decision.
+- A record of targets that must not be retried without new evidence.
+
+Leave `docs/pipelines/README.md`, `docs/pipelines/PIPELINE_TEMPLATE.md`, every surviving page, and `targets.md` mutually consistent.
+
+## In scope
+
+- Audit every Mermaid node and edge against its recorded primary-source mapping.
+- Audit page triggers, ordered steps, artifacts, gates, feedback loops, evidence labels, observed/potential skills, portability notes, licenses, and citations.
+- Compare all pages for duplicate workflows hidden by different source vocabulary.
+- Repair concise wording, broken links, diagram errors, mislabeled inference, and index drift when the source supports the repair.
+- Withdraw a page from the library when its required claim cannot be supported; preserve the reason in the audit outcome.
+- Rank the remaining direct-source frontier by evidence quality, distinct coverage, accessibility, and recursion yield.
+- End this objective with a continuation recommendation; do not execute the next wave.
+
+## Required tests and evidence
+
+At minimum, prove:
+
+- Every indexed page exists and every existing pipeline page is indexed exactly once.
+- Every surviving page conforms to `PIPELINE_TEMPLATE.md`, has a complete source mapping, and passes all admission criteria.
+- Every inference is labeled, every evidence label is supported, and no popularity or self-report is presented as independent validation.
+- No two pages describe the same workflow without an explicit, source-backed reason for keeping both.
+- Every page passes the exact Mermaid, link, and cold-reader checks established by Goal 00; `git diff --check` also passes.
+- The continuation queue contains only exact, deduplicated, unharvested targets with traceable parent edges.
+- The continue/stop recommendation cites measured yield from both recursive waves and identifies what a follow-up objective would own.
+
+## Explicit non-goals
+
+- Do not harvest new targets or publish new pipeline candidates.
+- Do not create a universal end-to-end game-development pipeline.
+- Do not retain unsupported pages to preserve page count.
+- Do not turn the continuation queue into another research catalog.
+- Do not execute or scaffold a follow-up objective.
+
+## Engineering constraints
+
+- Follow `skills/AGENTS.md`, `docs/GOOD_ENGINEERING_H.md`, the library boundary, and the established page contract.
+- Make the smallest source-supported repair. Record material corrections and all withdrawals.
+- Keep deep audit evidence in `research/12-library-audit-and-continuation.md`; keep pages and `targets.md` concise.
+- Preserve history: do not rewrite prior research outcomes to make the final corpus look cleaner.
+- Preserve unrelated worktree changes and do not add co-author trailers.
+
+## Completion definition
+
+This goal is complete when the surviving library is internally consistent and source-auditable, unsupported pages are absent and documented, the concise target queue matches the continuation graph, and the audit gives a checkable recommendation to continue or stop recursive harvesting.
+
+If a page cannot be audited because its frozen source is unavailable, do not silently bless it. Record the blockage and remove it from the active index until a future goal restores evidence.

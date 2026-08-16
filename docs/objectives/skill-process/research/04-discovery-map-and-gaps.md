@@ -1,5 +1,46 @@
 # Recurring discovery map and research gaps
 
+## Findings from the expanded target search
+
+The follow-up search found four source classes that materially improve the discovery map.
+
+### A human-led game-jam case
+
+[A Generative AI Game Jam Case Study from October 2024](https://openaccess.thecvf.com/content/CVPR2025W/CV2/papers/Spjut_A_Generative_AI_Game_Jam_Case_Study_from_October_2024_CVPRW_2025_paper.pdf)
+documents one experienced programmer building *Plunderwater: Sunken Treasure* over a few days. The
+paper says the author retained the game source and chat logs, describes where human edits remained
+necessary, and reports that the result was playable but lacked its intended objectives. It is a
+strong target for a source-faithful game-jam pipeline, but it remains one author-run case.
+
+### Code-and-play repair loops
+
+[GUI Agents for Continual Game Generation](https://arxiv.org/abs/2605.28258) defines PlaytestArena
+and Play2Code. A game agent and GUI playtester share memory and repeatedly generate, run, play,
+report, and revise browser games. Its 200-task evaluation makes it a high-priority source for
+runtime feedback and bounded repair. Automated rubric checks must remain separate from human
+judgments about fun, comprehension, or taste.
+
+[GameCraft-Bench](https://github.com/FreedomIntelligence/gamecraft-bench) requires a complete Godot
+project and replayable input traces. Its verifier launches the game, replays the traces, records
+gameplay evidence, and applies a hidden rubric. This supplies unusually concrete artifact and
+interactive-verification gates, but it is benchmark evidence rather than a production workflow.
+
+### Real game-jam project corpora
+
+[JAMER / JamSet / JamBench](https://arxiv.org/abs/2606.19830) reports 8,133 runtime-verified Godot
+projects mined from more than 240,000 game-jam repositories, including 300 manually verified
+benchmark projects. Its promised public code and data could lead to real briefs, histories, builds,
+and postmortems. Its dataset-construction flow is not itself a developer pipeline.
+
+### Young evidence-first repositories
+
+[GameDesignOS](https://github.com/DY-2026/GameDesignOS) and the
+[Unreal Agent Benchmark](https://github.com/44-99/unreal-agent-benchmark) expose useful evidence,
+human-gate, rollback, save/reopen, package, and smoke-test concepts. Both remain leads. GameDesignOS
+needs independent project outcomes; the Unreal benchmark had not yet published formal scored
+results and includes a private asset service. [Summer Engine](https://github.com/SummerEngine/summer-engine-agent)
+is another source-graph target, not yet evidence of a practiced portable pipeline.
+
 ## Highest-priority next targets
 
 ### Production and research pipelines
@@ -95,4 +136,3 @@ external pipeline.
   or production credentials?
 - Which source-specific pipelines have enough common structure to justify a generalized companion
   page without falsifying their constraints?
-
