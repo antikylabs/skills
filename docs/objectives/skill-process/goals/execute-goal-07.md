@@ -3,7 +3,7 @@
 ## Prerequisites
 
 - [Goal 00](execute-goal-00.md), [Goal 01](execute-goal-01.md), [Goal 02](execute-goal-02.md), [Goal 03](execute-goal-03.md), [Goal 04](execute-goal-04.md), [Goal 05](execute-goal-05.md), and [Goal 06](execute-goal-06.md) are complete.
-- Harvest outcomes 05 through 07, wave plans 08 and 10, and wave outcomes 09 and 11 are available.
+- `research/05-scott-threejs-harvest.md`, `06-thrixel-harvest.md`, `07-gamedev-skills-harvest.md`, `08-recursive-wave-01-plan.md`, `09-recursive-wave-01-outcome.md`, `10-recursive-wave-02-plan.md`, and `11-recursive-wave-02-outcome.md` are available.
 - Read every published pipeline page, the current pipeline index, and the concise target queue.
 - Read [`../02-recursive-target-harvest.md`](../02-recursive-target-harvest.md), especially the execution sequence and completion definition.
 - This goal has exclusive write ownership of `docs/pipelines/**`, `targets.md`, and its audit outcome while it runs.
@@ -37,7 +37,7 @@ Leave `docs/pipelines/README.md`, `docs/pipelines/PIPELINE_TEMPLATE.md`, every s
 - Audit page triggers, ordered steps, artifacts, gates, feedback loops, evidence labels, observed/potential skills, portability notes, licenses, and citations.
 - Compare all pages for duplicate workflows hidden by different source vocabulary.
 - Repair concise wording, broken links, diagram errors, mislabeled inference, and index drift when the source supports the repair.
-- Withdraw a page from the library when its required claim cannot be supported; preserve the reason in the audit outcome.
+- Withdraw a page when its required claim cannot be supported: record the path and reason, then remove its active `docs/pipelines/<slug>/pipeline.md` and index entry.
 - Rank the remaining direct-source frontier by evidence quality, distinct coverage, accessibility, and recursion yield.
 - End this objective with a continuation recommendation; do not execute the next wave.
 
@@ -45,7 +45,7 @@ Leave `docs/pipelines/README.md`, `docs/pipelines/PIPELINE_TEMPLATE.md`, every s
 
 At minimum, prove:
 
-- Every indexed page exists and every existing pipeline page is indexed exactly once.
+- Every indexed page exists and every surviving active pipeline page is indexed exactly once. A withdrawn page has no active `pipeline.md` or index entry, and its removal is recorded in the audit outcome.
 - Every surviving page conforms to `PIPELINE_TEMPLATE.md`, has a complete source mapping, and passes all admission criteria.
 - Every inference is labeled, every evidence label is supported, and no popularity or self-report is presented as independent validation.
 - No two pages describe the same workflow without an explicit, source-backed reason for keeping both.
@@ -73,4 +73,4 @@ At minimum, prove:
 
 This goal is complete when the surviving library is internally consistent and source-auditable, unsupported pages are absent and documented, the concise target queue matches the continuation graph, and the audit gives a checkable recommendation to continue or stop recursive harvesting.
 
-If a page cannot be audited because its frozen source is unavailable, do not silently bless it. Record the blockage and remove it from the active index until a future goal restores evidence.
+If a page cannot be audited because its frozen source is unavailable, do not silently bless it. Record the blockage, remove its active `pipeline.md` and index entry, and rely on Git history plus the audit outcome for recovery.

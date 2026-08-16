@@ -51,7 +51,7 @@ At minimum, prove:
 - `PIPELINE_TEMPLATE.md` defines the required sections, evidence capsule, diagram limits, and source/inference labels used by both candidate pages.
 - `docs/pipelines/README.md` names the exact link-check and Mermaid-render commands, including the Mermaid parser and version. The harvest outcome records each command and result.
 - Each diagram has one top-level path, no more than nine main nodes, and renders without a parser error under that named Mermaid check.
-- The source supports both page titles and scopes; repository popularity, examples, or prose confidence are not treated as effectiveness evidence.
+- The source supports the title and scope of each published page; rejected candidates retain the failed evidence check instead. Repository popularity, examples, or prose confidence are not treated as effectiveness evidence.
 - License and reuse limits are stated where they affect what a reader can copy or run.
 - All local links resolve under the recorded link command, all external citations are direct rather than search-result links, and `git diff --check` passes.
 - The README defines a five-item cold-reader checklist: identify the trigger, ordered loop, feedback gate, outputs, and evidence level. The outcome records pass/fail for every item on every accepted page.

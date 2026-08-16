@@ -44,7 +44,7 @@ Produce `docs/objectives/skill-process/research/08-recursive-wave-01-plan.md` wi
 At minimum, prove:
 
 - Every selected target has a direct, cited edge from a completed harvest or an explicitly identified canonical-source redirect.
-- Every target URL resolves at selection time, and the plan records the retrieval date.
+- Every selected target URL resolves at selection time, and the plan records the retrieval date. Each inaccessible candidate records the failed URL check and date before rejection or deferral.
 - The selected set is at most six targets and each has at most two candidate pages.
 - Each proposed candidate states the observable evidence expected to satisfy every admission criterion; vague topic fit is insufficient.
 - Duplicate, inaccessible, license-blocked, inventory-only, and already-covered candidates are rejected or deferred with a specific reason.
