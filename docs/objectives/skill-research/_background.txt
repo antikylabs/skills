@@ -4,3 +4,4 @@ Also add the following repos to corpus of skill research directions:
 
 - https://github.com/thrixel/goal-to-game
 - https://github.com/gamedev-skills/awesome-gamedev-agent-skills
+- https://github.com/scottstts/Threejs-Awesome-Graphics-Agent-Skills

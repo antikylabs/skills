@@ -125,8 +125,7 @@ its rules. ASD-STE100 is the property of ASD and its name is an EU registered tr
 [the skill's notice](skills/general-simplified-technical-english/NOTICE.md) for what is and is not
 included, and get the standard itself, free, from <https://www.asd-ste100.org>.
 
-`general-anti-slop` takes the names and intent of fifteen TypeScript rules from
+`general-anti-slop` adapts fifteen TypeScript rules from
 [`dmmulroy/anti-slop`](https://github.com/dmmulroy/anti-slop) by Dillon Mulroy (MIT, Copyright (c)
-2026), and implements them here against the Oxlint plugin API. No source is copied; upstream is the
-reference implementation and worth installing in its own right. See
-[the skill's notice](skills/general-anti-slop/NOTICE.md).
+2026). Each adapted rule carries the complete upstream MIT license notice at the top of its source
+file. The other five Oxlint rules and the two Node checkers do not carry that upstream notice.

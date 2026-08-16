@@ -17,7 +17,8 @@ npm test          # typecheck, harness self-test, then the eval
 | `npm run test:sandbox` | **The harness catches misbehavior and the container confines it** | free |
 | `npm run test:skill-behavior` | Skill routing and playbook adherence, scripted | free |
 | `npm run test:skill-behavior:live` | The same cases against a real model | ~1¢ |
-| `npm run test:skill-behavior:luna` | The same, on GPT-5.6 Luna | ~1¢ |
+| `npm run test:skill-behavior:paired` | Live comparison with and without skills | varies |
+| `npm run test:repo-skill-ablation` | Live comparison of general + repo skills against general only | varies |
 
 Run `test:sandbox` first. A green `test:skill-behavior` means nothing on its own —
 assertions that can never fail are also green. The self-test scripts an agent that
@@ -111,26 +112,12 @@ reason; prefer the `:live` script, which sets it for one invocation.
 
 ## Models
 
-Live runs go through OpenRouter. Set `OPENROUTER_API_KEY`. Never Claude pricing.
+Live runs use `deepseek/deepseek-v4-flash-0731` through OpenRouter. The slug has no
+`:nitro` suffix, so OpenRouter uses standard routing. Set `OPENROUTER_API_KEY`.
 
-| Model | in $/M | out $/M | tools |
-| --- | --- | --- | --- |
-| `tencent/hy3` (default) | 0.132 | 0.528 | yes |
-| `deepseek/deepseek-v4-flash` | 0.14 | 0.28 | yes |
-| `openai/gpt-5.6-luna` | 0.10 | 0.60 | yes |
-
-`gpt-5.6-luna` is unusable on this account: OpenRouter applies a **new-account cap of 10 requests
-per minute to that model alone**, and a paired run is several hundred requests. The cap is not a
-spend limit and not account-wide — `deepseek-v4-flash` and `gpt-oss-120b` both answer immediately.
-The error names it: `limit_source: openrouter_new_account`.
-
-The harness now waits out a 429 rather than treating the refusal as an answer, so luna still runs;
-it just runs slowly. `hy3` is the default because it has no such cap here.
-
-pi-ai 0.84 registers providers explicitly rather than shipping a catalog, so both
-model definitions are pinned in `agent-run.ts`. The eval does not depend on a
-network catalog fetch, and the definitions are the only thing to update when
-pricing changes.
+pi-ai 0.84 registers providers explicitly rather than shipping a catalog, so the
+model definition is pinned in `agent-run.ts`. The eval does not depend on a network
+catalog fetch.
 
 ## Three arms
 
@@ -162,20 +149,9 @@ at 1 otherwise, because three arms at five repeats is fifteen container runs per
 
 ## Thinking changes what you are measuring
 
-Measured on this suite, luna, one run each, three arms:
-
-| | with | sham | without | delta |
-| --- | --: | --: | --: | --: |
-| `EVAL_THINKING=off` | 53/67 | 44/67 | 20/67 | **+33** |
-| `EVAL_THINKING=medium` | 43/67 | 39/67 | 32/67 | **+11** |
-
-Reasoning moves both arms toward each other: the baseline derives conventions it was never told
-(20 → 32) while the guided arm gets *worse* (53 → 43). The delta shrank in eight of nine suites, so
-the direction is not noise even though one run per configuration does not fix the magnitude.
-
-Two consequences. A skill measured on a reasoning model will look weaker than the same skill measured
-without one, so **the thinking level belongs beside every number quoted**. And a rising pass rate is
-not by itself good news: all three arms can rise while the thing the skill adds shrinks to nothing.
+Record `EVAL_THINKING` beside every quoted result. Reasoning can help both arms infer
+repository conventions, which changes the measured value of the skills rather than only
+raising the overall pass rate.
 
 ## Triage: whose failure is it?
 
@@ -252,7 +228,6 @@ guessed and checked afterwards.
 | Variable | Effect |
 | --- | --- |
 | `EVAL_PROVIDER` | `faux` (default) or `openrouter` |
-| `EVAL_MODEL` | OpenRouter model id |
 | `EVAL_ONLY` | one case id, or a kind (`trigger`, `behavior`) |
 | `EVAL_BASELINE=1` | add the no-skill arm (live only) |
 | `EVAL_SHAM=1` | add the sham arm: same catalog, generic bodies (live only) |

@@ -65,14 +65,8 @@ export const HARDENING = [
 /**
  * Reasoning effort for live runs, from EVAL_THINKING.
  *
- * Default `off`, chosen from measurement rather than caution. Across the full
- * 45-case paired suite, luna at `off` scores 34/45 against 36/45 at `low` — two
- * cases — while running 5.6× faster and 27% cheaper. The skill delta is +20
- * either way: reasoning helped both arms equally, so it was not what made the
- * skills work.
- *
  * `off` is enforced at the request level, not through pi's thinkingLevelMap.
- * See installProviderRouting in sandbox/agent-run.ts for why.
+ * See installOpenRouterShim in sandbox/agent-run.ts for why.
  */
 export function thinkingLevel(): ThinkingLevel {
   const raw = (process.env.EVAL_THINKING ?? "off").trim().toLowerCase();
@@ -172,54 +166,6 @@ function normalizeTrace(parsed: unknown, raw: string): Trace {
   return { ...trace, finalText: trace.finalText ?? "" };
 }
 
-/**
- * The Codex subscription tokens, read from the CLI's own credential file.
- *
- * Codex stores `tokens.access_token` / `tokens.refresh_token`; pi wants
- * `{ access, refresh }`. Only those two fields are forwarded — the id token and
- * account id stay on the host, because nothing in the run needs them.
- */
-function codexTokens(): { access: string; refresh: string; expires: number } {
-  const file = path.join(process.env.HOME ?? "", ".codex", "auth.json");
-  if (!fs.existsSync(file)) {
-    process.stderr.write(
-      `EVAL_PROVIDER=codex needs Codex credentials at ${file}.\n` +
-        "Sign in with the Codex CLI first, then re-run.\n",
-    );
-    process.exit(2);
-  }
-  const parsed = JSON.parse(fs.readFileSync(file, "utf-8")) as {
-    tokens?: { access_token?: string; refresh_token?: string };
-  };
-  const access = parsed.tokens?.access_token;
-  const refresh = parsed.tokens?.refresh_token;
-  if (!access || !refresh) {
-    process.stderr.write(`${file} has no OAuth tokens — sign in with the Codex CLI again.\n`);
-    process.exit(2);
-  }
-
-  /**
-   * The real expiry, from the access token's own `exp` claim.
-   *
-   * This started as `0`, meaning "assume stale, let pi refresh first". That is
-   * harmless for one agent and wrong for several: a batch of twelve jobs each
-   * decided the token needed refreshing and hit the token endpoint at once, and
-   * every request came back empty. The token was valid for another seventeen
-   * hours. Passing the true expiry means no refresh happens until one is due,
-   * and then only because it is actually due.
-   */
-  let expires = 0;
-  try {
-    const payload = access.split(".")[1] ?? "";
-    const claims = JSON.parse(Buffer.from(payload, "base64url").toString("utf-8")) as { exp?: number };
-    if (claims.exp) expires = claims.exp * 1000;
-  } catch {
-    // Not a JWT we can read. Leave it stale so pi refreshes once, which is the
-    // safe direction: a needless refresh beats sending a lapsed token.
-  }
-  return { access, refresh, expires };
-}
-
 // --- batched running -------------------------------------------------------
 
 export interface BatchJob {
@@ -253,7 +199,7 @@ export async function runBatchInSandbox(
   runtime: string,
   options: {
     jobs: BatchJob[];
-    provider: "faux" | "openrouter" | "codex";
+    provider: "faux" | "openrouter";
     modelId: string;
     thinkingLevel?: ThinkingLevel;
     concurrency: number;
@@ -361,11 +307,9 @@ function batchHardening(concurrency: number): string[] {
 }
 
 /** Provider credentials and network posture, shared by both run paths. */
-function applyProviderEnv(args: string[], provider: "faux" | "openrouter" | "codex"): void {
+function applyProviderEnv(args: string[], provider: "faux" | "openrouter"): void {
   if (provider === "faux") {
     args.push("--network=none");
-  } else if (provider === "codex") {
-    args.push("-e", `CODEX_OAUTH=${JSON.stringify(codexTokens())}`);
   } else {
     const key = process.env.OPENROUTER_API_KEY;
     if (!key) {
@@ -380,7 +324,7 @@ function applyProviderEnv(args: string[], provider: "faux" | "openrouter" | "cod
 
 export interface RunOptions {
   prompt: string;
-  provider: "faux" | "openrouter" | "codex";
+  provider: "faux" | "openrouter";
   modelId: string;
   systemPrompt: string;
   thinkingLevel?: ThinkingLevel;

@@ -91,10 +91,9 @@ export function concurrency(): number {
    * The hard cap.
    *
    * This is where the provider gets a say that the arithmetic above cannot see.
-   * Codex refused 57 of 67 runs at a concurrency of 5 on a 2 GiB machine, and
-   * luna over OpenRouter caps at 10 requests per minute whatever the hardware
-   * allows — so past some point more workers just produce more 429s, and the
-   * provider-failure gate turns those into a refused run rather than a number.
+   * Provider rate limits can bind before the hardware does. Past that point,
+   * more workers only produce more 429s, and the provider-failure gate turns
+   * those into a refused run rather than a number.
    *
    * Raised from 4 once the machine grew to 8 GiB: memory had been the binding
    * constraint and no longer is, so the remaining ceiling is worth finding

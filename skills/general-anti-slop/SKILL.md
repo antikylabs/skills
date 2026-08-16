@@ -98,8 +98,8 @@ eight need only Node.
 | `no-empty-metaphor` | A metaphor standing in for a mechanism — `load-bearing`, `seam`, `smoking gun` | `prose_lint.mjs` |
 | `no-ai-tell` | A structural tic that carries no information | `prose_lint.mjs` |
 
-Plus **fifteen TypeScript rules** in the same plugin, whose names and intent come from
-[`dmmulroy/anti-slop`](https://github.com/dmmulroy/anti-slop) and whose implementations are ours:
+Plus **fifteen TypeScript rules** in the same plugin, adapted from
+[`dmmulroy/anti-slop`](https://github.com/dmmulroy/anti-slop):
 `no-chained-type-assertions`, `no-unknown-returns`, `no-unknown-parameters`,
 `no-unknown-type-aliases`, `no-unsafe-dictionary-type`, `no-known-value-widening`,
 `no-widen-then-assert`, `no-runtime-typeof`, `no-object-parameters`, `no-module-mocking`,
@@ -107,12 +107,12 @@ Plus **fifteen TypeScript rules** in the same plugin, whose names and intent com
 `no-shape-in-symbol-names`, `require-safety-comment-for-type-assertion`.
 
 They carry no dependency beyond Oxlint itself, and they ship the same `Do:`/`Never:` messages and
-fixture pairs as every other rule here. See [NOTICE.md](NOTICE.md).
+fixture pairs as every other rule here.
 
 Every rule ships a fixture that makes it fire and one that keeps it quiet, and the test suite fails
 if either is missing. A rule that has never been shown to fire is not a check.
 
-**The prose metaphor and tic rules are editable data**, as are all twelve TypeScript rules. Their words and phrases live in the `patterns` array of
+**The prose metaphor and tic rules are editable data**, as are all fifteen TypeScript rules. Their words and phrases live in the `patterns` array of
 `scripts/prose-lint.json`, and adding one needs no code change:
 
 ```bash
@@ -137,9 +137,10 @@ of evidencing it. **Follow `Do:`, or argue that the finding is wrong. Do not tak
 
 ## Boundaries
 
-- **Type safety.** [`dmmulroy/anti-slop`](https://github.com/dmmulroy/anti-slop) covers low-evidence
-  *type* patterns for TypeScript — chained assertions, `unknown` returns, known-value widening. These
-  rules are written to sit beside it, not to overlap it. Install both. See [NOTICE.md](NOTICE.md).
+- **Type safety.** The fifteen rules adapted from
+  [`dmmulroy/anti-slop`](https://github.com/dmmulroy/anti-slop) cover low-evidence *type* patterns
+  for TypeScript — chained assertions, `unknown` returns, known-value widening. Use upstream
+  directly when its TypeScript plugin and runtime dependencies fit the target project better.
 - **Complexity, duplication, dead exports.** Already shipped by `eslint-plugin-sonarjs`, Ruff, and
   `knip`. Do not rebuild them here.
 - **What a document is for.** Page type and reader goal belong to `general-write-docs`.

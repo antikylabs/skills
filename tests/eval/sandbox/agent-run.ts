@@ -25,7 +25,6 @@ import {
   fauxToolCall,
 } from "@earendil-works/pi-ai";
 import { openrouterProvider } from "@earendil-works/pi-ai/providers/openrouter";
-import { openaiCodexProvider } from "@earendil-works/pi-ai/providers/openai-codex";
 import type { Model } from "@earendil-works/pi-ai";
 import { buildTools, type RecordedCall } from "./tools.ts";
 import { loadCatalog, SKILL_INSTRUCTIONS } from "./skills.ts";
@@ -38,7 +37,7 @@ export type ThinkingLevel = (typeof THINKING_LEVELS)[number];
 
 interface Job {
   prompt: string;
-  provider: "openrouter" | "faux" | "codex";
+  provider: "openrouter" | "faux";
   modelId: string;
   systemPrompt: string;
   thinkingLevel: ThinkingLevel;
@@ -57,15 +56,6 @@ export interface UsageTotals {
   reasoning: number;
   totalTokens: number;
   costUsd: number;
-  /**
-   * What the same tokens would have cost on a metered provider.
-   *
-   * A subscription run is charged nothing per request, so `costUsd` is zero and
-   * says so honestly — but zero is not comparable to the other models in a
-   * report. This is the equivalent at OpenRouter list prices, which makes a
-   * Codex run readable beside a metered one.
-   */
-  notionalUsd: number;
   turns: number;
 }
 
@@ -86,22 +76,18 @@ const emptyUsage = (): UsageTotals => ({
   reasoning: 0,
   totalTokens: 0,
   costUsd: 0,
-  notionalUsd: 0,
   turns: 0,
 });
 
 /**
  * Model definitions, pinned.
  *
- * Prices are $ per million tokens as published by OpenRouter. Both models
- * support tool calling, which the eval depends on. Luna is the cheaper of the
- * two on input; deepseek is cheaper on output.
+ * Prices are $ per million tokens as published by OpenRouter. The model
+ * supports tool calling, which the eval depends on.
  *
  * `thinkingLevelMap` maps pi's level onto what the provider actually accepts.
  * A `null` entry means "send no reasoning parameter at this level" — that is
  * how deepseek's own catalog entry treats its lower levels, so it is kept here.
- * Luna takes OpenAI-style `reasoning_effort`, so its levels pass straight
- * through and `low` is a real low-effort request rather than a silent default.
  */
 const MODELS: Record<string, Model<"openai-completions">> = {
   // A dated snapshot, not the rolling `deepseek-v4-flash` alias: an alias can be
@@ -123,229 +109,10 @@ const MODELS: Record<string, Model<"openai-completions">> = {
     contextWindow: 1_048_576,
     maxTokens: 8192,
   } as unknown as Model<"openai-completions">,
-  // The same snapshot with :nitro, which pins OpenRouter to a high-throughput
-  // endpoint. Cost is the listed nitro price, $0.0798/$0.1596 per M, taken from
-  // the OpenRouter listing while a 43% discount was running — so it sits below
-  // the entry above rather than at its $0.08/$0.18. Re-check it when the
-  // discount ends; the cost report is only honest at the rate actually billed.
-  "deepseek/deepseek-v4-flash-0731:nitro": {
-    id: "deepseek/deepseek-v4-flash-0731:nitro",
-    name: "DeepSeek V4 Flash (0731, nitro)",
-    api: "openai-completions",
-    provider: "openrouter",
-    baseUrl: "https://openrouter.ai/api/v1",
-    reasoning: true,
-    compat: { requiresReasoningContentOnAssistantMessages: true, thinkingFormat: "deepseek" },
-    thinkingLevelMap: { minimal: null, low: null, medium: null, high: "high", xhigh: "max" },
-    input: ["text"],
-    cost: { input: 0.0798, output: 0.1596, cacheRead: 0.01596, cacheWrite: 0 },
-    contextWindow: 1_048_576,
-    maxTokens: 8192,
-  } as unknown as Model<"openai-completions">,
-  // Routed to Cerebras at fp16 — see OPENROUTER_ROUTING. Pricing here is
-  // Cerebras's ($0.35/$0.75), not gpt-oss-120b's default-routing price
-  // ($0.03/$0.17): the fast provider costs about ten times the input rate, and
-  // the cost report is only honest if it uses the endpoint actually billed.
-  "openai/gpt-oss-120b:nitro": {
-    id: "openai/gpt-oss-120b:nitro",
-    name: "OpenAI gpt-oss-120b (Cerebras fp16)",
-    api: "openai-completions",
-    provider: "openrouter",
-    baseUrl: "https://openrouter.ai/api/v1",
-    reasoning: true,
-    compat: { thinkingFormat: "openai" },
-    thinkingLevelMap: { minimal: "low", low: "low", medium: "medium", high: "high", xhigh: "high" },
-    input: ["text"],
-    cost: { input: 0.35, output: 0.75, cacheRead: 0.35, cacheWrite: 0 },
-    contextWindow: 131_072,
-    maxTokens: 40_960,
-  } as unknown as Model<"openai-completions">,
-  // Routed to Novita — see OPENROUTER_ROUTING. The cheapest endpoint tested.
-  "inclusionai/ling-3.0-flash:nitro": {
-    id: "inclusionai/ling-3.0-flash:nitro",
-    name: "InclusionAI Ling 3.0 Flash (Novita)",
-    api: "openai-completions",
-    provider: "openrouter",
-    baseUrl: "https://openrouter.ai/api/v1",
-    reasoning: true,
-    compat: { thinkingFormat: "openai" },
-    thinkingLevelMap: { minimal: "low", low: "low", medium: "medium", high: "high", xhigh: "high" },
-    input: ["text"],
-    cost: { input: 0.021, output: 0.063, cacheRead: 0.021, cacheWrite: 0 },
-    contextWindow: 262_144,
-    maxTokens: 16_384,
-  } as unknown as Model<"openai-completions">,
-  "openai/gpt-5.6-luna": {
-    id: "openai/gpt-5.6-luna",
-    name: "OpenAI GPT-5.6 Luna",
-    api: "openai-completions",
-    provider: "openrouter",
-    baseUrl: "https://openrouter.ai/api/v1",
-    reasoning: true,
-    compat: { thinkingFormat: "openai" },
-    thinkingLevelMap: {
-      minimal: "minimal",
-      low: "low",
-      medium: "medium",
-      high: "high",
-      xhigh: "high",
-    },
-    input: ["text"],
-    cost: { input: 0.1, output: 0.6, cacheRead: 0, cacheWrite: 0 },
-    contextWindow: 1_050_000,
-    maxTokens: 32_000,
-  } as unknown as Model<"openai-completions">,
-
-  // Added because gpt-5.6-luna carries a new-account cap on this OpenRouter
-  // account — 10 requests per minute, for that model alone. A paired run is
-  // several hundred requests, so the cap made luna impractical here regardless
-  // of how well it scores. hy3 has no such cap on this account and supports
-  // tools, which the eval needs.
-  "tencent/hy3": {
-    id: "tencent/hy3",
-    name: "Tencent HY3",
-    api: "openai-completions",
-    provider: "openrouter",
-    baseUrl: "https://openrouter.ai/api/v1",
-    reasoning: true,
-    compat: { thinkingFormat: "openai" },
-    thinkingLevelMap: {
-      minimal: "minimal",
-      low: "low",
-      medium: "medium",
-      high: "high",
-      xhigh: "high",
-    },
-    input: ["text"],
-    cost: { input: 0.132, output: 0.528, cacheRead: 0, cacheWrite: 0 },
-    contextWindow: 262_144,
-    maxTokens: 32_000,
-  } as unknown as Model<"openai-completions">,
-
-  "nvidia/nemotron-3.5-lightning:nitro": {
-    id: "nvidia/nemotron-3.5-lightning:nitro",
-    name: "NVIDIA Nemotron 3.5 Lightning",
-    api: "openai-completions",
-    provider: "openrouter",
-    baseUrl: "https://openrouter.ai/api/v1",
-    reasoning: true,
-    compat: { thinkingFormat: "openai" },
-    thinkingLevelMap: {
-      minimal: "minimal",
-      low: "low",
-      medium: "medium",
-      high: "high",
-      xhigh: "high",
-    },
-    input: ["text"],
-    cost: { input: 0.1, output: 0.25, cacheRead: 0, cacheWrite: 0 },
-    // Matches the pinned coreweave/bf16 endpoint. DeepInfra caps at 28k and
-    // Venice serves 1M, so the window is a property of the endpoint, not the
-    // model — which is why the endpoint is pinned rather than left to :nitro.
-    contextWindow: 262_144,
-    maxTokens: 32_000,
-  } as unknown as Model<"openai-completions">,
 };
 
-/**
- * OpenRouter provider routing, per model.
- *
- * OpenRouter takes provider preferences as a request-body field. pi's
- * OpenAICompletionsOptions has no extra-body hook and the model slug cannot
- * carry a provider, so the only way through is to add the field to the outgoing
- * request — see installProviderRouting below.
- */
-const OPENROUTER_ROUTING: Record<string, unknown> = {
-  // `only` pins the endpoint: no silent fallback to a slower or differently
-  // quantized provider, which would make a latency comparison meaningless.
-  "openai/gpt-oss-120b:nitro": { only: ["cerebras/fp16"] },
-  "inclusionai/ling-3.0-flash:nitro": { only: ["novita"] },
-  // venice/fp4 serves the full million-token window but does no prompt caching:
-  // 4.37M billed input tokens and $0.45 for six cases, against $0.008 on a model
-  // whose cache absorbed most of it. coreweave/bf16 is the same weights at a
-  // smaller window, kept pinned so the endpoint cannot drift under :nitro.
-  "nvidia/nemotron-3.5-lightning:nitro": { only: ["coreweave/bf16"] },
-};
-
-/**
- * Inject OpenRouter provider routing into outgoing requests.
- *
- * Deliberately narrow: it rewrites only JSON POST bodies aimed at OpenRouter's
- * completions endpoint, and only when the pinned model asks for routing.
- * Everything else passes through untouched. This is a shim around a missing
- * hook in the SDK, not a general request interceptor — if pi grows an
- * extra-body option, delete this and pass the field properly.
- */
 /** How many times a 429 is waited out before the request is allowed to fail. */
 const RATE_LIMIT_RETRIES = 6;
-
-/**
- * Published per-million prices, for pricing a subscription run as if metered.
- *
- * `cacheRead` is priced deliberately. Leaving it at zero is what made the
- * harness report $0.69 for a run the account was charged about $8.50 for — on a
- * cache-heavy run it is the largest column, not a rounding error.
- */
-const LIST_PRICES: Record<string, { input: number; output: number; cacheRead: number }> = {
-  // OpenRouter's luna pricing, so a Codex run is comparable to a metered one.
-  "gpt-5.6-luna": { input: 0.1, output: 0.6, cacheRead: 0.01 },
-  "gpt-5.3-codex-spark": { input: 0.2, output: 1.2, cacheRead: 0.02 },
-};
-
-function notionalCost(modelId: string, usage: UsageTotals): number {
-  const price = LIST_PRICES[modelId];
-  if (!price) return 0;
-  return (
-    (usage.input * price.input + usage.output * price.output + usage.cacheRead * price.cacheRead) / 1e6
-  );
-}
-
-/**
- * Hand pi the Codex subscription tokens.
- *
- * pi keeps its own credential store rather than reading Codex CLI's
- * `~/.codex/auth.json`, and the sandbox cannot see the host filesystem anyway —
- * that isolation is the point, and mounting a home directory into the eval
- * container to reach one file would trade it away for nothing. So the tokens
- * arrive as an environment variable and this store serves them from memory.
- *
- * `modify` is deliberately a no-op sink. pi calls it to persist a refreshed
- * token, and there is nowhere in a read-only container to persist it to; the
- * refreshed value still flows back through pi's own return path for the life of
- * the process. A container is one run, so a token that outlives the run is not
- * something we need.
- */
-function codexCredentials() {
-  const raw = process.env.CODEX_OAUTH;
-  if (!raw) {
-    throw new Error("EVAL_PROVIDER=codex needs CODEX_OAUTH in the environment (see container.ts)");
-  }
-  const tokens = JSON.parse(raw) as { access: string; refresh: string; expires?: number };
-  let current: { type: "oauth"; access: string; refresh: string; expires: number } = {
-    type: "oauth",
-    access: tokens.access,
-    refresh: tokens.refresh,
-    // Treat an unknown expiry as already stale so pi refreshes before the first
-    // request rather than sending a token that may have lapsed.
-    expires: tokens.expires ?? 0,
-  };
-  return {
-    async read() {
-      return current;
-    },
-    async list() {
-      return [{ providerId: "openai-codex", type: "oauth" as const }];
-    },
-    async modify(_id: string, fn: (c: typeof current | undefined) => Promise<typeof current | undefined>) {
-      const next = await fn(current);
-      if (next) current = next;
-      return current;
-    },
-    async delete() {
-      /* nothing to remove: this store never touched disk */
-    },
-  };
-}
 
 /** Same line shape as the per-run logger, usable from module scope. */
 const logEvent = (record: Record<string, unknown>) => {
@@ -359,7 +126,7 @@ const logEvent = (record: Record<string, unknown>) => {
  *
  * pi derives cost from the price table on the Model definition, and every one of
  * those declares `cacheRead: 0`. On a cache-heavy run that is not a rounding
- * error: one nemotron run billed 144M cache-read tokens, and the harness
+ * error: one prior run billed 144M cache-read tokens, and the harness
  * reported $0.69 for what the account was charged roughly $8.50 for. The figure
  * matched `input × price + output × price` to the cent, which is how the cause
  * was found — it was our arithmetic, faithfully executed, on a table that priced
@@ -378,17 +145,15 @@ const billed = { costUsd: 0, requests: 0 };
  * A batch is homogeneous — same provider, same model, same thinking level — so
  * one config describes every job in it.
  */
-let shimConfig: { routing: unknown; onServed: (provider: string) => void; disableReasoning: boolean } = {
-  routing: undefined,
+let shimConfig: { onServed: (provider: string) => void; disableReasoning: boolean } = {
   onServed: () => {},
   disableReasoning: false,
 };
 
-/** Whether the wrapper is already in place. See installProviderRouting. */
+/** Whether the wrapper is already in place. See installOpenRouterShim. */
 let shimInstalled = false;
 
-function installProviderRouting(
-  routing: unknown,
+function installOpenRouterShim(
   onServed: (provider: string) => void,
   disableReasoning = false,
 ): void {
@@ -399,9 +164,7 @@ function installProviderRouting(
   // twelve nested wrappers, every response unwinding through all of them. The
   // visible cost was arithmetic — each layer added the charged amount to
   // `billed`, so a run would have reported twelve times what it spent. It went
-  // unnoticed because every batched run so far has been Codex, where the
-  // subscription path forces the figure to zero before anyone could read it.
-  shimConfig = { routing, onServed, disableReasoning };
+  shimConfig = { onServed, disableReasoning };
   if (shimInstalled) return;
   shimInstalled = true;
 
@@ -411,34 +174,17 @@ function installProviderRouting(
       typeof input === "string" ? input : input instanceof URL ? input.href : (input?.url ?? "");
     const isCompletion = url.includes("openrouter.ai") && url.includes("/chat/completions");
 
-    /**
-     * Reasoning cannot be forced off on the Codex transport.
-     *
-     * Three things were tried and all of them are dead ends, recorded here so
-     * nobody repeats them. pi converts `thinkingLevel: "off"` to `undefined`
-     * before the branch that would send `"none"` can see it
-     * (openai-codex-responses.js:366), so nothing is sent and GPT-5.6 defaults
-     * to *medium*. pi's injectable `fetch` option is documented as not affecting
-     * WebSocket transports. Forcing `transport: "sse"` does put the request back
-     * on this shim — and the body arrives gzipped, so rewriting it means
-     * decompress, edit, recompress on someone else's wire format.
-     *
-     * Use `EVAL_THINKING=minimal` on Codex instead. It maps to `effort: low` and
-     * measures 0.16 reasoning-to-output against 0.45 at the default.
-     */
-    if ((shimConfig.routing || shimConfig.disableReasoning) && init?.body && isCompletion) {
+    if (init?.body && isCompletion) {
       try {
         const body = JSON.parse(String(init.body));
-        if (shimConfig.routing) body.provider = shimConfig.routing;
         // Ask for the charged amount. Without this the response carries token
         // counts but no cost, and the only figure available is one we computed.
         body.usage = { include: true };
         if (shimConfig.disableReasoning) {
           // pi has no "off" in its thinkingLevelMap, so an off setting sends no
           // reasoning parameter at all — and a model that reasons by default
-          // just keeps reasoning. Verified: gpt-5.6-luna at EVAL_THINKING=off
-          // still emitted reasoning tokens until this was added, and
-          // deepseek-v4-flash-0731 emitted 292k of them in a run labelled off.
+          // just keeps reasoning. DeepSeek V4 Flash 0731 emitted 292k reasoning
+          // tokens in a run labelled off until this was added.
           // OpenRouter's own switch is the only thing that actually stops it.
           body.reasoning = { enabled: false };
           delete body.reasoning_effort;
@@ -596,7 +342,7 @@ export async function runJob(job: Job, workspaceRoot: string = WORKSPACE, tag?: 
     }
   };
 
-  const models = createModels(job.provider === "codex" ? { credentials: codexCredentials() } : undefined);
+  const models = createModels();
   let model: Model<any>;
 
   if (job.provider === "faux") {
@@ -604,22 +350,6 @@ export async function runJob(job: Job, workspaceRoot: string = WORKSPACE, tag?: 
     models.setProvider(faux.provider);
     faux.setResponses(scriptToResponses(job.fauxScript ?? [{ kind: "text", text: "(no script)" }]));
     model = faux.getModel();
-  } else if (job.provider === "codex") {
-    // A ChatGPT Plus/Pro subscription rather than metered API credits. There is
-    // no per-request charge to report, so every cost column stays at zero — the
-    // run is not free, it is prepaid, and the report says so rather than
-    // implying the tokens cost nothing.
-    const provider = openaiCodexProvider();
-    models.setProvider(provider);
-    const catalog = provider.getModels();
-    const found = catalog.find((m: { id: string }) => m.id === job.modelId);
-    if (!found) {
-      throw new Error(
-        `unknown codex model: ${job.modelId}. Known: ${catalog.map((m: { id: string }) => m.id).join(", ")}`,
-      );
-    }
-    model = found as Model<any>;
-    logLine({ ev: "provider_auth", provider: "openai-codex", subscription: true });
   } else {
     models.setProvider(openrouterProvider());
     const pinned = MODELS[job.modelId];
@@ -630,11 +360,9 @@ export async function runJob(job: Job, workspaceRoot: string = WORKSPACE, tag?: 
 
     // Always installed: even unrouted models need the served-by record, because
     // an unpinned endpoint is exactly the case where the price is unknown.
-    const routing = OPENROUTER_ROUTING[job.modelId];
     const off = job.thinkingLevel === "off";
     const seen = new Set<string>();
-    installProviderRouting(
-      routing,
+    installOpenRouterShim(
       (provider) => {
         if (seen.has(provider)) return;
         seen.add(provider);
@@ -645,7 +373,7 @@ export async function runJob(job: Job, workspaceRoot: string = WORKSPACE, tag?: 
     logLine({
       ev: "provider_routing",
       model: job.modelId,
-      routing: routing ?? "default",
+      routing: "standard",
       reasoning: off ? "disabled" : job.thinkingLevel,
     });
   }
@@ -750,19 +478,10 @@ export async function runJob(job: Job, workspaceRoot: string = WORKSPACE, tag?: 
    * otherwise pi's arithmetic over our price table, which zeroes cache reads.
    */
   const settle = (): typeof usage => {
-    // A subscription has no per-request charge. pi still computes one from the
-    // catalog's price table, and reporting that would invent a bill nobody was
-    // sent — so the column reads zero and the notional figure goes to the log,
-    // where it is a curiosity rather than an accounting claim.
-    if (job.provider === "codex") {
-      const notionalUsd = notionalCost(job.modelId, usage);
-      logEvent({ ev: "billed", subscription: true, costUsd: 0, notionalUsd });
-      return { ...usage, costUsd: 0, notionalUsd };
-    }
     if (billed.requests > 0) {
       logEvent({ ev: "billed", requests: billed.requests, costUsd: billed.costUsd, computed: usage.costUsd });
       // On a metered provider the charged amount is the honest figure for both.
-      return { ...usage, costUsd: billed.costUsd, notionalUsd: billed.costUsd };
+      return { ...usage, costUsd: billed.costUsd };
     }
     return usage;
   };

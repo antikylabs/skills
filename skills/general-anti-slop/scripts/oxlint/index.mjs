@@ -11,9 +11,9 @@
  *   no-placeholder-body          a stub with a finished-looking signature
  *   require-suppression-reason   a claim the checker is wrong, with no reason
  *
- * Fifteen are about evidence thrown away in the type system. Their names and
- * their intent come from dmmulroy/anti-slop; the implementations are ours, and
- * carry no dependency beyond Oxlint itself. See NOTICE.md.
+ * Fifteen are about evidence thrown away in the type system. They are adapted
+ * from dmmulroy/anti-slop, carry its MIT license in each rule file, and need no
+ * dependency beyond Oxlint itself.
  *
  * Wiring, in the target project's oxlint config:
  *

@@ -70,5 +70,3 @@ Reach for the skill that owns a job rather than restating it:
 | [reference/talk-it-out.md](reference/talk-it-out.md) | Rounds, frontier, and when to stop |
 | [reference/plan-it.md](reference/plan-it.md) | Judgement over a plan |
 | [reference/grill-it.md](reference/grill-it.md) | Adversarial review |
-
-Credits in [NOTICE.md](NOTICE.md).
