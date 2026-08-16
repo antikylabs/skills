@@ -8,6 +8,7 @@ Larger pieces of work, each in its own folder, retired to one durable summary wh
 | Objective | What it is |
 | --- | --- |
 | [`skill-research/`](skill-research/) | Research into the skills an Antiky game developer needs, and drafts of the first three |
+| [`skill-process/`](skill-process/) | Research and learn common patterns folks are using with AI to build |
 
 ## Archived
 
