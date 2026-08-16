@@ -93,21 +93,11 @@ export interface ReportInput {
   paired: boolean;
   runId: string;
   durationMs: number;
-  labels?: {
-    primary: string;
-    comparison: string;
-    delta: string;
-  };
 }
 
 /** The full end-of-run report. */
 export function renderReport(input: ReportInput): string {
   const { results, paired } = input;
-  const labels = input.labels ?? {
-    primary: "with skill",
-    comparison: "without skill",
-    delta: "skill delta",
-  };
   const line = "─".repeat(78);
   const out: string[] = [];
 
@@ -147,11 +137,11 @@ export function renderReport(input: ReportInput): string {
   const shamPass = results.filter((r) => r.sham?.verdict.passed).length;
   if (paired) {
     const pct = (v: number) => `${((v / total) * 100).toFixed(0)}%`;
-    out.push(`  ${pad(labels.primary, 16)}${withPass}/${total}  (${pct(withPass)})`);
+    out.push(`  ${pad("with skill", 16)}${withPass}/${total}  (${pct(withPass)})`);
     if (shamRuns.length) out.push(`  sham skill      ${shamPass}/${total}  (${pct(shamPass)})`);
-    out.push(`  ${pad(labels.comparison, 16)}${withoutPass}/${total}  (${pct(withoutPass)})`);
+    out.push(`  ${pad("without skill", 16)}${withoutPass}/${total}  (${pct(withoutPass)})`);
     const d = withPass - withoutPass;
-    out.push(`  ${pad(labels.delta, 16)}${d > 0 ? "+" : ""}${d} cases  (${d >= 0 ? "+" : ""}${(((withPass - withoutPass) / total) * 100).toFixed(0)} pp)`);
+    out.push(`  ${pad("skill delta", 16)}${d > 0 ? "+" : ""}${d} cases  (${d >= 0 ? "+" : ""}${(((withPass - withoutPass) / total) * 100).toFixed(0)} pp)`);
     if (shamRuns.length) {
       // The split that two arms cannot show: how much of the delta is the
       // writing, and how much is any document at all.
@@ -166,10 +156,10 @@ export function renderReport(input: ReportInput): string {
 
   const unstable = results.flatMap((r) => [
     ...(r.withSkill.repeats && r.withSkill.repeats.passed % r.withSkill.repeats.total !== 0
-      ? [{ result: r, arm: labels.primary, repeats: r.withSkill.repeats }]
+      ? [{ result: r, arm: "with skill", repeats: r.withSkill.repeats }]
       : []),
     ...(r.withoutSkill?.repeats && r.withoutSkill.repeats.passed % r.withoutSkill.repeats.total !== 0
-      ? [{ result: r, arm: labels.comparison, repeats: r.withoutSkill.repeats }]
+      ? [{ result: r, arm: "without skill", repeats: r.withoutSkill.repeats }]
       : []),
   ]);
   if (unstable.length) {
@@ -185,7 +175,7 @@ export function renderReport(input: ReportInput): string {
   if (anyUsage) {
     out.push("", "TOKENS");
     if (paired) {
-      out.push(`  ${pad("", 14)}${padStart(labels.primary, 14)}${padStart(labels.comparison, 14)}${padStart("delta", 14)}${padStart("ratio", 8)}`);
+      out.push(`  ${pad("", 14)}${padStart("with skill", 14)}${padStart("without skill", 14)}${padStart("delta", 14)}${padStart("ratio", 8)}`);
       const row = (label: string, a: number, b: number) =>
         out.push(`  ${pad(label, 14)}${padStart(n(a), 14)}${padStart(n(b), 14)}${padStart(delta(a, b), 14)}${padStart(ratio(a, b), 8)}`);
       row("input", withUsage.input, withoutUsage.input);
@@ -210,8 +200,8 @@ export function renderReport(input: ReportInput): string {
 
     out.push("", "COST (USD)");
     if (paired) {
-      out.push(`  ${pad(labels.primary, 14)}${padStart(usd(withUsage.costUsd), 14)}`);
-      out.push(`  ${pad(labels.comparison, 14)}${padStart(usd(withoutUsage.costUsd), 14)}`);
+      out.push(`  ${pad("with skill", 14)}${padStart(usd(withUsage.costUsd), 14)}`);
+      out.push(`  ${pad("without skill", 14)}${padStart(usd(withoutUsage.costUsd), 14)}`);
       out.push(`  ${pad("run total", 14)}${padStart(usd(withUsage.costUsd + withoutUsage.costUsd), 14)}`);
       if (total > 0) {
         out.push(`  ${pad("per case", 14)}${padStart(usd((withUsage.costUsd + withoutUsage.costUsd) / total), 14)}`);
@@ -235,8 +225,6 @@ export function renderReport(input: ReportInput): string {
 
 function assess(input: ReportInput, withUsage: UsageTotals, withoutUsage: UsageTotals): string[] {
   const { results, paired } = input;
-  const labels = input.labels ?? { primary: "with skill", comparison: "without skill" };
-  const ablation = input.labels !== undefined;
   const out: string[] = [];
   const total = results.length;
 
@@ -265,40 +253,32 @@ function assess(input: ReportInput, withUsage: UsageTotals, withoutUsage: UsageT
   const costRatio = withoutUsage.costUsd > 0 ? withUsage.costUsd / withoutUsage.costUsd : 0;
 
   if (onlyWith.length > 0) {
-    out.push(`  ${labels.primary} passed ${onlyWith.length} case${onlyWith.length === 1 ? "" : "s"} that ${labels.comparison} failed:`);
+    out.push(`  With skill passed ${onlyWith.length} case${onlyWith.length === 1 ? "" : "s"} that without skill failed:`);
     for (const r of onlyWith) out.push(`    + ${r.testCase.id} — ${r.testCase.expectation}`);
   } else {
-    out.push(`  No case passed with ${labels.primary} that failed with ${labels.comparison}.`);
-    out.push(
-      ablation
-        ? "  On this set the repo skills added no observed behavior."
-        : "  On this set the skill is not yet demonstrating value.",
-    );
+    out.push("  No case passed with the skill that failed without it.");
+    out.push("  On this set the skill is not yet demonstrating value.");
   }
 
   if (onlyWithout.length > 0) {
-    out.push("", `  REGRESSION — ${onlyWithout.length} case${onlyWithout.length === 1 ? "" : "s"} passed with ${labels.comparison} but failed with ${labels.primary}:`);
+    out.push("", `  REGRESSION — ${onlyWithout.length} case${onlyWithout.length === 1 ? "" : "s"} passed without the skill but failed with it:`);
     for (const r of onlyWithout) out.push(`    - ${r.testCase.id}: ${r.withSkill.verdict.detail}`);
   }
 
   if (bothPass.length > 0) {
     out.push("", `  ${bothPass.length} case${bothPass.length === 1 ? "" : "s"} passed in both arms.`);
-    out.push(
-      ablation
-        ? "  The general-only registry preserved these behaviors:"
-        : "  These measure nothing about the skill — the baseline already satisfies them. Consider sharpening them or accepting them as regression guards:",
-    );
+    out.push("  These measure nothing about the skill — the baseline already satisfies them. Consider sharpening them or accepting them as regression guards:");
     for (const r of bothPass) out.push(`    = ${r.testCase.id}`);
   }
 
   if (neither.length > 0) {
-    out.push("", `  ${neither.length} case${neither.length === 1 ? "" : "s"} failed in both arms${ablation ? "" : " — the skill does not address them"}:`);
+    out.push("", `  ${neither.length} case${neither.length === 1 ? "" : "s"} failed in both arms — the skill does not address them:`);
     for (const r of neither) out.push(`    ! ${r.testCase.id}: ${r.withSkill.verdict.detail}`);
   }
 
   if (tokenRatio > 0) {
-    out.push("", `  Cost of ${labels.primary}: ${tokenRatio.toFixed(2)}× the tokens and ${costRatio.toFixed(2)}× the spend`);
-    out.push(`  of ${labels.comparison}, for ${onlyWith.length - onlyWithout.length >= 0 ? "+" : ""}${onlyWith.length - onlyWithout.length} net case${Math.abs(onlyWith.length - onlyWithout.length) === 1 ? "" : "s"}.`);
+    out.push("", `  Cost of the skill: ${tokenRatio.toFixed(2)}× the tokens and ${costRatio.toFixed(2)}× the spend`);
+    out.push(`  of the baseline, for ${onlyWith.length - onlyWithout.length >= 0 ? "+" : ""}${onlyWith.length - onlyWithout.length} net case${Math.abs(onlyWith.length - onlyWithout.length) === 1 ? "" : "s"}.`);
     if (withUsage.cacheRead === 0 && withUsage.input > 50_000) {
       out.push("  No cache reads: every run paid full price for the skill text. A provider");
       out.push("  or prompt layout that caches the system prompt would cut this materially.");
@@ -320,12 +300,6 @@ function assess(input: ReportInput, withUsage: UsageTotals, withoutUsage: UsageT
 /** The same report as Markdown, for pasting into a PR or an objective summary. */
 export function renderMarkdown(input: ReportInput): string {
   const { results, paired } = input;
-  const labels = input.labels ?? {
-    primary: "With skill",
-    comparison: "Without skill",
-    delta: "Delta",
-  };
-  const ablation = input.labels !== undefined;
   const out: string[] = [];
 
   const withPass = results.filter((r) => r.withSkill.verdict.passed).length;
@@ -354,9 +328,9 @@ export function renderMarkdown(input: ReportInput): string {
   if (paired) {
     const d = withPass - withoutPass;
     out.push("| Arm | Passed | Rate |", "| --- | ---: | ---: |");
-    out.push(`| ${labels.primary} | ${withPass}/${total} | ${pct(withPass)} |`);
-    out.push(`| ${labels.comparison} | ${withoutPass}/${total} | ${pct(withoutPass)} |`);
-    out.push(`| **${labels.delta}** | **${d > 0 ? "+" : ""}${d}** | **${d > 0 ? "+" : ""}${(((withPass - withoutPass) / total) * 100).toFixed(0)} pp** |`);
+    out.push(`| With skill | ${withPass}/${total} | ${pct(withPass)} |`);
+    out.push(`| Without skill | ${withoutPass}/${total} | ${pct(withoutPass)} |`);
+    out.push(`| **Delta** | **${d > 0 ? "+" : ""}${d}** | **${d > 0 ? "+" : ""}${(((withPass - withoutPass) / total) * 100).toFixed(0)} pp** |`);
   } else {
     out.push(`**${withPass}/${total} passed** (${pct(withPass)})`);
   }
@@ -367,7 +341,7 @@ export function renderMarkdown(input: ReportInput): string {
   out.push("### Cases", "");
   out.push(
     paired
-      ? `| Suite | Case | ${labels.primary} | ${labels.comparison} | Detail |`
+      ? "| Suite | Case | With skill | Without skill | Detail |"
       : "| Suite | Case | Result | Detail |",
   );
   out.push(paired ? "| --- | --- | :---: | :---: | --- |" : "| --- | --- | :---: | --- |");
@@ -375,7 +349,7 @@ export function renderMarkdown(input: ReportInput): string {
   for (const r of results) {
     const primaryDetail = r.withSkill.verdict.detail;
     const comparisonDetail = r.withoutSkill?.verdict.detail;
-    const detail = [primaryDetail, comparisonDetail && `${labels.comparison}: ${comparisonDetail}`]
+    const detail = [primaryDetail, comparisonDetail && `Without skill: ${comparisonDetail}`]
       .filter(Boolean)
       .join("; ")
       .replace(/\|/g, "\\|")
@@ -393,7 +367,7 @@ export function renderMarkdown(input: ReportInput): string {
   if (withUsage.totalTokens > 0 || withoutUsage.totalTokens > 0) {
     out.push("## Tokens", "");
     if (paired) {
-      out.push(`| | ${labels.primary} | ${labels.comparison} | Delta | Ratio |`, "| --- | ---: | ---: | ---: | ---: |");
+      out.push("| | With skill | Without skill | Delta | Ratio |", "| --- | ---: | ---: | ---: | ---: |");
       const row = (label: string, a: number, b: number) =>
         out.push(`| ${label} | ${n(a)} | ${n(b)} | ${delta(a, b)} | ${ratio(a, b)} |`);
       row("input", withUsage.input, withoutUsage.input);
@@ -406,8 +380,8 @@ export function renderMarkdown(input: ReportInput): string {
       out.push("");
       out.push("## Cost", "");
       out.push("| | USD |", "| --- | ---: |");
-      out.push(`| ${labels.primary} | ${usd(withUsage.costUsd)} |`);
-      out.push(`| ${labels.comparison} | ${usd(withoutUsage.costUsd)} |`);
+      out.push(`| With skill | ${usd(withUsage.costUsd)} |`);
+      out.push(`| Without skill | ${usd(withoutUsage.costUsd)} |`);
       out.push(`| **Run total** | **${usd(withUsage.costUsd + withoutUsage.costUsd)}** |`);
       out.push(`| Per case | ${usd((withUsage.costUsd + withoutUsage.costUsd) / Math.max(total, 1))} |`);
     } else {
@@ -456,46 +430,38 @@ export function renderMarkdown(input: ReportInput): string {
   };
 
   section(
-    ablation ? `Only ${labels.primary}` : "Carried by the skill",
-    ablation
-      ? `Passed with ${labels.primary}, failed with ${labels.comparison}.`
-      : "Passed with the skill, failed without it. This is the skill's value.",
+    "Carried by the skill",
+    "Passed with the skill, failed without it. This is the skill's value.",
     onlyWith, (r) => `- ✅ \`${r.testCase.id}\` — ${r.testCase.expectation}`,
   );
   section(
     "Regressions",
-    ablation
-      ? `**Passed with ${labels.comparison}, failed with ${labels.primary}.**`
-      : "**Passed without the skill, failed with it.** The skill made these worse.",
+    "**Passed without the skill, failed with it.** The skill made these worse.",
     onlyWithout, (r) => `- ⚠️ \`${r.testCase.id}\` — ${r.withSkill.verdict.detail}`,
   );
   section(
     "Passed in both arms",
-    ablation
-      ? "The general-only registry preserved these behaviors."
-      : "These measure nothing about the skill — the baseline already satisfies them. Sharpen them, or keep them as regression guards.",
+    "These measure nothing about the skill — the baseline already satisfies them. Sharpen them, or keep them as regression guards.",
     bothPass, (r) => `- ➖ \`${r.testCase.id}\``,
   );
   section(
-    "Failed in both arms", ablation ? "Neither registry configuration handled these." : "The skill does not address these.",
+    "Failed in both arms", "The skill does not address these.",
     neither, (r) => `- ❌ \`${r.testCase.id}\` — ${r.withSkill.verdict.detail}`,
   );
 
   if (withoutUsage.totalTokens > 0) {
     const net = onlyWith.length - onlyWithout.length;
-    out.push(`### Cost of ${labels.primary}`, "");
+    out.push("### Cost of the skill", "");
     out.push(
       `${ratio(withUsage.totalTokens, withoutUsage.totalTokens)} the tokens and ` +
-        `${ratio(withUsage.costUsd, withoutUsage.costUsd)} the spend of ${labels.comparison}, ` +
+        `${ratio(withUsage.costUsd, withoutUsage.costUsd)} the spend of the baseline, ` +
         `for **${net >= 0 ? "+" : ""}${net} net case${Math.abs(net) === 1 ? "" : "s"}**.`,
       "",
     );
     if (net <= 0) {
       out.push(
-        ablation
-          ? "> On this set the repo skills did not improve the pass rate."
-          : "> On this set the skill is not paying for itself. Either the cases do not",
-        ...(ablation ? [] : ["> exercise what it teaches, or the instructions are not landing."]),
+        "> On this set the skill is not paying for itself. Either the cases do not",
+        "> exercise what it teaches, or the instructions are not landing.",
         "",
       );
     }
@@ -529,7 +495,6 @@ export function writeReportFiles(dir: string, input: ReportInput, text: string):
         thinking: input.thinking,
         runtime: input.runtime,
         paired: input.paired,
-        labels: input.labels,
         durationMs: input.durationMs,
         // A run where the provider stopped answering is not a measurement.
         // The release gate reads this; see scripts/release.mjs.

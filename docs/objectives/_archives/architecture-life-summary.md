@@ -17,7 +17,7 @@ It established that the question was the wrong shape, and that the right one is 
 
 ## Delivered outcome
 
-**One skill: [`skills/general-anti-slop/`](../../../skills/general-anti-slop/).** Twenty-eight named
+**One skill: [`skills/general/anti-slop/`](../../../skills/general/anti-slop/).** Twenty-eight named
 rules across four checkers, plus ten editable prose patterns.
 
 | Where | Count | What |
@@ -115,7 +115,7 @@ hard-wrapped prose and both missed claims and double-reported them.
 
 ## Follow-on work
 
-- **Build the eval suite** at `tests/eval/suites/general-anti-slop/`, with paired live runs. Nothing
+- **Build the eval suite** at `tests/eval/suites/anti-slop/`, with paired live runs. Nothing
   else here is worth extending until the skill's behaviour is measured rather than assumed.
 - **Adopt the checkers in CI** for this repository, per `reference/adopting.md`. They currently run by
   hand.
@@ -138,7 +138,7 @@ decisions and direction. So I wonder if there's a way to turn an ADR into a lint
 
 resources:
 
-- Our linter: skills/general-simplified-technical-english/scripts/ste_lint.mjs
+- Our linter: skills/general/simplified-technical-english/scripts/ste_lint.mjs
 - AI Slop Linter: https://github.com/seyedehsanhadi/sloptrim
 - Another Better AI Slop Linter: https://github.com/dmmulroy/anti-slop
 - Prose linter: https://github.com/vale-cli/vale
@@ -172,5 +172,5 @@ Really think through this, don't take the obvious for an answer...
 ```
 
 The two-word slop list that accompanied it — `seam` and `load-bearing` — is now encoded as guarded
-patterns in `skills/general-anti-slop/scripts/prose-lint.json`, with the technical uses of both
+patterns in `skills/general/anti-slop/scripts/prose-lint.json`, with the technical uses of both
 protected.

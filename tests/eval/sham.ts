@@ -48,7 +48,7 @@ const SKILLS_DIR = path.resolve(HERE, "../../skills");
  * comes away feeling helped.
  */
 const GENERIC_BODIES: Record<string, string> = {
-  "general-anti-slop": `# Keeping a repository tidy
+  "anti-slop": `# Keeping a repository tidy
 
 A repository accumulates files nobody meant to keep. Left alone, the accumulation becomes the
 norm, and nobody can tell which files still matter.
@@ -62,7 +62,7 @@ The same discipline applies to what a document asserts. Saying that something is
 maintainable tells a reader nothing on its own. Give the number, the measurement, or the record
 that settled it, or leave the claim out.`,
 
-  "general-simplified-technical-english": `# Writing clearly for technical readers
+  "simplified-technical-english": `# Writing clearly for technical readers
 
 Technical prose is read under pressure by people who are looking for one thing. Write so that
 they find it.
@@ -77,7 +77,7 @@ they find it.
 Read the draft back and ask whether a tired reader would get it right the first time. If a
 sentence needs a second pass, rewrite it rather than adding a clarification.`,
 
-  "general-write-adrs": `# Recording architectural decisions
+  "write-adrs": `# Recording architectural decisions
 
 A decision record captures a choice that was hard to make and would otherwise be re-litigated.
 Write it so a reader arriving in a year understands what was chosen and why.
@@ -90,7 +90,7 @@ Write it so a reader arriving in a year understands what was chosen and why.
 
 Decisions age. Note when one is no longer current rather than quietly editing history.`,
 
-  "general-write-objectives": `# Planning larger work
+  "write-objectives": `# Planning larger work
 
 Work that does not fit in one change needs a plan that survives contact with the work.
 
@@ -102,7 +102,7 @@ Work that does not fit in one change needs a plan that survives contact with the
 
 When a piece grows past its estimate, say so rather than quietly widening it.`,
 
-  "general-brometal-patching": `# Working with dependency defects
+  "brometal-patching": `# Working with dependency defects
 
 Sometimes the bug is not in your code. Handle that carefully.
 
@@ -114,7 +114,7 @@ Sometimes the bug is not in your code. Handle that carefully.
 
 A local change that nobody can explain later is a liability. Leave a trail.`,
 
-  "general-write-docs": `# Writing documentation
+  "write-docs": `# Writing documentation
 
 Good documentation serves a specific reader with a specific need.
 
@@ -126,19 +126,7 @@ Good documentation serves a specific reader with a specific need.
 
 Review documentation the way you review code: read it as the person who has to use it.`,
 
-  "repo-write-docs": `# Documentation in this repository
-
-Documentation lives alongside the code and is maintained with it.
-
-- Put a page where a reader would look for it.
-- Match the surrounding style and structure.
-- Keep names in the documentation synchronised with names in the source.
-- Some files are produced by tooling; check before editing one by hand.
-- Update the documentation in the same change as the behaviour it describes.
-
-When in doubt about placement or ownership, ask rather than guess.`,
-
-  "general-engineering": `# Engineering judgement
+  "engineering": `# Engineering judgement
 
 Before building something, think about whether it should exist.
 
@@ -150,31 +138,7 @@ Before building something, think about whether it should exist.
 
 Review is most valuable when it is honest. Agreeing to be agreeable helps nobody.`,
 
-  "repo-write-adrs": `# Decision records in this repository
-
-Architectural decisions in this repository are written down and kept.
-
-- Follow the structure of the records already there.
-- Give the record a clear title and a stable location.
-- Link related decisions and background material.
-- Keep the writing plain and the reasoning explicit.
-- Have the record reviewed by someone who was not in the discussion.
-
-Consistency matters more than any individual preference. Match what exists.`,
-
-  "repo-write-objectives": `# Planning in this repository
-
-Larger work is planned in writing before it is started.
-
-- Capture the intent first, in the owner's words.
-- Break the work down once the intent is settled, not before.
-- Keep the plan and the state of the work in agreement.
-- Record what was learned, not only what was done.
-- Tidy up when the work is finished.
-
-A plan is a communication tool. Write it for the person who picks it up next.`,
-
-  "general-wait-what": `# Catching up
+  "wait-what": `# Catching up
 
 When you have lost the thread, stop and re-establish it before continuing.
 
@@ -194,12 +158,38 @@ function frontmatter(skillMd: string): string {
   return skillMd.slice(0, end + 4);
 }
 
+interface SkillEntry {
+  name: string;
+  dir: string;
+  relativeDir: string;
+}
+
+function skillEntries(dir = SKILLS_DIR): SkillEntry[] {
+  const entries: SkillEntry[] = [];
+  for (const child of fs.readdirSync(dir, { withFileTypes: true })) {
+    if (!child.isDirectory()) continue;
+    const childDir = path.join(dir, child.name);
+    if (fs.existsSync(path.join(childDir, "SKILL.md"))) {
+      entries.push({
+        name: child.name,
+        dir: childDir,
+        relativeDir: path.relative(SKILLS_DIR, childDir),
+      });
+    } else {
+      entries.push(...skillEntries(childDir));
+    }
+  }
+  return entries.sort((a, b) => a.name.localeCompare(b.name));
+}
+
 export function skillNames(): string[] {
-  return fs
-    .readdirSync(SKILLS_DIR, { withFileTypes: true })
-    .filter((e) => e.isDirectory() && fs.existsSync(path.join(SKILLS_DIR, e.name, "SKILL.md")))
-    .map((e) => e.name)
-    .sort();
+  return skillEntries().map((entry) => entry.name);
+}
+
+export function skillPath(name: string): string {
+  const entry = skillEntries().find((candidate) => candidate.name === name);
+  if (!entry) throw new Error(`unknown skill: ${name}`);
+  return entry.dir;
 }
 
 /**
@@ -213,14 +203,15 @@ export function buildShamSkills(into?: string): string {
   const root = into ?? fs.mkdtempSync(path.join(os.tmpdir(), "antiky-sham-"));
   const missing: string[] = [];
 
-  for (const name of skillNames()) {
+  for (const entry of skillEntries()) {
+    const { name } = entry;
     const body = GENERIC_BODIES[name];
     if (!body) {
       missing.push(name);
       continue;
     }
-    const real = fs.readFileSync(path.join(SKILLS_DIR, name, "SKILL.md"), "utf-8");
-    const dir = path.join(root, name);
+    const real = fs.readFileSync(path.join(entry.dir, "SKILL.md"), "utf-8");
+    const dir = path.join(root, entry.relativeDir);
     fs.mkdirSync(dir, { recursive: true });
     fs.writeFileSync(path.join(dir, "SKILL.md"), `${frontmatter(real)}\n${body}\n`);
   }

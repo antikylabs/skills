@@ -1,5 +1,5 @@
 /**
- * Tests for skills/general-anti-slop.
+ * Tests for skills/general/anti-slop.
  *
  *   npm run test:unit
  *
@@ -21,7 +21,7 @@ import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { RULES } from "../../skills/general-anti-slop/scripts/oxlint/index.mjs";
+import { RULES } from "../../skills/general/anti-slop/scripts/oxlint/index.mjs";
 import {
   checkRepository,
   declaredTestGlobs,
@@ -29,7 +29,7 @@ import {
   listFiles,
   Rules,
   tokenise,
-} from "../../skills/general-anti-slop/scripts/structure_lint.mjs";
+} from "../../skills/general/anti-slop/scripts/structure_lint.mjs";
 import {
   checkText,
   splitSentences,
@@ -37,11 +37,11 @@ import {
   Vocabulary,
   selfTest,
   compilePattern,
-} from "../../skills/general-anti-slop/scripts/prose_lint.mjs";
+} from "../../skills/general/anti-slop/scripts/prose_lint.mjs";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const REPO = path.resolve(HERE, "..", "..");
-const SKILL = path.join(REPO, "skills", "general-anti-slop");
+const SKILL = path.join(REPO, "skills", "general", "anti-slop");
 const PLUGIN = path.join(SKILL, "scripts", "oxlint");
 const FIXTURES = path.join(PLUGIN, "fixtures");
 const OXLINT = path.join(HERE, "..", "node_modules", ".bin", "oxlint");

@@ -148,7 +148,7 @@ program has ever been able to tell whether a decision was actually read.
 ## Turning a decision into a rule
 
 **The rule lives beside the record, never inside it.** This is settled by the repository's own
-doctrine: [`format.md`](../skills/general-write-adrs/reference/format.md) line 91 says "Never edit an
+doctrine: [`format.md`](../skills/general/write-adrs/reference/format.md) line 91 says "Never edit an
 accepted decision in place." An embedded rule block is a mutable thing inside an immutable record —
 every path rename would force either an illegal edit or a spurious supersede. Bind by filename
 (`0007-*.yml` beside `0007-*.md`) and the ADR gains no new fields at all.
@@ -267,7 +267,7 @@ separates two opposite remedies that a naive detector would conflate.
 Exclude directories where ≥80% of basenames start with digits — migrations and ADR folders are
 supposed to look like that.
 
-### 2. The ADR corpus checker — shipped in `general-write-adrs`
+### 2. The ADR corpus checker — shipped in `write-adrs`
 
 **Note first: this repository has no ADR corpus.** `docs/` contains exactly one tracked file, and
 every `NNNN-*.md` in the tree is an eval fixture under `tests/`. The previous pass claimed "our
@@ -319,7 +319,7 @@ corpus.
 complete a goal/feature/objective." It is a regex over prose, it is exact, and nothing in the
 toolchain currently enforces it.
 
-Follow [`ste_lint.mjs`](../skills/general-simplified-technical-english/scripts/ste_lint.mjs): Node
+Follow [`ste_lint.mjs`](../skills/general/simplified-technical-english/scripts/ste_lint.mjs): Node
 stdlib only, data in a sibling JSON, `path:line:col: severity [rule] message`, `--json`,
 `--fail-on`. Put thresholds in the JSON as Vale-style `formula` + `condition` pairs rather than in
 code, and give every rule inline `specs: [{from, to}]` cases that **fail rule loading** when they do

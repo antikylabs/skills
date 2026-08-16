@@ -12,15 +12,16 @@ repository must work in any repository that installs it.
 
 ## Skill layout
 
-One skill is one directory under `skills/`. The directory name is the skill name.
+Skills are grouped by category. General-purpose skills live under `skills/general/`. The leaf
+directory name is the skill name.
 
 | Path | Required | Purpose |
 | --- | --- | --- |
-| `skills/<name>/SKILL.md` | Yes | The skill. YAML frontmatter, then the instructions. |
-| `skills/<name>/agents/openai.yaml` | No | Display metadata for Codex and other OpenAI agents. |
-| `skills/<name>/reference/` | No | Playbooks and reference files the skill loads on demand. |
-| `skills/<name>/scripts/` | No | Executables and their data files. |
-| `skills/<name>/NOTICE.md` | No | Third-party attribution, when the skill carries other people's material. |
+| `skills/<category>/<name>/SKILL.md` | Yes | The skill. YAML frontmatter, then the instructions. |
+| `skills/<category>/<name>/agents/openai.yaml` | No | Display metadata for Codex and other OpenAI agents. |
+| `skills/<category>/<name>/reference/` | No | Playbooks and reference files the skill loads on demand. |
+| `skills/<category>/<name>/scripts/` | No | Executables and their data files. |
+| `skills/<category>/<name>/NOTICE.md` | No | Third-party attribution, when the skill carries other people's material. |
 
 ## Skills with more than one job
 
@@ -45,7 +46,7 @@ Rules:
 - State in each playbook whether the command writes files.
 - Do not let a read-only command apply changes because the changes look obvious.
 
-`general-simplified-technical-english` is the worked example.
+`simplified-technical-english` is the worked example.
 
 ## Scripts
 
@@ -63,7 +64,7 @@ a tool the skill exists to run.
 
 ```markdown
 ---
-name: general-write-adrs
+name: write-adrs
 description: What the skill does and when an agent must use it.
 ---
 ```
@@ -71,70 +72,20 @@ description: What the skill does and when an agent must use it.
 Rules:
 
 - Make `name` lowercase, use hyphens, and match the directory name.
-- Start `name` with a domain prefix. See "Name prefixes" below.
-- After the prefix, name the task. Start with a verb when a verb reads naturally. Examples:
-  `antiky-build-games`, `brometal-write-shaders`, `general-write-adrs`.
+- Name the task, not its category. Start with a verb when a verb reads naturally. Examples:
+  `write-adrs`, `write-docs`, `anti-slop`.
 - Write `description` for routing. State the task and the trigger. An agent reads this line to
   decide whether to load the skill.
 - Set `metadata.internal: true` while a skill is a stub or is not ready to ship.
 
-## Name prefixes
+## Categories
 
-Every skill name starts with one of these prefixes.
+`general` holds working practices that can be installed in any repository. The category belongs in
+the path, not in the skill name. `skills/general/write-adrs/` therefore declares `name: write-adrs`.
 
-| Prefix | Domain |
-| --- | --- |
-| `antiky-` | **Using** Antiky products — building a game with the CLI, Framework, or Studio. |
-| `brometal-` | Building things with BroMetal — shaders, render passes, effects. |
-| `repo-` | **Working inside** an Antiky repository — where files go, local tooling, house conventions. |
-| `general-` | Working practice not tied to Antiky at all — portable to any repository. |
-
-The prefix names **what the agent is doing**, not what the subject matter is.
-
-**`antiky-` and `repo-` are the pair that gets confused, so be deliberate.** `antiky-` is for a
-reader who *uses* Antiky — a game developer with the released CLI and Framework, who neither has nor
-wants this repository. `repo-` is for someone *working inside* an Antiky repository, who needs to
-know that ADRs are numbered per area or that `docs/user-facing-docs/api/` is generated.
-
-A skill about writing user-facing documentation is `general-` if it teaches Diátaxis, and `repo-` if
-it says which folder the page goes in. Neither is `antiky-`, because neither helps anyone *use*
-Antiky. A skill that teaches a game developer to light a scene is `antiky-`.
-
-The same test separates `general-` from `brometal-`. `general-brometal-patching` carries our
-practice for consuming BroMetal as a patched dependency — that is dependency practice, portable in
-shape, so it is `general-`. A skill for writing BroMetal shaders would be `brometal-`. Both are
-about BroMetal; only one is about BroMetal work.
-
-After the prefix, name the task. `general-brometal-patching`, not `general-brometal` — the subject
-alone does not say what the skill does with it.
-
-Do not add a prefix without a matching row in this table and in [`README.md`](README.md). A skill
-that does not fit an existing prefix needs a human owner's decision first.
-
-## `repo-` skills and `AGENTS.md`
-
-A `repo-` skill encodes **how to do something** in a repository. The repository's `AGENTS.md` or
-`CLAUDE.md` then *references the skill* rather than restating it:
-
-```markdown
-## Architecture Decision Records
-
-Use the `repo-write-adrs` skill when creating or changing an ADR.
-```
-
-This is context economy, not tidiness. `AGENTS.md` is loaded on every session for every task; a
-skill loads only when it is needed. A procedure inlined into `AGENTS.md` makes every unrelated
-session pay for it, and the file grows until nobody reads it — which destroys exactly the
-progressive disclosure that makes skills worth having.
-
-| Belongs in `AGENTS.md` | Belongs in a `repo-` skill |
-| --- | --- |
-| That a convention exists, and which skill carries it | The convention itself |
-| Constraints binding *every* task — commit style, what must never be committed | Any multi-step procedure |
-| A pointer to the skill | Numbering, naming, placement, retirement steps |
-
-When a `repo-` skill takes over a convention that an `AGENTS.md` states inline, shrink that file to
-a pointer in the same change. Two copies of a convention is worse than either home alone.
+Classify by what the skill teaches, not by words in its subject. `brometal-patching` belongs under
+`general/` because dependency patching is a portable working practice. A new category needs a human
+owner's decision and a matching entry in [`README.md`](README.md).
 
 ## Writing rules
 

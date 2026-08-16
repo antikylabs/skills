@@ -61,16 +61,13 @@ export type CaseKind =
  * fixtures are always found under the same name.
  */
 export type Suite =
-  | "general-simplified-technical-english"
-  | "general-write-adrs"
-  | "general-write-objectives"
-  | "general-brometal-patching"
-  | "general-write-docs"
-  | "repo-write-docs"
-  | "general-engineering"
-  | "repo-write-adrs"
-  | "repo-write-objectives"
-  | "general-anti-slop";
+  | "simplified-technical-english"
+  | "write-adrs"
+  | "write-objectives"
+  | "brometal-patching"
+  | "write-docs"
+  | "engineering"
+  | "anti-slop";
 
 export interface EvalCase {
   id: string;
@@ -92,7 +89,7 @@ export const inSuite = (suite: Suite, cases: EvalCase[]): EvalCase[] =>
 
 // --- assertion helpers -----------------------------------------------------
 
-export const SKILL = "general-simplified-technical-english";
+export const SKILL = "simplified-technical-english";
 
 export const MUTATING = ["edit_file", "write_file", "move_file"] as const;
 
@@ -117,7 +114,7 @@ export const skillInvoked = (trace: Trace, skill: string = SKILL): boolean =>
     (c) =>
       !c.blocked &&
       (c.name === "read_file" || c.name === "list_dir") &&
-      new RegExp(`/skills/${skill}(/|$)`).test(String(c.args.path ?? "")),
+      new RegExp(`/skills/general/${skill}(/|$)`).test(String(c.args.path ?? "")),
   );
 
 export const mentions = (trace: Trace, pattern: RegExp): boolean => pattern.test(trace.finalText ?? "");
@@ -160,7 +157,7 @@ export const before = (
 /** Matcher: a read or list under this skill's directory. */
 export const readOf = (skill: string) => (c: Trace["toolCalls"][number]) =>
   (c.name === "read_file" || c.name === "list_dir") &&
-  new RegExp(`/skills/${skill}(/|$)`).test(String(c.args.path ?? ""));
+  new RegExp(`/skills/general/${skill}(/|$)`).test(String(c.args.path ?? ""));
 
 /** Matcher: any call that changes the workspace. */
 export const anyMutation = (c: Trace["toolCalls"][number]) =>
@@ -238,16 +235,13 @@ export const nearMiss = (reason: string, script: FauxStep[], prompt?: string): N
 // --- skill names -----------------------------------------------------------
 
 export const SKILLS = {
-  ste: "general-simplified-technical-english",
-  adr: "general-write-adrs",
-  objectives: "general-write-objectives",
-  brometal: "general-brometal-patching",
-  writeDocs: "general-write-docs",
-  repoDocs: "repo-write-docs",
-  engineering: "general-engineering",
-  repoAdrs: "repo-write-adrs",
-  repoObjectives: "repo-write-objectives",
-  antiSlop: "general-anti-slop",
+  ste: "simplified-technical-english",
+  adr: "write-adrs",
+  objectives: "write-objectives",
+  brometal: "brometal-patching",
+  writeDocs: "write-docs",
+  engineering: "engineering",
+  antiSlop: "anti-slop",
 } as const;
 
 // --- fixture paths ---------------------------------------------------------

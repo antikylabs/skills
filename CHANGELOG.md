@@ -9,6 +9,40 @@ version, not a patch.
 
 ## [Unreleased]
 
+## [0.6.0] — 2026-08-16
+
+The registry is smaller and the names are direct. The repository-specific wrappers did not change
+the model's behavior in the paired ablation, so they are gone instead of remaining as another layer
+an agent has to discover.
+
+### Changed
+
+- **All eight portable skills now live under `skills/general/` and no longer carry the `general-`
+  prefix.** For example, `general-write-adrs` is now `write-adrs`. Frontmatter, agent prompts,
+  cross-skill routing, documentation, and eval suite names moved with them.
+- The eval catalog discovers nested skill categories while still presenting each leaf skill by its
+  unprefixed name. The skills CLI reports exactly eight installable skills.
+- Local ADR, documentation, and objective conventions now come from the target repository's
+  guidance and surrounding files. The portable skills no longer require a second wrapper skill.
+- Live evals now use `deepseek/deepseek-v4-flash-0731` through standard OpenRouter routing with
+  reasoning off by default. The Codex, Luna, Hy3, Nitro, and model-selection runners are removed.
+- OpenRouter billing and routing records are isolated per concurrent eval job. One job can no longer
+  inherit another job's provider or charged amount.
+
+### Removed
+
+- **`repo-write-adrs`, `repo-write-docs`, and `repo-write-objectives`.** Their skill directories,
+  metadata, fixtures, cases, and registry entries are gone.
+- The temporary repo-skill ablation command and its custom report mode. Its result already answered
+  the question it was created to test.
+
+### Licensing
+
+- Added the repository-level [`LICENSE.md`](LICENSE.md) with Shannon Duncan's MIT license.
+- Files adapted from other MIT-licensed work now carry the relevant upstream copyright notice and
+  complete MIT text in the file itself. The separate anti-slop and engineering notice files were
+  removed.
+
 ## [0.5.0] — 2026-08-14
 
 The fifteen TypeScript rules v0.4.0 vendored are now implemented here. Same names, our code, one

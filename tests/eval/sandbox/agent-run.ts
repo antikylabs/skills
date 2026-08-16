@@ -14,6 +14,7 @@
  */
 
 import fs from "node:fs";
+import { AsyncLocalStorage } from "node:async_hooks";
 import { Agent } from "@earendil-works/pi-agent-core";
 import type { AgentMessage } from "@earendil-works/pi-agent-core";
 import type { Message } from "@earendil-works/pi-ai";
@@ -137,34 +138,26 @@ const logEvent = (record: Record<string, unknown>) => {
  * provider changes pricing, and it already accounts for cache tiers and
  * per-endpoint rates.
  */
-const billed = { costUsd: 0, requests: 0 };
+interface RequestContext {
+  billed: { costUsd: number; requests: number };
+  onServed: (provider: string) => void;
+  disableReasoning: boolean;
+}
 
-/**
- * Config for the fetch shim, set per batch rather than captured per install.
- *
- * A batch is homogeneous — same provider, same model, same thinking level — so
- * one config describes every job in it.
- */
-let shimConfig: { onServed: (provider: string) => void; disableReasoning: boolean } = {
-  onServed: () => {},
-  disableReasoning: false,
-};
+/** Keeps concurrent jobs' routing, logs, and billed cost separate. */
+const requestContext = new AsyncLocalStorage<RequestContext>();
 
 /** Whether the wrapper is already in place. See installOpenRouterShim. */
 let shimInstalled = false;
 
-function installOpenRouterShim(
-  onServed: (provider: string) => void,
-  disableReasoning = false,
-): void {
+function installOpenRouterShim(): void {
   // Install exactly once per process.
   //
   // This used to reassign globalThis.fetch on every call, which was harmless
   // when a container held one job and is not now: twelve concurrent agents meant
   // twelve nested wrappers, every response unwinding through all of them. The
   // visible cost was arithmetic — each layer added the charged amount to
-  // `billed`, so a run would have reported twelve times what it spent. It went
-  shimConfig = { onServed, disableReasoning };
+  // every job, so a run reported many times what it spent.
   if (shimInstalled) return;
   shimInstalled = true;
 
@@ -173,6 +166,7 @@ function installOpenRouterShim(
     const url =
       typeof input === "string" ? input : input instanceof URL ? input.href : (input?.url ?? "");
     const isCompletion = url.includes("openrouter.ai") && url.includes("/chat/completions");
+    const context = requestContext.getStore();
 
     if (init?.body && isCompletion) {
       try {
@@ -180,7 +174,7 @@ function installOpenRouterShim(
         // Ask for the charged amount. Without this the response carries token
         // counts but no cost, and the only figure available is one we computed.
         body.usage = { include: true };
-        if (shimConfig.disableReasoning) {
+        if (context?.disableReasoning) {
           // pi has no "off" in its thinkingLevelMap, so an off setting sends no
           // reasoning parameter at all — and a model that reasons by default
           // just keeps reasoning. DeepSeek V4 Flash 0731 emitted 292k reasoning
@@ -219,26 +213,26 @@ function installOpenRouterShim(
     // the price varies by endpoint, so the reported cost is only checkable if we
     // know who answered. Reads a clone so the real stream is untouched.
     if (isCompletion && response.ok) {
-      response
-        .clone()
-        .text()
-        .then((text) => {
-          const match = /"provider"\s*:\s*"([^"]+)"/.exec(text);
-          if (match?.[1]) shimConfig.onServed(match[1]);
+      try {
+        const text = await response.clone().text();
+        const match = /"provider"\s*:\s*"([^"]+)"/.exec(text);
+        if (match?.[1]) context?.onServed(match[1]);
 
-          // The charged amount, straight from the response. Matched loosely
-          // because the field sits inside `usage` on a completion and inside the
-          // final SSE frame on a stream, and both shapes are worth catching.
-          const charged = /"cost"\s*:\s*([0-9.eE+-]+)/.exec(text);
-          if (charged?.[1]) {
-            const value = Number(charged[1]);
-            if (Number.isFinite(value)) {
-              billed.costUsd += value;
-              billed.requests += 1;
-            }
+        // The charged amount, straight from the response. Matched loosely
+        // because the field sits inside `usage` on a completion and inside the
+        // final SSE frame on a stream, and both shapes are worth catching.
+        const charged = /"cost"\s*:\s*([0-9.eE+-]+)/.exec(text);
+        if (charged?.[1]) {
+          const value = Number(charged[1]);
+          if (Number.isFinite(value) && context) {
+            context.billed.costUsd += value;
+            context.billed.requests += 1;
           }
-        })
-        .catch(() => {});
+        }
+      } catch {
+        // Cost and endpoint logging are diagnostics. Do not discard a valid
+        // model response because its clone could not be inspected.
+      }
     }
     return response;
   };
@@ -324,6 +318,7 @@ export async function runJob(job: Job, workspaceRoot: string = WORKSPACE, tag?: 
   const toolCalls: RecordedCall[] = [];
   const record = (call: RecordedCall) => toolCalls.push(call);
   const usage = emptyUsage();
+  let liveContext: RequestContext | undefined;
 
   // The agent works on a copy. /suites stays pristine so the run can be diffed.
   // With several agents in one container each gets its own copy; the tool layer
@@ -362,14 +357,16 @@ export async function runJob(job: Job, workspaceRoot: string = WORKSPACE, tag?: 
     // an unpinned endpoint is exactly the case where the price is unknown.
     const off = job.thinkingLevel === "off";
     const seen = new Set<string>();
-    installOpenRouterShim(
-      (provider) => {
+    installOpenRouterShim();
+    liveContext = {
+      billed: { costUsd: 0, requests: 0 },
+      onServed: (provider) => {
         if (seen.has(provider)) return;
         seen.add(provider);
         logLine({ ev: "served_by", model: job.modelId, provider });
       },
-      off,
-    );
+      disableReasoning: off,
+    };
     logLine({
       ev: "provider_routing",
       model: job.modelId,
@@ -478,8 +475,9 @@ export async function runJob(job: Job, workspaceRoot: string = WORKSPACE, tag?: 
    * otherwise pi's arithmetic over our price table, which zeroes cache reads.
    */
   const settle = (): typeof usage => {
-    if (billed.requests > 0) {
-      logEvent({ ev: "billed", requests: billed.requests, costUsd: billed.costUsd, computed: usage.costUsd });
+    const billed = liveContext?.billed;
+    if (billed && billed.requests > 0) {
+      logLine({ ev: "billed", requests: billed.requests, costUsd: billed.costUsd, computed: usage.costUsd });
       // On a metered provider the charged amount is the honest figure for both.
       return { ...usage, costUsd: billed.costUsd };
     }
@@ -487,7 +485,11 @@ export async function runJob(job: Job, workspaceRoot: string = WORKSPACE, tag?: 
   };
 
   try {
-    await agent.prompt(job.prompt);
+    if (liveContext) {
+      await requestContext.run(liveContext, async () => await agent.prompt(job.prompt));
+    } else {
+      await agent.prompt(job.prompt);
+    }
   } catch (error) {
     return { toolCalls, finalText: chunks.join("\n"), usage: settle(), mutations: collectMutations(workspaceRoot), error: String(error) };
   }

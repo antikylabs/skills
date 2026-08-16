@@ -1,5 +1,5 @@
 /**
- * Tests for skills/general-simplified-technical-english/scripts/ste_lint.mjs.
+ * Tests for skills/general/simplified-technical-english/scripts/ste_lint.mjs.
  *
  *   npm run test:unit
  *
@@ -26,10 +26,10 @@ import {
   Dictionary,
   splitSentences,
   type Finding,
-} from "../../skills/general-simplified-technical-english/scripts/ste_lint.mjs";
+} from "../../skills/general/simplified-technical-english/scripts/ste_lint.mjs";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
-const SKILL = path.resolve(HERE, "..", "..", "skills", "general-simplified-technical-english");
+const SKILL = path.resolve(HERE, "..", "..", "skills", "general", "simplified-technical-english");
 const LINTER = path.join(SKILL, "scripts", "ste_lint.mjs");
 const DATA = path.join(SKILL, "scripts", "ste100-lint.json");
 const GUIDE = path.join(SKILL, "reference", "ste-guide.md");

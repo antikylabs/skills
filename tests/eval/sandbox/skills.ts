@@ -108,6 +108,26 @@ export interface SkillCatalog {
   diagnostics: { code: string; message: string; path: string }[];
 }
 
+/** Directories whose immediate children are skill directories. */
+function discoveryRoots(root: string): string[] {
+  const roots = new Set<string>();
+
+  const walk = (dir: string) => {
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      if (!entry.isDirectory()) continue;
+      const child = path.join(dir, entry.name);
+      if (fs.existsSync(path.join(child, "SKILL.md"))) {
+        roots.add(dir);
+      } else {
+        walk(child);
+      }
+    }
+  };
+
+  walk(root);
+  return [...roots].sort();
+}
+
 /**
  * Load every skill under `dir` and render the spec catalog.
  *
@@ -116,7 +136,11 @@ export interface SkillCatalog {
  * body is never in the catalog.
  */
 export async function loadCatalog(dir: string): Promise<SkillCatalog> {
-  const { skills, diagnostics } = await loadSkills(readOnlyEnv(), dir);
+  const loaded = await Promise.all(
+    discoveryRoots(dir).map((root) => loadSkills(readOnlyEnv(), root)),
+  );
+  const skills = loaded.flatMap((result) => result.skills);
+  const diagnostics = loaded.flatMap((result) => result.diagnostics);
 
   const visible = skills.filter((s) => !s.disableModelInvocation);
   if (visible.length === 0) {

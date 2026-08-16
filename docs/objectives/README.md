@@ -1,10 +1,7 @@
 # Objectives
 
-Larger pieces of work, each in its own folder, retired to one durable summary when finished.
-
-The conventions — the layout, the naming, the archive rule, what must be read before planning — live
-in the `repo-write-objectives` skill. Load it alongside `general-write-objectives`, which carries the
-lifecycle itself.
+Larger pieces of work, each in its own folder, retired to one durable summary when finished. Use the
+`write-objectives` skill for the lifecycle and read this tree for this repository's paths and naming.
 
 ## Active
 
@@ -16,4 +13,4 @@ lifecycle itself.
 
 | Objective | Archived | Summary |
 | --- | --- | --- |
-| `architecture-life` | 2026-08-14 | [`_archives/architecture-life-summary.md`](_archives/architecture-life-summary.md) — can an ADR become a lint. Shipped `general-anti-slop` |
+| `architecture-life` | 2026-08-14 | [`_archives/architecture-life-summary.md`](_archives/architecture-life-summary.md) — can an ADR become a lint. Shipped `anti-slop` |

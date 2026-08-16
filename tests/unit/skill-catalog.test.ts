@@ -16,30 +16,23 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { loadCatalog } from "../eval/sandbox/skills.ts";
-import { buildShamSkills, skillNames } from "../eval/sham.ts";
+import { buildShamSkills, skillNames, skillPath } from "../eval/sham.ts";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const SKILLS = path.resolve(HERE, "..", "..", "skills");
 
 /** Skill directories whose SKILL.md sets disable-model-invocation. */
 function humanOnlySkills(): string[] {
-  return fs
-    .readdirSync(SKILLS, { withFileTypes: true })
-    .filter((e) => e.isDirectory())
-    .filter((e) => {
-      const md = path.join(SKILLS, e.name, "SKILL.md");
-      return fs.existsSync(md) && /^disable-model-invocation:\s*true/m.test(fs.readFileSync(md, "utf-8"));
-    })
-    .map((e) => e.name);
+  return skillNames().filter((name) => {
+    const md = path.join(skillPath(name), "SKILL.md");
+    return /^disable-model-invocation:\s*true/m.test(fs.readFileSync(md, "utf-8"));
+  });
 }
 
 describe("skill catalog", () => {
   it("loads every skill directory", async () => {
     const { skills } = await loadCatalog(SKILLS);
-    const onDisk = fs
-      .readdirSync(SKILLS, { withFileTypes: true })
-      .filter((e) => e.isDirectory() && fs.existsSync(path.join(SKILLS, e.name, "SKILL.md")))
-      .map((e) => e.name);
+    const onDisk = skillNames();
 
     // loadCatalog returns only model-visible skills, so the visible set plus the
     // human-only set must account for everything on disk.
@@ -75,7 +68,7 @@ describe("skill catalog", () => {
     // regenerating one a human has curated, so the refusal has to be in the
     // playbook and not merely intended. Asserted on the text because the
     // command is prose, not code — there is nothing else to point a test at.
-    const init = fs.readFileSync(path.join(SKILLS, "general-wait-what", "reference", "init.md"), "utf-8");
+    const init = fs.readFileSync(path.join(skillPath("wait-what"), "reference", "init.md"), "utf-8");
     assert.match(init, /Refuse if one exists/i);
     assert.match(init, /Do not overwrite an existing `CONTEXT\.md`/i);
   });
@@ -84,7 +77,7 @@ describe("skill catalog", () => {
     // The skill's copy is the source of truth and has to work in a repository
     // that does not carry the file. Two copies drift; this fails the day one is
     // edited without the other.
-    const shipped = path.join(SKILLS, "general-engineering", "reference", "GOOD_ENGINEERING_H.md");
+    const shipped = path.join(skillPath("engineering"), "reference", "GOOD_ENGINEERING_H.md");
     const local = path.resolve(HERE, "..", "..", "docs", "GOOD_ENGINEERING_H.md");
     if (!fs.existsSync(local)) return; // docs/ copy retired; the skill's is authoritative
     assert.equal(
@@ -111,11 +104,11 @@ describe("sham arm", () => {
     // A drifted description would make the third arm measure the description
     // change as well as the body change, which is the confound it exists to remove.
     const root = buildShamSkills();
-    const real = path.resolve(HERE, "../../skills");
 
     for (const name of skillNames()) {
-      const shamMd = fs.readFileSync(path.join(root, name, "SKILL.md"), "utf-8");
-      const realMd = fs.readFileSync(path.join(real, name, "SKILL.md"), "utf-8");
+      const relativeDir = path.relative(SKILLS, skillPath(name));
+      const shamMd = fs.readFileSync(path.join(root, relativeDir, "SKILL.md"), "utf-8");
+      const realMd = fs.readFileSync(path.join(skillPath(name), "SKILL.md"), "utf-8");
       const head = (md: string) => md.slice(0, md.indexOf("\n---", 3) + 4);
       assert.equal(head(shamMd), head(realMd), `${name}: sham frontmatter differs from the real skill`);
       assert.notEqual(shamMd, realMd, `${name}: sham body is identical to the real one — it controls for nothing`);

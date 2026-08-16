@@ -18,7 +18,6 @@ npm test          # typecheck, harness self-test, then the eval
 | `npm run test:skill-behavior` | Skill routing and playbook adherence, scripted | free |
 | `npm run test:skill-behavior:live` | The same cases against a real model | ~1¢ |
 | `npm run test:skill-behavior:paired` | Live comparison with and without skills | varies |
-| `npm run test:repo-skill-ablation` | Live comparison of general + repo skills against general only | varies |
 
 Run `test:sandbox` first. A green `test:skill-behavior` means nothing on its own —
 assertions that can never fail are also green. The self-test scripts an agent that

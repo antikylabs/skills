@@ -1,4 +1,0 @@
-interface:
-  display_name: "Antiky Objective Conventions"
-  short_description: "Layout, naming, required reading, and archiving"
-  default_prompt: "Use $repo-write-objectives for where objective files go in this repository."

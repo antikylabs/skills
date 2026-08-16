@@ -11,30 +11,24 @@
  */
 
 import type { CaseKind, EvalCase, Suite } from "./types.ts";
-import { ASDSTE100_CASES } from "./general-simplified-technical-english/cases/index.ts";
-import { ADR_CASES } from "./general-write-adrs/cases/index.ts";
-import { OBJECTIVES_CASES } from "./general-write-objectives/cases/index.ts";
-import { BROMETAL_CASES } from "./general-brometal-patching/cases/index.ts";
-import { GENERAL_WRITE_DOCS_CASES } from "./general-write-docs/cases/index.ts";
-import { REPO_WRITE_DOCS_CASES } from "./repo-write-docs/cases/index.ts";
-import { GENERAL_ENGINEERING_CASES } from "./general-engineering/cases/index.ts";
-import { REPO_WRITE_ADRS_CASES } from "./repo-write-adrs/cases/index.ts";
-import { REPO_WRITE_OBJECTIVES_CASES } from "./repo-write-objectives/cases/index.ts";
-import { ANTI_SLOP_CASES } from "./general-anti-slop/cases/index.ts";
+import { ASDSTE100_CASES } from "./simplified-technical-english/cases/index.ts";
+import { ADR_CASES } from "./write-adrs/cases/index.ts";
+import { OBJECTIVES_CASES } from "./write-objectives/cases/index.ts";
+import { BROMETAL_CASES } from "./brometal-patching/cases/index.ts";
+import { GENERAL_WRITE_DOCS_CASES } from "./write-docs/cases/index.ts";
+import { GENERAL_ENGINEERING_CASES } from "./engineering/cases/index.ts";
+import { ANTI_SLOP_CASES } from "./anti-slop/cases/index.ts";
 
 export * from "./types.ts";
 
 export const SUITES = {
-  "general-simplified-technical-english": ASDSTE100_CASES,
-  "general-write-adrs": ADR_CASES,
-  "general-write-objectives": OBJECTIVES_CASES,
-  "general-brometal-patching": BROMETAL_CASES,
-  "general-write-docs": GENERAL_WRITE_DOCS_CASES,
-  "repo-write-docs": REPO_WRITE_DOCS_CASES,
-  "general-engineering": GENERAL_ENGINEERING_CASES,
-  "repo-write-adrs": REPO_WRITE_ADRS_CASES,
-  "repo-write-objectives": REPO_WRITE_OBJECTIVES_CASES,
-  "general-anti-slop": ANTI_SLOP_CASES,
+  "simplified-technical-english": ASDSTE100_CASES,
+  "write-adrs": ADR_CASES,
+  "write-objectives": OBJECTIVES_CASES,
+  "brometal-patching": BROMETAL_CASES,
+  "write-docs": GENERAL_WRITE_DOCS_CASES,
+  "engineering": GENERAL_ENGINEERING_CASES,
+  "anti-slop": ANTI_SLOP_CASES,
 } satisfies Record<Suite, EvalCase[]>;
 
 export const SUITE_NAMES = Object.keys(SUITES) as Suite[];
@@ -82,7 +76,7 @@ export const selectorHelp = (): string =>
     "Valid EVAL_ONLY values:",
     `  suites: ${SUITE_NAMES.join(", ")}`,
     `  kinds:  ${[...new Set(CASES.map((c) => c.kind))].join(", ")}`,
-    "  scoped: general-write-adrs:write",
+    "  scoped: write-adrs:write",
     "  or any case id",
   ].join("\n");
 

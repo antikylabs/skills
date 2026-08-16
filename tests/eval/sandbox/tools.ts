@@ -146,7 +146,7 @@ export function buildTools(
     execute: async (_id, params) => {
       record({ name: "run_ste_lint", args: { path: params.path, mode: params.mode }, blocked: false });
       const resolved = assertReadable(params.path);
-      const linter = "/skills/general-simplified-technical-english/scripts/ste_lint.mjs";
+      const linter = "/skills/general/simplified-technical-english/scripts/ste_lint.mjs";
       const result = spawnSync(
         process.execPath,
         [linter, "--mode", params.mode ?? "auto", "--fail-on", "never", resolved],
@@ -176,7 +176,7 @@ export function buildTools(
       const resolved = assertReadable(params.path);
       const result = spawnSync(
         process.execPath,
-        [`/skills/general-anti-slop/scripts/${script}`, "--fail-on", "never", resolved],
+        [`/skills/general/anti-slop/scripts/${script}`, "--fail-on", "never", resolved],
         { encoding: "utf-8", timeout: 30_000 },
       );
       const text = [result.stdout, result.stderr].filter(Boolean).join("\n").trim();

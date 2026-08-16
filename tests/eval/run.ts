@@ -8,7 +8,6 @@
  *   npm run test:skill-behavior         # faux provider: deterministic, free
  *   npm run test:skill-behavior:live    # real model over OpenRouter
  *   npm run test:skill-behavior:paired  # live, with a without-skill baseline
- *   npm run test:repo-skill-ablation    # general + repo vs general only
  *
  * Every run writes logs and reports to eval/runs/<id>/, which is gitignored.
  * EVAL_TAIL=1 streams the pi event log to the console while it runs.
@@ -17,7 +16,7 @@
  * the assertions have been shown capable of failing.
  */
 
-import { byId, select, selectorHelp, toolPath } from "./suites/index.ts";
+import { select, selectorHelp, toolPath } from "./suites/index.ts";
 import {
   detectRuntime,
   runBatchInSandbox,
@@ -30,18 +29,16 @@ import {
 import { renderReport, writeReportFiles, type ArmResult, type CaseResult } from "./report.ts";
 import { concurrency, mapLimit } from "./pool.ts";
 import { buildShamSkills } from "./sham.ts";
-import { buildSkillSet } from "./skill-set.ts";
 
 const PROVIDER = (process.env.EVAL_PROVIDER ?? "faux") as "faux" | "openrouter";
 const MODEL_ID = "deepseek/deepseek-v4-flash-0731";
-const REPO_ABLATION = process.env.EVAL_REPO_ABLATION === "1";
 // A baseline arm doubles the spend, so it is opt-in — and meaningless on faux,
 // where the responses are scripted regardless of what the agent can see.
-const PAIRED = (process.env.EVAL_BASELINE === "1" || REPO_ABLATION) && PROVIDER !== "faux";
+const PAIRED = process.env.EVAL_BASELINE === "1" && PROVIDER !== "faux";
 // The third arm: same catalog, generic bodies. Isolates what the writing is
 // worth from what merely having a document is worth. Live-only for the same
 // reason the baseline is — a scripted response ignores what the agent can see.
-const SHAM = process.env.EVAL_SHAM === "1" && PROVIDER !== "faux" && !REPO_ABLATION;
+const SHAM = process.env.EVAL_SHAM === "1" && PROVIDER !== "faux";
 /**
  * Runs per arm per case; the reported verdict is the majority.
  *
@@ -51,34 +48,8 @@ const SHAM = process.env.EVAL_SHAM === "1" && PROVIDER !== "faux" && !REPO_ABLAT
  */
 const REPEAT = Math.max(1, Number(process.env.EVAL_REPEAT ?? "1") || 1);
 
-const REPO_ABLATION_CASES = [
-  "repoadrs-numbers-per-area",
-  "repoadrs-index-unnamed",
-  "repodocs-never-edits-generated",
-  "repoobj-goal-filename",
-] as const;
-
-const GENERAL_WRITE_SKILLS = [
-  "general-write-adrs",
-  "general-write-docs",
-  "general-write-objectives",
-];
-
-const REPO_WRITE_SKILLS = [
-  "repo-write-adrs",
-  "repo-write-docs",
-  "repo-write-objectives",
-];
-
 async function main(): Promise<number> {
-  if (REPO_ABLATION && PROVIDER === "faux") {
-    process.stderr.write("EVAL_REPO_ABLATION=1 requires a live provider.\n");
-    return 2;
-  }
-
-  const selected = REPO_ABLATION
-    ? REPO_ABLATION_CASES.map((id) => byId(id)).filter((testCase) => testCase !== undefined)
-    : select(process.env.EVAL_ONLY);
+  const selected = select(process.env.EVAL_ONLY);
   if (selected.length === 0) {
     process.stderr.write(`no case matched EVAL_ONLY=${process.env.EVAL_ONLY}\n\n${selectorHelp()}\n`);
     return 2;
@@ -95,25 +66,22 @@ async function main(): Promise<number> {
   const promptWith = systemPrompt(true);
   const promptWithout = systemPrompt(false);
   const shamDir = SHAM ? buildShamSkills() : undefined;
-  const bothDir = REPO_ABLATION
-    ? buildSkillSet([...GENERAL_WRITE_SKILLS, ...REPO_WRITE_SKILLS])
-    : undefined;
-  const generalOnlyDir = REPO_ABLATION ? buildSkillSet(GENERAL_WRITE_SKILLS) : undefined;
 
   log.note(
     `\nskill-behavior eval — runtime=${runtime} provider=${PROVIDER}` +
       (PROVIDER === "openrouter" ? ` model=${MODEL_ID} thinking=${thinking}` : " (deterministic)") +
-      (PAIRED && !REPO_ABLATION ? " +baseline" : "") +
+      (PAIRED ? " +baseline" : "") +
       (SHAM ? " +sham" : "") +
-      (REPO_ABLATION ? " +repo-ablation" : "") +
       (REPEAT > 1 ? ` repeat=${REPEAT}` : "") +
       `\nlogs: ${log.dir}\n${"─".repeat(78)}`,
   );
 
-  type Arm = "with-skill" | "no-skill" | "sham" | "with-repo" | "general-only";
-  const arms: Arm[] = REPO_ABLATION
-    ? ["with-repo", "general-only"]
-    : ["with-skill", ...(PAIRED ? ["no-skill" as const] : []), ...(SHAM ? ["sham" as const] : [])];
+  type Arm = "with-skill" | "no-skill" | "sham";
+  const arms: Arm[] = [
+    "with-skill",
+    ...(PAIRED ? ["no-skill" as const] : []),
+    ...(SHAM ? ["sham" as const] : []),
+  ];
   const limit = concurrency();
   log.note(
     `  running ${selected.length} case${selected.length === 1 ? "" : "s"} × ${arms.length} arm${
@@ -123,8 +91,6 @@ async function main(): Promise<number> {
 
   const skillsDirFor = (arm: Arm): string | undefined => {
     if (arm === "sham") return shamDir;
-    if (arm === "with-repo") return bothDir;
-    if (arm === "general-only") return generalOnlyDir;
     return undefined;
   };
 
@@ -287,12 +253,8 @@ async function main(): Promise<number> {
     };
 
     return selected.map((testCase, caseIndex) => {
-      const withSkill = reduce(
-        armResults.get(key(caseIndex, REPO_ABLATION ? "with-repo" : "with-skill")),
-      )!;
-      const withoutSkill = reduce(
-        armResults.get(key(caseIndex, REPO_ABLATION ? "general-only" : "no-skill")),
-      );
+      const withSkill = reduce(armResults.get(key(caseIndex, "with-skill")))!;
+      const withoutSkill = reduce(armResults.get(key(caseIndex, "no-skill")));
       const sham = reduce(armResults.get(key(caseIndex, "sham")));
 
       const mark = withSkill.verdict.passed ? "PASS" : "FAIL";
@@ -304,7 +266,7 @@ async function main(): Promise<number> {
       const stability = withSkill.repeats ? ` [${withSkill.repeats.passed}/${withSkill.repeats.total}]` : "";
       log.note(
         `  ${String(caseIndex + 1).padStart(3)}/${selected.length}  ${mark}${stability}  ${testCase.suite}/${testCase.id}\n` +
-          `           ${withSkill.verdict.detail}${other(REPO_ABLATION ? "general-only" : "baseline", withoutSkill)}${other("sham", sham)}\n` +
+          `           ${withSkill.verdict.detail}${other("baseline", withoutSkill)}${other("sham", sham)}\n` +
           `           tools: ${withSkill.toolPath}`,
       );
 
@@ -321,9 +283,6 @@ async function main(): Promise<number> {
     paired: PAIRED,
     runId: log.id,
     durationMs: Date.now() - started,
-    labels: REPO_ABLATION
-      ? { primary: "general + repo", comparison: "general only", delta: "repo-skill delta" }
-      : undefined,
   });
 
   log.note(report);
@@ -332,17 +291,11 @@ async function main(): Promise<number> {
     {
       results, provider: PROVIDER, modelId: MODEL_ID, thinking, runtime,
       paired: PAIRED, runId: log.id, durationMs: Date.now() - started,
-      labels: REPO_ABLATION
-        ? { primary: "general + repo", comparison: "general only", delta: "repo-skill delta" }
-        : undefined,
     },
     report,
   );
 
-  const passed = results.every(
-    (r) => r.withSkill.verdict.passed && (!REPO_ABLATION || r.withoutSkill?.verdict.passed),
-  );
-  return passed ? 0 : 1;
+  return results.every((r) => r.withSkill.verdict.passed) ? 0 : 1;
 }
 
 process.exitCode = await main();
