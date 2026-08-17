@@ -2,10 +2,10 @@
 
 ## Prerequisites
 
-- [Goal 00](_completed/execute-goal-00.md) is complete; it provides `docs/pipelines/README.md`, `docs/pipelines/PIPELINE_TEMPLATE.md`, and `docs/objectives/skill-process/research/05-scott-threejs-harvest.md`.
-- Read [`../03-flat-pipeline-files.md`](../03-flat-pipeline-files.md) and use its flat filename contract.
-- Read [`../02-recursive-target-harvest.md`](../02-recursive-target-harvest.md), especially the harvest loop, quality bar, execution sequence, recursive bounds, and file contract.
-- Read [`../00-library-boundary.md`](../00-library-boundary.md) and the Thrixel evidence in [`../research/02-candidate-pipelines.md`](../research/02-candidate-pipelines.md).
+- [Goal 00](execute-goal-00.md) is complete; it provides `docs/pipelines/README.md`, `docs/pipelines/PIPELINE_TEMPLATE.md`, and `docs/objectives/skill-process/research/05-scott-threejs-harvest.md`.
+- Read [`../../03-flat-pipeline-files.md`](../../03-flat-pipeline-files.md) and use its flat filename contract.
+- Read [`../../02-recursive-target-harvest.md`](../../02-recursive-target-harvest.md), especially the harvest loop, quality bar, execution sequence, recursive bounds, and file contract.
+- Read [`../../00-library-boundary.md`](../../00-library-boundary.md) and the Thrixel evidence in [`../../research/02-candidate-pipelines.md`](../../research/02-candidate-pipelines.md).
 - Use the page contract and index structure established by Goal 00.
 - This goal has exclusive write ownership of `docs/pipelines/README.md`, `targets.md`, its new pipeline files, its harvest outcome, and only the Goal 01 row in Goal 80's candidate-intake table while it runs.
 
@@ -17,19 +17,20 @@ Nothing.
 
 Harvest the known Thrixel target end to end, decide the two declared workflow candidates, and make the target's proprietary boundaries and source contradictions impossible to miss.
 
-Plan source: [`02-recursive-target-harvest.md`, lines 20–52, 59, and 80–104](../02-recursive-target-harvest.md#L20-L52).
-File-layout source: [`03-flat-pipeline-files.md`, lines 7–20](../03-flat-pipeline-files.md#L7-L20).
+Plan source: [`02-recursive-target-harvest.md`, lines 20–52, 59, and 80–104](../../02-recursive-target-harvest.md#L20-L52).
+File-layout source: [`03-flat-pipeline-files.md`, lines 7–20](../../03-flat-pipeline-files.md#L7-L20).
 
 ## Required outcome
 
 Produce:
 
 - `docs/objectives/skill-process/research/06-thrixel-harvest.md`.
-- `docs/pipelines/pipeline-thrixel-asset-to-engine.md` if the refreshed source passes admission.
+- `docs/pipelines/pipeline-thrixel-goal-to-game.md` if the refreshed source proves that the declared
+  asset-to-engine candidate is one subloop of the source's named end-to-end workflow.
 - `docs/pipelines/pipeline-thrixel-deterministic-threejs-build.md` only if it is a distinct, fully sourced workflow after refresh.
 - Updated `docs/pipelines/README.md` entries for accepted pages only.
 - Newly discovered direct source URLs added concisely to `docs/objectives/skill-process/targets.md`.
-- A Goal 01 row added to the candidate-intake table in [`execute-goal-80.md`](execute-goal-80.md)
+- A Goal 01 row added to the candidate-intake table in [`execute-goal-80.md`](../execute-goal-80.md)
   during completion.
 
 The harvest outcome must give an explicit admit/reject decision for both named candidates. It may admit one and reject the other; page count is not a success criterion. Any additional coherent candidate is recorded and deferred rather than published in this goal.
