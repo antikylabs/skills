@@ -1,3 +1,17 @@
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/brand/antiky-labs-wordmark-and-text-white.png">
+    <source media="(prefers-color-scheme: light)" srcset="docs/assets/brand/antiky-labs-wordmark-and-text-black.png">
+    <img src="docs/assets/brand/antiky-labs-wordmark-and-text-black.png" alt="Antiky Labs" width="372">
+  </picture>
+
+  <br>
+  <strong>Portable ways of working for coding agents.</strong>
+  <br><br>
+
+  [Website](https://antikylabs.com) &nbsp;·&nbsp; [Discord](https://discord.gg/3Qs2uejUf9)
+</p>
+
 # Antiky agent skills
 
 Skills used by the Antiky Framework, BroMetal, Antiky Studio, and the Antiky team.

@@ -23,6 +23,7 @@ the current topic instead of defaulting to prose or one heavyweight diagram form
   interaction flow, and responsive HTML comparison artifacts.
 - A targeted negative control for every `show-me` eval and a generic sham body for paired
   attribution.
+- An Antiky Labs-branded README header with website and Discord links.
 
 ## [0.6.0] — 2026-08-16
 
