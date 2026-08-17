@@ -2,10 +2,10 @@
 
 ## Prerequisites
 
-- [Goal 05](_completed/execute-goal-05.md) is complete and `docs/objectives/skill-process/research/10-recursive-wave-02-plan.md` contains a frozen manifest, which may be empty.
-- Read [`../03-flat-pipeline-files.md`](../03-flat-pipeline-files.md) and use its flat filename contract.
-- [Goal 04](_completed/execute-goal-04.md) is complete; its wave-1 outcome and direct-child evidence are available.
-- Read [`../02-recursive-target-harvest.md`](../02-recursive-target-harvest.md), especially the target-harvest loop and recursive-wave bounds.
+- [Goal 05](execute-goal-05.md) is complete and `docs/objectives/skill-process/research/10-recursive-wave-02-plan.md` contains a frozen manifest, which may be empty.
+- Read [`../../03-flat-pipeline-files.md`](../../03-flat-pipeline-files.md) and use its flat filename contract.
+- [Goal 04](execute-goal-04.md) is complete; its wave-1 outcome and direct-child evidence are available.
+- Read [`../../02-recursive-target-harvest.md`](../../02-recursive-target-harvest.md), especially the target-harvest loop and recursive-wave bounds.
 - This goal has exclusive write ownership of the pipeline files declared by the frozen manifest, `docs/pipelines/README.md`, `targets.md`, its outcome, and only the Goal 06 row in Goal 80's candidate-intake table while it runs.
 
 ### Needed from the owner before starting
@@ -16,8 +16,8 @@ Nothing.
 
 Harvest every selected second-wave target, publish only distinct workflows that pass admission, and measure whether another recursive wave would add value.
 
-Plan source: [`02-recursive-target-harvest.md`, lines 20–52, 64, and 80–104](../02-recursive-target-harvest.md#L20-L52).
-File-layout source: [`03-flat-pipeline-files.md`, lines 7–20](../03-flat-pipeline-files.md#L7-L20).
+Plan source: [`02-recursive-target-harvest.md`, lines 20–52, 64, and 80–104](../../02-recursive-target-harvest.md#L20-L52).
+File-layout source: [`03-flat-pipeline-files.md`, lines 7–20](../../03-flat-pipeline-files.md#L7-L20).
 
 ## Required outcome
 
@@ -27,7 +27,7 @@ Produce:
 - Accepted pipeline pages only at the exact filenames declared by `research/10-recursive-wave-02-plan.md`.
 - Updated `docs/pipelines/README.md` entries for accepted pages only.
 - Newly discovered direct source URLs added concisely to `docs/objectives/skill-process/targets.md`.
-- A Goal 06 row added to the candidate-intake table in [`execute-goal-80.md`](execute-goal-80.md)
+- A Goal 06 row added to the candidate-intake table in [`execute-goal-80.md`](../execute-goal-80.md)
   during completion.
 
 The outcome must give every selected target and candidate a disposition, list direct children for continuation, and quantify recursion yield. If the manifest is empty, write a documented no-op outcome and make no pipeline, index, or target-queue changes.

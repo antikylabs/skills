@@ -66,7 +66,7 @@ already-covered rejection rather than a selected AI-assisted pipeline.
 
 ## What this unblocks
 
-- [Goal 06](../execute-goal-06.md) can write its required empty-wave outcome without inspecting a
+- [Goal 06](execute-goal-06.md) can write its required empty-wave outcome without inspecting a
   target or changing pipelines, the index, or the target queue.
 - Goal 07 can later audit a corpus whose second recursive wave stopped for recorded evidence reasons
   rather than an arbitrary quota.
