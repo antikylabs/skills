@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-- [Goal 07](execute-goal-07.md) is complete. This goal needs its audited corpus, deduplicated
+- [Goal 07](_completed/execute-goal-07.md) is complete. This goal needs its audited corpus, deduplicated
   continuation graph, ranked deferred-candidate queue, and continue/stop decision.
 - The candidate-intake table below contains one reconciled row for every completed Goal 00–07.
   Do not start while a completed goal's row is absent or still disagrees with its outcome.

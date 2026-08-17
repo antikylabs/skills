@@ -2,11 +2,11 @@
 
 ## Prerequisites
 
-- [Goal 00](_completed/execute-goal-00.md), [Goal 01](_completed/execute-goal-01.md), [Goal 02](_completed/execute-goal-02.md), [Goal 03](_completed/execute-goal-03.md), [Goal 04](_completed/execute-goal-04.md), [Goal 05](_completed/execute-goal-05.md), and [Goal 06](_completed/execute-goal-06.md) are complete.
+- [Goal 00](execute-goal-00.md), [Goal 01](execute-goal-01.md), [Goal 02](execute-goal-02.md), [Goal 03](execute-goal-03.md), [Goal 04](execute-goal-04.md), [Goal 05](execute-goal-05.md), and [Goal 06](execute-goal-06.md) are complete.
 - `research/05-scott-threejs-harvest.md`, `06-thrixel-harvest.md`, `07-gamedev-skills-harvest.md`, `08-recursive-wave-01-plan.md`, `09-recursive-wave-01-outcome.md`, `10-recursive-wave-02-plan.md`, and `11-recursive-wave-02-outcome.md` are available.
 - Read every published pipeline page, the current pipeline index, and the concise target queue.
-- Read [`../02-recursive-target-harvest.md`](../02-recursive-target-harvest.md), especially the execution sequence and completion definition.
-- Read [`../03-flat-pipeline-files.md`](../03-flat-pipeline-files.md) and audit the flat filename contract.
+- Read [`../../02-recursive-target-harvest.md`](../../02-recursive-target-harvest.md), especially the execution sequence and completion definition.
+- Read [`../../03-flat-pipeline-files.md`](../../03-flat-pipeline-files.md) and audit the flat filename contract.
 - This goal has exclusive write ownership of `docs/pipelines/**`, `targets.md`, its audit outcome, and the complete candidate-intake table in Goal 80 while it runs.
 
 ### Needed from the owner before starting
@@ -17,8 +17,8 @@ Nothing.
 
 Audit the generated library as one corpus, repair or withdraw unsupported material, and leave a ranked, evidence-backed queue for the next recursive objective instead of continuing indefinitely.
 
-Plan source: [`02-recursive-target-harvest.md`, lines 65, 75–78, and 141–146](../02-recursive-target-harvest.md#L65).
-File-layout source: [`03-flat-pipeline-files.md`, lines 7–20](../03-flat-pipeline-files.md#L7-L20).
+Plan source: [`02-recursive-target-harvest.md`, lines 65, 75–78, and 141–146](../../02-recursive-target-harvest.md#L65).
+File-layout source: [`03-flat-pipeline-files.md`, lines 7–20](../../03-flat-pipeline-files.md#L7-L20).
 
 ## Required outcome
 
@@ -31,7 +31,7 @@ Produce `docs/objectives/skill-process/research/12-library-audit-and-continuatio
 - A ranked next-wave recommendation with exact URLs, parent edges, expected workflow contribution, known risks, and a clear continue/stop decision.
 - A record of targets that must not be retried without new evidence.
 - A reconciled Goal 00–07 candidate-intake table plus Goal 07's own row in
-  [`execute-goal-80.md`](execute-goal-80.md), ready for Goal 80 or explicitly empty.
+  [`execute-goal-80.md`](../execute-goal-80.md), ready for Goal 80 or explicitly empty.
 
 Leave `docs/pipelines/README.md`, `docs/pipelines/PIPELINE_TEMPLATE.md`, every surviving page, and `targets.md` mutually consistent.
 

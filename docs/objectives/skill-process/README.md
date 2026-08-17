@@ -4,7 +4,7 @@
 
 **Started:** 2026-08-16
 
-**Next:** [Goal 07](goals/execute-goal-07.md)
+**Next:** [Goal 80](goals/execute-goal-80.md)
 
 Build a concise, Mermaid-first library of source-faithful AI-assisted game-development pipelines.
 Start with one known target, let direct source links feed bounded recursive harvests, and retain only
@@ -34,7 +34,7 @@ Nothing.
 | [04](goals/_completed/execute-goal-04.md) | Complete | Recursive wave-1 harvest | 03 |
 | [05](goals/_completed/execute-goal-05.md) | Complete | Frozen direct-child manifest for recursive wave 2 | 04 |
 | [06](goals/_completed/execute-goal-06.md) | Complete | Recursive wave-2 harvest | 05 |
-| [07](goals/execute-goal-07.md) | Open | Corpus audit and ranked continuation decision | 00–06 |
+| [07](goals/_completed/execute-goal-07.md) | Complete | Corpus audit and ranked continuation decision | 00–06 |
 | [80](goals/execute-goal-80.md) | Open | Deferred-candidate follow-up harvest and admitted pages | 07 |
 
 ## Research and targets

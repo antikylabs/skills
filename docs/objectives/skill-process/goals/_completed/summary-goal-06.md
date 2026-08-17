@@ -67,7 +67,7 @@ masquerading as duplicate records.
 
 ## What this unblocks
 
-- [Goal 07](../execute-goal-07.md) can audit the complete 11-page corpus, reconcile the continuation
+- [Goal 07](execute-goal-07.md) can audit the complete 11-page corpus, reconcile the continuation
   graph and deferred-candidate intake, and make the objective's continue/stop decision.
 - Goal 07 can distinguish this exhausted recursive branch from the broader pre-existing target and
   Goal 80 candidate queues.
