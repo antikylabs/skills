@@ -138,6 +138,19 @@ Before building something, think about whether it should exist.
 
 Review is most valuable when it is honest. Agreeing to be agreeable helps nobody.`,
 
+  "show-me": `# Explaining visually
+
+A visual explanation should make the central relationship easy to find.
+
+- Decide what the reader needs to understand.
+- Include only the labels and relationships that support that point.
+- Put related things near each other.
+- Use consistent direction, spacing, and terminology.
+- Add a short explanation when the visual cannot stand alone.
+
+Review the result at the size where the reader will use it. Remove anything that competes with the
+main idea.`,
+
   "wait-what": `# Catching up
 
 When you have lost the thread, stop and re-establish it before continuing.

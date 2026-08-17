@@ -67,6 +67,7 @@ export type Suite =
   | "brometal-patching"
   | "write-docs"
   | "engineering"
+  | "show-me"
   | "anti-slop";
 
 export interface EvalCase {
@@ -241,6 +242,7 @@ export const SKILLS = {
   brometal: "brometal-patching",
   writeDocs: "write-docs",
   engineering: "engineering",
+  showMe: "show-me",
   antiSlop: "anti-slop",
 } as const;
 

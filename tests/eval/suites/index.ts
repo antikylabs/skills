@@ -17,6 +17,7 @@ import { OBJECTIVES_CASES } from "./write-objectives/cases/index.ts";
 import { BROMETAL_CASES } from "./brometal-patching/cases/index.ts";
 import { GENERAL_WRITE_DOCS_CASES } from "./write-docs/cases/index.ts";
 import { GENERAL_ENGINEERING_CASES } from "./engineering/cases/index.ts";
+import { SHOW_ME_CASES } from "./show-me/cases/index.ts";
 import { ANTI_SLOP_CASES } from "./anti-slop/cases/index.ts";
 
 export * from "./types.ts";
@@ -28,6 +29,7 @@ export const SUITES = {
   "brometal-patching": BROMETAL_CASES,
   "write-docs": GENERAL_WRITE_DOCS_CASES,
   "engineering": GENERAL_ENGINEERING_CASES,
+  "show-me": SHOW_ME_CASES,
   "anti-slop": ANTI_SLOP_CASES,
 } satisfies Record<Suite, EvalCase[]>;
 
