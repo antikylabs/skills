@@ -2,10 +2,10 @@
 
 ## Prerequisites
 
-- [Goal 03](_completed/execute-goal-03.md) is complete and `docs/objectives/skill-process/research/08-recursive-wave-01-plan.md` contains a frozen manifest, which may be empty.
-- Read [`../03-flat-pipeline-files.md`](../03-flat-pipeline-files.md) and use its flat filename contract.
-- [Goal 00](_completed/execute-goal-00.md), [Goal 01](_completed/execute-goal-01.md), and [Goal 02](_completed/execute-goal-02.md) are complete; the page contract, template, and `research/05-scott-threejs-harvest.md`, `06-thrixel-harvest.md`, and `07-gamedev-skills-harvest.md` are available.
-- Read [`../02-recursive-target-harvest.md`](../02-recursive-target-harvest.md), especially the harvest loop, quality bar, recursive bounds, and file contract.
+- [Goal 03](execute-goal-03.md) is complete and `docs/objectives/skill-process/research/08-recursive-wave-01-plan.md` contains a frozen manifest, which may be empty.
+- Read [`../../03-flat-pipeline-files.md`](../../03-flat-pipeline-files.md) and use its flat filename contract.
+- [Goal 00](execute-goal-00.md), [Goal 01](execute-goal-01.md), and [Goal 02](execute-goal-02.md) are complete; the page contract, template, and `research/05-scott-threejs-harvest.md`, `06-thrixel-harvest.md`, and `07-gamedev-skills-harvest.md` are available.
+- Read [`../../02-recursive-target-harvest.md`](../../02-recursive-target-harvest.md), especially the harvest loop, quality bar, recursive bounds, and file contract.
 - This goal has exclusive write ownership of the pipeline files named in the frozen manifest, `docs/pipelines/README.md`, `targets.md`, its outcome, and only the Goal 04 row in Goal 80's candidate-intake table while it runs.
 
 ### Needed from the owner before starting
@@ -16,8 +16,8 @@ Nothing.
 
 Harvest every selected wave-1 target to source depth, publish only the distinct workflows that pass admission, and capture the next layer of direct source relationships for wave 2.
 
-Plan source: [`02-recursive-target-harvest.md`, lines 20–52, 62, and 80–104](../02-recursive-target-harvest.md#L20-L52).
-File-layout source: [`03-flat-pipeline-files.md`, lines 7–20](../03-flat-pipeline-files.md#L7-L20).
+Plan source: [`02-recursive-target-harvest.md`, lines 20–52, 62, and 80–104](../../02-recursive-target-harvest.md#L20-L52).
+File-layout source: [`03-flat-pipeline-files.md`, lines 7–20](../../03-flat-pipeline-files.md#L7-L20).
 
 ## Required outcome
 
@@ -27,7 +27,7 @@ Produce:
 - Accepted pipeline pages only at the exact filenames authorized by `research/08-recursive-wave-01-plan.md`.
 - Updated `docs/pipelines/README.md` entries for accepted pages only.
 - Newly discovered direct child URLs added concisely to `docs/objectives/skill-process/targets.md`.
-- A Goal 04 row added to the candidate-intake table in [`execute-goal-80.md`](execute-goal-80.md)
+- A Goal 04 row added to the candidate-intake table in [`execute-goal-80.md`](../execute-goal-80.md)
   during completion.
 
 The outcome must record a complete harvest result for every selected target and an admit/reject decision for every proposed candidate. Zero accepted pages is valid when the evidence says so.

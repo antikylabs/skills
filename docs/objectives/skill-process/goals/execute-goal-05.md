@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-- [Goal 04](execute-goal-04.md) is complete; `docs/objectives/skill-process/research/09-recursive-wave-01-outcome.md` and its direct-child queue are available.
+- [Goal 04](_completed/execute-goal-04.md) is complete; `docs/objectives/skill-process/research/09-recursive-wave-01-outcome.md` and its direct-child queue are available.
 - Read [`../03-flat-pipeline-files.md`](../03-flat-pipeline-files.md) and freeze complete flat filenames for selected candidates.
 - Read [`../02-recursive-target-harvest.md`](../02-recursive-target-harvest.md), especially the execution sequence and recursive-wave bounds.
 - Read all earlier reject, defer, and duplicate records before selecting another target.

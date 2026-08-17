@@ -71,7 +71,7 @@ one Goal 03 row; no content changed to accommodate the test.
 
 ## What this unblocks
 
-- [Goal 04](../execute-goal-04.md) can harvest exactly four targets without rediscovering scope,
+- [Goal 04](execute-goal-04.md) can harvest exactly four targets without rediscovering scope,
   choosing filenames, or substituting a more convenient target after a rejection.
 - Goal 04 can also complete with zero pages if deep inspection rejects all four candidates; the
   manifest supplies explicit rejection boundaries and forbids ad hoc replacements.
