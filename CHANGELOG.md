@@ -9,6 +9,21 @@ version, not a patch.
 
 ## [Unreleased]
 
+## [0.7.0] — 2026-08-16
+
+This release adds a visual-explanation skill that chooses the smallest useful representation for
+the current topic instead of defaulting to prose or one heavyweight diagram format.
+
+### Added
+
+- **`show-me`**, with call-tree, pseudocode, component-tree, file-tree, Mermaid, diff, code-block,
+  and focused responsive HTML guidance.
+- OpenAI agent metadata with a complete `$show-me` default prompt and concise catalog description.
+- Five behavior evals covering implicit invocation, call-tree selection, focused diffs, Mermaid
+  interaction flow, and responsive HTML comparison artifacts.
+- A targeted negative control for every `show-me` eval and a generic sham body for paired
+  attribution.
+
 ## [0.6.0] — 2026-08-16
 
 The registry is smaller and the names are direct. The repository-specific wrappers did not change
