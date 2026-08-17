@@ -3,6 +3,7 @@
 ## Prerequisites
 
 - Read [`../02-recursive-target-harvest.md`](../02-recursive-target-harvest.md), especially the strategic call, harvest loop, quality bar, and file contract.
+- Read [`../03-flat-pipeline-files.md`](../03-flat-pipeline-files.md) and use its flat filename contract.
 - Read [`../00-library-boundary.md`](../00-library-boundary.md) and apply its admission and evidence rules.
 - Read the existing Scott research in [`../research/02-candidate-pipelines.md`](../research/02-candidate-pipelines.md) and [`../research/03-patterns-and-document-contract.md`](../research/03-patterns-and-document-contract.md). Treat it as a lead, not as a substitute for refreshing the source.
 - This goal owns the first writes under `docs/pipelines/`. Later goals must not edit that tree, `targets.md`, or this goal's research outcome until this goal is complete.
@@ -16,6 +17,7 @@ Nothing.
 Create the first small, source-faithful pipeline set by harvesting the known Scott Three.js target. Test the library format against two expected visual-development loops, then leave a precise record of what the source did and did not support.
 
 Plan source: [`02-recursive-target-harvest.md`, lines 7–52, 58, and 96–104](../02-recursive-target-harvest.md#L7-L52).
+File-layout source: [`03-flat-pipeline-files.md`, lines 7–20](../03-flat-pipeline-files.md#L7-L20).
 
 ## Required outcome
 
@@ -23,8 +25,8 @@ Produce:
 
 - `docs/pipelines/README.md`, containing the short page contract, evidence vocabulary, pipeline index, maintenance rule, and exact verification checklist.
 - `docs/pipelines/PIPELINE_TEMPLATE.md`, the copyable scaffold for every later pipeline page.
-- `docs/pipelines/threejs-visual-system-validation/pipeline.md` if that candidate passes admission.
-- `docs/pipelines/threejs-final-image/pipeline.md` if that candidate passes admission.
+- `docs/pipelines/pipeline-threejs-visual-system-validation.md` if that candidate passes admission.
+- `docs/pipelines/pipeline-threejs-final-image.md` if that candidate passes admission.
 - `docs/objectives/skill-process/research/05-scott-threejs-harvest.md`.
 - Only newly discovered, direct source URLs added to `docs/objectives/skill-process/targets.md`; keep that file a concise URL queue.
 

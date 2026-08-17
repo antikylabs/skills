@@ -3,9 +3,10 @@
 ## Prerequisites
 
 - [Goal 05](execute-goal-05.md) is complete and `docs/objectives/skill-process/research/10-recursive-wave-02-plan.md` contains a frozen manifest, which may be empty.
+- Read [`../03-flat-pipeline-files.md`](../03-flat-pipeline-files.md) and use its flat filename contract.
 - [Goal 04](execute-goal-04.md) is complete; its wave-1 outcome and direct-child evidence are available.
 - Read [`../02-recursive-target-harvest.md`](../02-recursive-target-harvest.md), especially the target-harvest loop and recursive-wave bounds.
-- This goal has exclusive write ownership of the pipeline directories declared by the frozen manifest, `docs/pipelines/README.md`, `targets.md`, and its outcome while it runs.
+- This goal has exclusive write ownership of the pipeline files declared by the frozen manifest, `docs/pipelines/README.md`, `targets.md`, and its outcome while it runs.
 
 ### Needed from the owner before starting
 
@@ -16,13 +17,14 @@ Nothing.
 Harvest every selected second-wave target, publish only distinct workflows that pass admission, and measure whether another recursive wave would add value.
 
 Plan source: [`02-recursive-target-harvest.md`, lines 20–52, 64, and 80–104](../02-recursive-target-harvest.md#L20-L52).
+File-layout source: [`03-flat-pipeline-files.md`, lines 7–20](../03-flat-pipeline-files.md#L7-L20).
 
 ## Required outcome
 
 Produce:
 
 - `docs/objectives/skill-process/research/11-recursive-wave-02-outcome.md`.
-- Accepted pipeline pages only in the exact directories declared by `research/10-recursive-wave-02-plan.md`.
+- Accepted pipeline pages only at the exact filenames declared by `research/10-recursive-wave-02-plan.md`.
 - Updated `docs/pipelines/README.md` entries for accepted pages only.
 - Newly discovered direct source URLs added concisely to `docs/objectives/skill-process/targets.md`.
 
@@ -64,7 +66,7 @@ At minimum, prove:
 - Follow `skills/AGENTS.md`, `docs/GOOD_ENGINEERING_H.md`, the library boundary, and the established page contract.
 - Use primary sources and frozen revision links wherever possible.
 - Keep target-specific evidence, negative results, and yield counts in `research/11-recursive-wave-02-outcome.md`.
-- Never overwrite an existing pipeline directory for a newly selected target; route duplicates to the outcome and reject the duplicate page.
+- Never overwrite an existing pipeline file for a newly selected target; route duplicates to the outcome and reject the duplicate page.
 - Serialize shared-file edits, preserve unrelated worktree changes, and do not add co-author trailers.
 
 ## Completion definition

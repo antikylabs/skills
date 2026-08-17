@@ -3,9 +3,10 @@
 ## Prerequisites
 
 - [Goal 03](execute-goal-03.md) is complete and `docs/objectives/skill-process/research/08-recursive-wave-01-plan.md` contains a frozen manifest, which may be empty.
+- Read [`../03-flat-pipeline-files.md`](../03-flat-pipeline-files.md) and use its flat filename contract.
 - [Goal 00](execute-goal-00.md), [Goal 01](execute-goal-01.md), and [Goal 02](execute-goal-02.md) are complete; the page contract, template, and `research/05-scott-threejs-harvest.md`, `06-thrixel-harvest.md`, and `07-gamedev-skills-harvest.md` are available.
 - Read [`../02-recursive-target-harvest.md`](../02-recursive-target-harvest.md), especially the harvest loop, quality bar, recursive bounds, and file contract.
-- This goal has exclusive write ownership of the pipeline directories named in the frozen manifest, `docs/pipelines/README.md`, `targets.md`, and its outcome while it runs.
+- This goal has exclusive write ownership of the pipeline files named in the frozen manifest, `docs/pipelines/README.md`, `targets.md`, and its outcome while it runs.
 
 ### Needed from the owner before starting
 
@@ -16,13 +17,14 @@ Nothing.
 Harvest every selected wave-1 target to source depth, publish only the distinct workflows that pass admission, and capture the next layer of direct source relationships for wave 2.
 
 Plan source: [`02-recursive-target-harvest.md`, lines 20–52, 62, and 80–104](../02-recursive-target-harvest.md#L20-L52).
+File-layout source: [`03-flat-pipeline-files.md`, lines 7–20](../03-flat-pipeline-files.md#L7-L20).
 
 ## Required outcome
 
 Produce:
 
 - `docs/objectives/skill-process/research/09-recursive-wave-01-outcome.md`.
-- Accepted pipeline pages only in the exact candidate directories authorized by `research/08-recursive-wave-01-plan.md`.
+- Accepted pipeline pages only at the exact filenames authorized by `research/08-recursive-wave-01-plan.md`.
 - Updated `docs/pipelines/README.md` entries for accepted pages only.
 - Newly discovered direct child URLs added concisely to `docs/objectives/skill-process/targets.md`.
 
@@ -67,7 +69,7 @@ At minimum, prove:
 - Follow `skills/AGENTS.md`, `docs/GOOD_ENGINEERING_H.md`, the library boundary, and the established page contract.
 - Use primary sources and frozen revision links wherever possible.
 - Keep target-specific evidence and negative results in `research/09-recursive-wave-01-outcome.md`.
-- Do not overwrite an existing pipeline directory unless the wave plan explicitly identifies it as an audit/update rather than a new page.
+- Do not overwrite an existing pipeline file unless the wave plan explicitly identifies it as an audit/update rather than a new page.
 - Serialize shared index and target edits, preserve unrelated worktree changes, and do not add co-author trailers.
 
 ## Completion definition

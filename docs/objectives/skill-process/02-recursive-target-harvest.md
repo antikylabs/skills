@@ -95,7 +95,9 @@ library.
 
 ## Files and indexing
 
-Pipeline pages use `docs/pipelines/<pipeline-slug>/pipeline.md`. The first goal creates
+The original plan used `docs/pipelines/<pipeline-slug>/pipeline.md`. That nested path is superseded
+by the flat filename contract in [03-flat-pipeline-files.md](03-flat-pipeline-files.md). The first
+goal still creates
 `docs/pipelines/README.md` and the exact scaffold at `docs/pipelines/PIPELINE_TEMPLATE.md`. Every
 later harvest updates that index only after a page passes its own source audit.
 

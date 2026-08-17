@@ -21,6 +21,7 @@ Nothing.
 | 00 | [Library boundary](00-library-boundary.md) | Current | Admission, evidence vocabulary, scope, and source fidelity |
 | 01 | [First-pass plan](01-first-pass-plan.md) | Superseded | Preserved record of the rejected fixed six-page batch |
 | 02 | [Recursive target harvest](02-recursive-target-harvest.md) | Current | Known-target order, recursive waves, bounds, files, and completion |
+| 03 | [Flat pipeline files](03-flat-pipeline-files.md) | Current | Flat filename contract; supersedes the nested layout in plan 02 |
 
 ## Goals
 

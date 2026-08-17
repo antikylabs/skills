@@ -3,10 +3,11 @@
 ## Prerequisites
 
 - [Goal 00](execute-goal-00.md) and [Goal 01](execute-goal-01.md) are complete; `docs/pipelines/README.md`, `docs/pipelines/PIPELINE_TEMPLATE.md`, `docs/objectives/skill-process/research/05-scott-threejs-harvest.md`, and `06-thrixel-harvest.md` are available.
+- Read [`../03-flat-pipeline-files.md`](../03-flat-pipeline-files.md) and use its flat filename contract.
 - Read [`../02-recursive-target-harvest.md`](../02-recursive-target-harvest.md), especially the harvest loop, quality bar, execution sequence, recursive bounds, and file contract.
 - Read [`../00-library-boundary.md`](../00-library-boundary.md) and the gamedev-skills evidence in [`../research/02-candidate-pipelines.md`](../research/02-candidate-pipelines.md).
 - Use the existing page contract, evidence vocabulary, and index.
-- This goal has exclusive write ownership of the shared index, target queue, its harvest outcome, and any new pipeline directories while it runs.
+- This goal has exclusive write ownership of the shared index, target queue, its harvest outcome, and any new pipeline files while it runs.
 
 ### Needed from the owner before starting
 
@@ -17,15 +18,16 @@ Nothing.
 Harvest the known gamedev-skills target as a workflow source, separate real multi-step loops from its catalogs and routers, and publish only the candidates that remain source-faithful under close inspection.
 
 Plan source: [`02-recursive-target-harvest.md`, lines 20–52, 60, and 80–104](../02-recursive-target-harvest.md#L20-L52).
+File-layout source: [`03-flat-pipeline-files.md`, lines 7–20](../03-flat-pipeline-files.md#L7-L20).
 
 ## Required outcome
 
 Produce `docs/objectives/skill-process/research/07-gamedev-skills-harvest.md` and give an explicit admit/reject decision for these candidate page paths:
 
-- `docs/pipelines/fast-gameplay-prototyping/pipeline.md`
-- `docs/pipelines/game-jam-delivery/pipeline.md`
-- `docs/pipelines/game-asset-production/pipeline.md`
-- `docs/pipelines/level-blockout-teach-test/pipeline.md`
+- `docs/pipelines/pipeline-gamedev-skills-fast-gameplay-prototyping.md`
+- `docs/pipelines/pipeline-gamedev-skills-game-jam-delivery.md`
+- `docs/pipelines/pipeline-gamedev-skills-game-asset-production.md`
+- `docs/pipelines/pipeline-gamedev-skills-level-blockout-teach-test.md`
 
 Create only the paths whose candidates pass. Update `docs/pipelines/README.md` for accepted pages and add newly discovered direct source URLs, without annotations, to `docs/objectives/skill-process/targets.md`.
 

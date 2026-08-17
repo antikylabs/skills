@@ -3,6 +3,7 @@
 ## Prerequisites
 
 - [Goal 00](execute-goal-00.md), [Goal 01](execute-goal-01.md), and [Goal 02](execute-goal-02.md) are complete.
+- Read [`../03-flat-pipeline-files.md`](../03-flat-pipeline-files.md) and freeze complete flat filenames for selected candidates.
 - Read [`../02-recursive-target-harvest.md`](../02-recursive-target-harvest.md), especially the execution sequence, ordering rationale, recursive bounds, and file contract.
 - Read `docs/objectives/skill-process/research/05-scott-threejs-harvest.md`, `06-thrixel-harvest.md`, `07-gamedev-skills-harvest.md`, and the current concise target queue.
 - The known-target harvests must have recorded direct outbound sources and rejected duplicates precisely enough to build a source graph.
@@ -17,6 +18,7 @@ Nothing.
 Turn the first three harvests into a bounded, evidence-led first recursive wave. Select the strongest direct child targets and give the next goal a frozen manifest it can execute without rediscovering scope.
 
 Plan source: [`02-recursive-target-harvest.md`, line 61 and lines 75–104](../02-recursive-target-harvest.md#L61).
+File-layout source: [`03-flat-pipeline-files.md`, lines 7–20](../03-flat-pipeline-files.md#L7-L20).
 
 ## Required outcome
 
@@ -25,7 +27,7 @@ Produce `docs/objectives/skill-process/research/08-recursive-wave-01-plan.md` wi
 - A one-hop source graph from the three known targets to every direct outbound candidate.
 - Deduplicated candidate identities and canonical URLs.
 - A ranked selection of no more than six targets.
-- For each selected target: frozen revision or immutable artifact where available, source relationship, expected artifacts, verification questions, license/provenance risks, proposed pipeline candidate names, and exact proposed output directory slugs.
+- For each selected target: frozen revision or immutable artifact where available, source relationship, expected artifacts, verification questions, license/provenance risks, proposed pipeline candidate names, and exact proposed output filenames.
 - No more than two proposed page candidates per selected target.
 - A dependency-safe execution order for Goal 04.
 - Explicit reject, defer, and duplicate decisions for every unselected candidate.
@@ -48,7 +50,7 @@ At minimum, prove:
 - The selected set is at most six targets and each has at most two candidate pages.
 - Each proposed candidate states the observable evidence expected to satisfy every admission criterion; vague topic fit is insufficient.
 - Duplicate, inaccessible, license-blocked, inventory-only, and already-covered candidates are rejected or deferred with a specific reason.
-- Proposed slugs do not collide with existing pipeline directories.
+- Proposed filenames follow `pipeline-<group-name>-<name>.md` and do not collide with existing pipeline files.
 - Goal 04 can identify its exact allowed targets and output paths from this artifact alone.
 - `git diff --check` passes.
 
@@ -70,6 +72,6 @@ At minimum, prove:
 
 ## Completion definition
 
-This goal is complete when every one-hop candidate has a disposition and Goal 04 has a frozen, ordered manifest of zero to six harvestable targets with exact candidate slugs and verification questions.
+This goal is complete when every one-hop candidate has a disposition and Goal 04 has a frozen, ordered manifest of zero to six harvestable targets with exact candidate filenames and verification questions.
 
 If no candidate meets the selection threshold, record an empty manifest and complete the goal. Goal 04 consumes that manifest as a documented no-op; it must not improvise a replacement wave.
