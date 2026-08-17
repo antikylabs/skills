@@ -79,7 +79,7 @@ The fail-fast runs passed all 11 charts and every selected Markdown file.
 
 ## What this unblocks
 
-- [Goal 05](../execute-goal-05.md) can select recursive wave 2 from exactly ten recorded one-hop
+- [Goal 05](execute-goal-05.md) can select recursive wave 2 from exactly ten recorded one-hop
   children without inventing or rediscovering relationships.
 - Goal 07 and Goal 80 now have three stable Sea Park overflow names to reconcile against the existing
   deferred performance and asset candidates.

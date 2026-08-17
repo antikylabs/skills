@@ -2,9 +2,9 @@
 
 ## Prerequisites
 
-- [Goal 04](_completed/execute-goal-04.md) is complete; `docs/objectives/skill-process/research/09-recursive-wave-01-outcome.md` and its direct-child queue are available.
-- Read [`../03-flat-pipeline-files.md`](../03-flat-pipeline-files.md) and freeze complete flat filenames for selected candidates.
-- Read [`../02-recursive-target-harvest.md`](../02-recursive-target-harvest.md), especially the execution sequence and recursive-wave bounds.
+- [Goal 04](execute-goal-04.md) is complete; `docs/objectives/skill-process/research/09-recursive-wave-01-outcome.md` and its direct-child queue are available.
+- Read [`../../03-flat-pipeline-files.md`](../../03-flat-pipeline-files.md) and freeze complete flat filenames for selected candidates.
+- Read [`../../02-recursive-target-harvest.md`](../../02-recursive-target-harvest.md), especially the execution sequence and recursive-wave bounds.
 - Read all earlier reject, defer, and duplicate records before selecting another target.
 - This goal owns `docs/objectives/skill-process/research/10-recursive-wave-02-plan.md` and only the Goal 05 row in Goal 80's candidate-intake table. It must not create pipeline pages or edit the pipeline index.
 
@@ -16,8 +16,8 @@ Nothing.
 
 Select a bounded second recursive wave from the direct children of wave 1 and freeze an executable manifest before any deep harvest begins.
 
-Plan source: [`02-recursive-target-harvest.md`, line 63 and lines 75–104](../02-recursive-target-harvest.md#L63).
-File-layout source: [`03-flat-pipeline-files.md`, lines 7–20](../03-flat-pipeline-files.md#L7-L20).
+Plan source: [`02-recursive-target-harvest.md`, line 63 and lines 75–104](../../02-recursive-target-harvest.md#L63).
+File-layout source: [`03-flat-pipeline-files.md`, lines 7–20](../../03-flat-pipeline-files.md#L7-L20).
 
 ## Required outcome
 
@@ -29,7 +29,7 @@ Produce `docs/objectives/skill-process/research/10-recursive-wave-02-plan.md` wi
 - A dependency-safe execution order for Goal 06.
 - Explicit reject, defer, and duplicate decisions for every unselected child.
 - An empty manifest when no candidate clears the threshold.
-- A Goal 05 row added to the candidate-intake table in [`execute-goal-80.md`](execute-goal-80.md)
+- A Goal 05 row added to the candidate-intake table in [`execute-goal-80.md`](../execute-goal-80.md)
   during completion.
 
 ## In scope

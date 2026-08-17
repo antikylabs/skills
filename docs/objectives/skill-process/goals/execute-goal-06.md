@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-- [Goal 05](execute-goal-05.md) is complete and `docs/objectives/skill-process/research/10-recursive-wave-02-plan.md` contains a frozen manifest, which may be empty.
+- [Goal 05](_completed/execute-goal-05.md) is complete and `docs/objectives/skill-process/research/10-recursive-wave-02-plan.md` contains a frozen manifest, which may be empty.
 - Read [`../03-flat-pipeline-files.md`](../03-flat-pipeline-files.md) and use its flat filename contract.
 - [Goal 04](_completed/execute-goal-04.md) is complete; its wave-1 outcome and direct-child evidence are available.
 - Read [`../02-recursive-target-harvest.md`](../02-recursive-target-harvest.md), especially the target-harvest loop and recursive-wave bounds.
