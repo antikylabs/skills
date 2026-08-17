@@ -15,7 +15,8 @@ Every `pipeline-<group-name>-<name>.md` page must:
 - separate observed supporting skills from potential supporting skills; and
 - use direct, auditable citations.
 
-Copy [the pipeline template](PIPELINE_TEMPLATE.md) for a new page.
+Follow [the researcher guide](RESEARCHER.md) to harvest a target, then copy
+[the pipeline template](PIPELINE_TEMPLATE.md) for each admitted page.
 
 ## Evidence vocabulary
 
