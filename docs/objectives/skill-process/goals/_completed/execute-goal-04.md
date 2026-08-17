@@ -27,7 +27,7 @@ Produce:
 - Accepted pipeline pages only at the exact filenames authorized by `research/08-recursive-wave-01-plan.md`.
 - Updated `docs/pipelines/README.md` entries for accepted pages only.
 - Newly discovered direct child URLs added concisely to `docs/objectives/skill-process/targets.md`.
-- A Goal 04 row added to the candidate-intake table in [`execute-goal-80.md`](../execute-goal-80.md)
+- A Goal 04 row added to the candidate-intake table in [`execute-goal-80.md`](execute-goal-80.md)
   during completion.
 
 The outcome must record a complete harvest result for every selected target and an admit/reject decision for every proposed candidate. Zero accepted pages is valid when the evidence says so.

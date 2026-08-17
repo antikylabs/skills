@@ -20,7 +20,7 @@ documented no-op, so no target, licensing, publication, or product decision need
 3. Reconciled recursion yield: Goal 05 selected 0 of 10 children, while Goal 06 had no deep-harvest
    denominator. The branch therefore produced no page or continuation edge, and no third recursive
    wave is justified from it.
-4. A matching [Goal 06 intake row](../execute-goal-80.md#candidate-intake) that records `None` and
+4. A matching [Goal 06 intake row](execute-goal-80.md#candidate-intake) that records `None` and
    keeps Goal 05's seven duplicates and three rejections as upstream exclusions.
 5. Byte-for-byte preservation of all 11 pipeline pages, the 11-row pipeline index, and the 79-entry
    unique URL queue.

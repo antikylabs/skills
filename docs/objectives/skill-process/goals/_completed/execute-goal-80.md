@@ -2,16 +2,16 @@
 
 ## Prerequisites
 
-- [Goal 07](_completed/execute-goal-07.md) is complete. This goal needs its audited corpus, deduplicated
+- [Goal 07](execute-goal-07.md) is complete. This goal needs its audited corpus, deduplicated
   continuation graph, ranked deferred-candidate queue, and continue/stop decision.
 - The candidate-intake table below contains one reconciled row for every completed Goal 00–07.
   Do not start while a completed goal's row is absent or still disagrees with its outcome.
-- [Goal 00](_completed/execute-goal-00.md) is complete. Read
-  [`research/05-scott-threejs-harvest.md`](../research/05-scott-threejs-harvest.md), especially every
+- [Goal 00](execute-goal-00.md) is complete. Read
+  [`research/05-scott-threejs-harvest.md`](../../research/05-scott-threejs-harvest.md), especially every
   candidate deferred at lines 74–113.
-- Read [`../02-recursive-target-harvest.md`](../02-recursive-target-harvest.md), especially the
+- Read [`../02-recursive-target-harvest.md`](../../02-recursive-target-harvest.md), especially the
   later-harvest rule and per-source page bound at lines 80–94.
-- Read [`../03-flat-pipeline-files.md`](../03-flat-pipeline-files.md) and preserve the flat
+- Read [`../03-flat-pipeline-files.md`](../../03-flat-pipeline-files.md) and preserve the flat
   `pipeline-<group-name>-<name>.md` contract.
 - Do not run this goal concurrently with another goal that owns `docs/pipelines/**`, `targets.md`,
   or a source harvest outcome. Those files are the serialization lock.
@@ -27,7 +27,7 @@ set. Reopen the source evidence, apply the admission gate rather than trusting t
 label, and publish only distinct workflows whose order, artifacts, feedback, provenance, and scope
 remain auditable.
 
-Plan source: [`02-recursive-target-harvest.md`, lines 80–106](../02-recursive-target-harvest.md#L80-L106).
+Plan source: [`02-recursive-target-harvest.md`, lines 80–106](../../02-recursive-target-harvest.md#L80-L106).
 The plan explicitly queues coherent candidates for later harvesting instead of dropping them after
 the first per-source page cap.
 
@@ -41,14 +41,14 @@ become Goal 80 work by appearing here.
 
 | Source goal | Outcome | Eligible deferred pipeline candidates | Exclusions | Intake state |
 | --- | --- | --- | --- | --- |
-| 00 | [`05-scott-threejs-harvest.md`](../research/05-scott-threejs-harvest.md#candidate-disposition) | New procedural-scene orchestration; all 21 routed atomic modules | Two pages admitted; skill-pack source distillation is outside the game-development scope; deterministic gallery capture is a constituent of the visual-validation page; source inventories fail Gate 1 | Ready for Goal 80 |
-| 01 | [`06-thrixel-harvest.md`](../research/06-thrixel-harvest.md#candidate-disposition) | Unity imported-asset inspection and play-mode validation; Three.js gameplay-relationship bench | Goal to Game admitted; deterministic Three.js build rejected; capture-measure-fix review duplicates/constitutes visual-system validation; pixel-gated performance is consolidated into Goal 04's practiced performance candidate | Ready for Goal 80 |
-| 02 | [`07-gamedev-skills-harvest.md`](../research/07-gamedev-skills-harvest.md#candidate-disposition) | Godot export and runtime validation; Unity build and runtime validation | Four declared pages admitted; Butler, SteamPipe, and Unreal follow-ups were published by Goal 04; profile–fix–remeasure is consolidated into Goal 04's practiced performance candidate; router/catalog, gameplay, recipe, and meta-workflow exclusions remain | Ready for Goal 80 |
-| 03 | [`08-recursive-wave-01-plan.md`](../research/08-recursive-wave-01-plan.md#frozen-goal-04-manifest) | None | Four selected targets belong to Goal 04; CodePen `RNKpmQj`, `Elysium-Mars-Park`, and `scottstts/Stellar` are target-only deferrals; every other unselected child was rejected or already-covered at selection depth | No eligible candidates |
-| 04 | [`09-recursive-wave-01-outcome.md`](../research/09-recursive-wave-01-outcome.md#candidate-ledger) | Sea Park GLB fauna replacement and audit; Sea Park measured performance recovery; Sea Park simulation-first ride geometry correction | Four pages admitted; visual-validation and final-image routes deduplicated; proposed-page constituents, setup/inventory records, and non-agent procedures remain ineligible; measured performance represents the consolidated Goal 01/02 performance family without pre-admission | Ready for Goal 80 |
-| 05 | [`10-recursive-wave-02-plan.md`](../research/10-recursive-wave-02-plan.md#frozen-goal-06-manifest) | None | The shallow selection found no deferred pipeline candidate eligible for Goal 80: seven children are artifact or constituent duplicates and three repositories fail AI-scope or distinct-workflow gates; no target-only deferral is relabeled as a pipeline | No eligible candidates |
-| 06 | [`11-recursive-wave-02-outcome.md`](../research/11-recursive-wave-02-outcome.md#target-and-candidate-ledger) | None | The empty Goal 05 manifest authorized no target, candidate, page, overflow candidate, or direct child; Goal 05's seven duplicates and three rejections remain upstream exclusions and no target-only record is relabeled as a pipeline | No eligible candidates |
-| 07 | [`12-library-audit-and-continuation.md`](../research/12-library-audit-and-continuation.md#goal-80-intake-reconciliation) | None | The corpus audit created no candidate; it reconciled 29 earlier candidates, removed published duplicates and scope-ineligible or constituent leads, recorded three target-only no-retry records, and stopped recursive URL harvesting | No eligible candidates |
+| 00 | [`05-scott-threejs-harvest.md`](../../research/05-scott-threejs-harvest.md#candidate-disposition) | New procedural-scene orchestration; all 21 routed atomic modules | Two pages admitted; skill-pack source distillation is outside the game-development scope; deterministic gallery capture is a constituent of the visual-validation page; source inventories fail Gate 1 | Ready for Goal 80 |
+| 01 | [`06-thrixel-harvest.md`](../../research/06-thrixel-harvest.md#candidate-disposition) | Unity imported-asset inspection and play-mode validation; Three.js gameplay-relationship bench | Goal to Game admitted; deterministic Three.js build rejected; capture-measure-fix review duplicates/constitutes visual-system validation; pixel-gated performance is consolidated into Goal 04's practiced performance candidate | Ready for Goal 80 |
+| 02 | [`07-gamedev-skills-harvest.md`](../../research/07-gamedev-skills-harvest.md#candidate-disposition) | Godot export and runtime validation; Unity build and runtime validation | Four declared pages admitted; Butler, SteamPipe, and Unreal follow-ups were published by Goal 04; profile–fix–remeasure is consolidated into Goal 04's practiced performance candidate; router/catalog, gameplay, recipe, and meta-workflow exclusions remain | Ready for Goal 80 |
+| 03 | [`08-recursive-wave-01-plan.md`](../../research/08-recursive-wave-01-plan.md#frozen-goal-04-manifest) | None | Four selected targets belong to Goal 04; CodePen `RNKpmQj`, `Elysium-Mars-Park`, and `scottstts/Stellar` are target-only deferrals; every other unselected child was rejected or already-covered at selection depth | No eligible candidates |
+| 04 | [`09-recursive-wave-01-outcome.md`](../../research/09-recursive-wave-01-outcome.md#candidate-ledger) | Sea Park GLB fauna replacement and audit; Sea Park measured performance recovery; Sea Park simulation-first ride geometry correction | Four pages admitted; visual-validation and final-image routes deduplicated; proposed-page constituents, setup/inventory records, and non-agent procedures remain ineligible; measured performance represents the consolidated Goal 01/02 performance family without pre-admission | Ready for Goal 80 |
+| 05 | [`10-recursive-wave-02-plan.md`](../../research/10-recursive-wave-02-plan.md#frozen-goal-06-manifest) | None | The shallow selection found no deferred pipeline candidate eligible for Goal 80: seven children are artifact or constituent duplicates and three repositories fail AI-scope or distinct-workflow gates; no target-only deferral is relabeled as a pipeline | No eligible candidates |
+| 06 | [`11-recursive-wave-02-outcome.md`](../../research/11-recursive-wave-02-outcome.md#target-and-candidate-ledger) | None | The empty Goal 05 manifest authorized no target, candidate, page, overflow candidate, or direct child; Goal 05's seven duplicates and three rejections remain upstream exclusions and no target-only record is relabeled as a pipeline | No eligible candidates |
+| 07 | [`12-library-audit-and-continuation.md`](../../research/12-library-audit-and-continuation.md#goal-80-intake-reconciliation) | None | The corpus audit created no candidate; it reconciled 29 earlier candidates, removed published duplicates and scope-ineligible or constituent leads, recorded three target-only no-retry records, and stopped recursive URL harvesting | No eligible candidates |
 
 Goal 07 must reconcile every row against the completed outcomes, deduplicate cross-source workflow
 leads, and change the intake state to `Ready for Goal 80` or `No eligible candidates`. Goal 80 may

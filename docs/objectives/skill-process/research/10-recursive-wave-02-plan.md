@@ -136,7 +136,7 @@ proposes no filename, it cannot collide with either set and satisfies the zero-t
 bound for every selected target vacuously. A future goal must perform a new selection before any
 of the rejected or duplicate sources can receive a filename.
 
-The Goal 05 row in [Goal 80's candidate-intake table](../goals/execute-goal-80.md#candidate-intake)
+The Goal 05 row in [Goal 80's candidate-intake table](../goals/_completed/execute-goal-80.md#candidate-intake)
 records `None`. Shallow selection found no deferred pipeline candidate eligible for Goal 80. The
 three rejected repositories and seven duplicate/constituent sources remain exclusions; there are
 no target-only deferrals to relabel as pipelines.

@@ -18,7 +18,7 @@ parent nor measured yield to justify it.
 Stopping recursive traversal does not discard the coherent candidates already deferred by the four
 source harvests. After removing published duplicates, one scope-ineligible meta-workflow, two
 validation constituents, and two lower-evidence performance variants, 29 source-specific candidates
-remain for the bounded [Goal 80 follow-up](../goals/execute-goal-80.md). That goal owns source refresh,
+remain for the bounded [Goal 80 follow-up](../goals/_completed/execute-goal-80.md). That goal owns source refresh,
 admission decisions, and at most six new pages; this audit does not pre-admit any candidate.
 
 [`targets.md`](../targets.md) is cut from a 79-URL discovery history to the 29 exact primary-artifact
@@ -247,7 +247,7 @@ wording, or repository activity does not.
 
 ## Goal 80 intake reconciliation
 
-The authoritative serialized table is in [Goal 80](../goals/execute-goal-80.md#candidate-intake).
+The authoritative serialized table is in [Goal 80](../goals/_completed/execute-goal-80.md#candidate-intake).
 The reconciled state is:
 
 | Source goal | Eligible count | Reconciliation | Intake state |

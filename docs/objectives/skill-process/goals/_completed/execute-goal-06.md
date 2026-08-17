@@ -27,7 +27,7 @@ Produce:
 - Accepted pipeline pages only at the exact filenames declared by `research/10-recursive-wave-02-plan.md`.
 - Updated `docs/pipelines/README.md` entries for accepted pages only.
 - Newly discovered direct source URLs added concisely to `docs/objectives/skill-process/targets.md`.
-- A Goal 06 row added to the candidate-intake table in [`execute-goal-80.md`](../execute-goal-80.md)
+- A Goal 06 row added to the candidate-intake table in [`execute-goal-80.md`](execute-goal-80.md)
   during completion.
 
 The outcome must give every selected target and candidate a disposition, list direct children for continuation, and quantify recursion yield. If the manifest is empty, write a documented no-op outcome and make no pipeline, index, or target-queue changes.

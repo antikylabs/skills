@@ -29,7 +29,7 @@ authority.
    page.
 5. A catalog with 11 pipeline files and 11 matching index rows, plus ten unique direct-child URLs in
    the terse target queue for Goal 05.
-6. A matching [Goal 04 intake row](../execute-goal-80.md#candidate-intake) naming Sea Park GLB fauna
+6. A matching [Goal 04 intake row](execute-goal-80.md#candidate-intake) naming Sea Park GLB fauna
    replacement and audit, measured performance recovery, and simulation-first ride geometry
    correction as the only eligible deferred candidates from this wave.
 

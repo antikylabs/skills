@@ -29,7 +29,7 @@ Produce `docs/objectives/skill-process/research/10-recursive-wave-02-plan.md` wi
 - A dependency-safe execution order for Goal 06.
 - Explicit reject, defer, and duplicate decisions for every unselected child.
 - An empty manifest when no candidate clears the threshold.
-- A Goal 05 row added to the candidate-intake table in [`execute-goal-80.md`](../execute-goal-80.md)
+- A Goal 05 row added to the candidate-intake table in [`execute-goal-80.md`](execute-goal-80.md)
   during completion.
 
 ## In scope

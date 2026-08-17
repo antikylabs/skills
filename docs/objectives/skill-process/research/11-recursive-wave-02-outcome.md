@@ -92,7 +92,7 @@ outcome makes no stop decision for those separate records.
 
 ## Goal 80 intake
 
-The Goal 06 row in [Goal 80's candidate-intake table](../goals/execute-goal-80.md#candidate-intake)
+The Goal 06 row in [Goal 80's candidate-intake table](../goals/_completed/execute-goal-80.md#candidate-intake)
 records `None`. No deferred pipeline candidate was produced because the execution manifest had no
 target or candidate. Goal 05's seven duplicates and three rejections remain exclusions and are not
 relabeled as Goal 06 work.

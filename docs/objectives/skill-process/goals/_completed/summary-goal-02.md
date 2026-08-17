@@ -26,7 +26,7 @@ product or evidence-policy decision appeared.
    deferrals, rejection and alternative-interpretation records, diagram mappings, evidence limits,
    outbound targets, and verification.
 6. Four matching library-index entries, three direct URL-only additions to the
-   [target queue](../../targets.md), and a reconciled Goal 02 [Goal 80 intake row](../execute-goal-80.md#candidate-intake).
+   [target queue](../../targets.md), and a reconciled Goal 02 [Goal 80 intake row](execute-goal-80.md#candidate-intake).
 
 ## What I got wrong
 

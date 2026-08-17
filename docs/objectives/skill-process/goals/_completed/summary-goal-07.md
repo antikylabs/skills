@@ -31,7 +31,7 @@ Nothing. The audit found no unsupported active page and no decision that needs n
 7. A pruned [continuation target queue](../../targets.md) with 29 exact, unique, immutable artifact
    URLs instead of 79 mixed historical discovery records. Rejected, harvested, duplicate, and
    no-retry targets remain in the research history.
-8. A complete [Goal 80 intake table](../execute-goal-80.md#candidate-intake): Goals 00, 01, 02, and
+8. A complete [Goal 80 intake table](execute-goal-80.md#candidate-intake): Goals 00, 01, 02, and
    04 are ready; Goals 03, 05, 06, and 07 explicitly have no eligible candidates.
 
 ## What I got wrong
@@ -81,7 +81,7 @@ approved network boundary passed. This was an execution-environment failure, not
 
 ## What this unblocks
 
-- [Goal 80](../execute-goal-80.md) can start with a reconciled, ranked, source-specific candidate
+- [Goal 80](execute-goal-80.md) can start with a reconciled, ranked, source-specific candidate
   set and an exact active artifact queue.
 - Goal 80 can spend its six-candidate bound on source refresh and admission instead of repeating
   recursive target selection or rediscovering published duplicates.

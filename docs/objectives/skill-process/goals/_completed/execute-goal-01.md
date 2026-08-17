@@ -30,7 +30,7 @@ Produce:
 - `docs/pipelines/pipeline-thrixel-deterministic-threejs-build.md` only if it is a distinct, fully sourced workflow after refresh.
 - Updated `docs/pipelines/README.md` entries for accepted pages only.
 - Newly discovered direct source URLs added concisely to `docs/objectives/skill-process/targets.md`.
-- A Goal 01 row added to the candidate-intake table in [`execute-goal-80.md`](../execute-goal-80.md)
+- A Goal 01 row added to the candidate-intake table in [`execute-goal-80.md`](execute-goal-80.md)
   during completion.
 
 The harvest outcome must give an explicit admit/reject decision for both named candidates. It may admit one and reject the other; page count is not a success criterion. Any additional coherent candidate is recorded and deferred rather than published in this goal.

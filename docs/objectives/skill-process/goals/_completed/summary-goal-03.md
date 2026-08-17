@@ -23,7 +23,7 @@ decision was delegated to the executor.
    rejection conditions for each selected target.
 4. Specific rejections for 27 candidates and three target-only deferrals. The two inaccessible
    URLs retain their observed `403` and `404` results and dates instead of guessed replacements.
-5. A matching Goal 03 [Goal 80 intake row](../execute-goal-80.md#candidate-intake) that records no
+5. A matching Goal 03 [Goal 80 intake row](execute-goal-80.md#candidate-intake) that records no
    eligible deferred pipeline candidate. Selected targets belong to Goal 04; unresolved target
    leads remain exclusions.
 

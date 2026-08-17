@@ -19,7 +19,7 @@ authority.
    rejections. No source was deferred, retried without evidence, or promoted merely to fill a slot.
 3. An explicit empty Goal 06 manifest with zero targets, zero candidates, zero filenames, and a
    dependency-safe no-op order. Goal 06 cannot infer a replacement or follow a second-hop edge.
-4. A matching [Goal 05 intake row](../execute-goal-80.md#candidate-intake) that records `None` and
+4. A matching [Goal 05 intake row](execute-goal-80.md#candidate-intake) that records `None` and
    keeps every rejected or duplicate target out of Goal 80's deferred-pipeline queue.
 5. No pipeline page, pipeline-index entry, or target-queue change. The public library remains at 11
    accepted pages.

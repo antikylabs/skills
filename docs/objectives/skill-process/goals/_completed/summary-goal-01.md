@@ -17,7 +17,7 @@ admission failure, and no new product or evidence-policy decision appeared.
    source, all 48 tracked files, path history, current service constraints, both declared decisions,
    four deferred workflows, diagram mapping, contradictions, boundaries, and verification.
 3. A matching [pipeline index](../../../../pipelines/README.md) entry and Goal 01
-   [Goal 80 intake row](../execute-goal-80.md#candidate-intake).
+   [Goal 80 intake row](execute-goal-80.md#candidate-intake).
 4. An explicit rejection of the separate deterministic Three.js build page because its claimed
    measured reference project is unnamed and cannot be audited directly.
 

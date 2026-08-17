@@ -34,7 +34,7 @@ Create only the paths whose candidates pass. Update `docs/pipelines/README.md` f
 Record and defer any additional coherent candidate found during full-repository inspection. Only the four declared candidate paths may be published in this goal.
 
 During completion, add Goal 02's row to the candidate-intake table in
-[`execute-goal-80.md`](../execute-goal-80.md).
+[`execute-goal-80.md`](execute-goal-80.md).
 
 ## In scope
 

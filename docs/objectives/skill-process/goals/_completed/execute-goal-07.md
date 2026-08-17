@@ -31,7 +31,7 @@ Produce `docs/objectives/skill-process/research/12-library-audit-and-continuatio
 - A ranked next-wave recommendation with exact URLs, parent edges, expected workflow contribution, known risks, and a clear continue/stop decision.
 - A record of targets that must not be retried without new evidence.
 - A reconciled Goal 00–07 candidate-intake table plus Goal 07's own row in
-  [`execute-goal-80.md`](../execute-goal-80.md), ready for Goal 80 or explicitly empty.
+  [`execute-goal-80.md`](execute-goal-80.md), ready for Goal 80 or explicitly empty.
 
 Leave `docs/pipelines/README.md`, `docs/pipelines/PIPELINE_TEMPLATE.md`, every surviving page, and `targets.md` mutually consistent.
 
