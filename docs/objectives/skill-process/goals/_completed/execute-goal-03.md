@@ -2,9 +2,9 @@
 
 ## Prerequisites
 
-- [Goal 00](_completed/execute-goal-00.md), [Goal 01](_completed/execute-goal-01.md), and [Goal 02](_completed/execute-goal-02.md) are complete.
-- Read [`../03-flat-pipeline-files.md`](../03-flat-pipeline-files.md) and freeze complete flat filenames for selected candidates.
-- Read [`../02-recursive-target-harvest.md`](../02-recursive-target-harvest.md), especially the execution sequence, ordering rationale, recursive bounds, and file contract.
+- [Goal 00](execute-goal-00.md), [Goal 01](execute-goal-01.md), and [Goal 02](execute-goal-02.md) are complete.
+- Read [`../../03-flat-pipeline-files.md`](../../03-flat-pipeline-files.md) and freeze complete flat filenames for selected candidates.
+- Read [`../../02-recursive-target-harvest.md`](../../02-recursive-target-harvest.md), especially the execution sequence, ordering rationale, recursive bounds, and file contract.
 - Read `docs/objectives/skill-process/research/05-scott-threejs-harvest.md`, `06-thrixel-harvest.md`, `07-gamedev-skills-harvest.md`, and the current concise target queue.
 - The known-target harvests must have recorded direct outbound sources and rejected duplicates precisely enough to build a source graph.
 - This goal owns `docs/objectives/skill-process/research/08-recursive-wave-01-plan.md` and only the Goal 03 row in Goal 80's candidate-intake table. It may normalize duplicate URLs in `targets.md`, but it must not create pipeline pages or edit the pipeline index.
@@ -17,8 +17,8 @@ Nothing.
 
 Turn the first three harvests into a bounded, evidence-led first recursive wave. Select the strongest direct child targets and give the next goal a frozen manifest it can execute without rediscovering scope.
 
-Plan source: [`02-recursive-target-harvest.md`, line 61 and lines 75–104](../02-recursive-target-harvest.md#L61).
-File-layout source: [`03-flat-pipeline-files.md`, lines 7–20](../03-flat-pipeline-files.md#L7-L20).
+Plan source: [`02-recursive-target-harvest.md`, line 61 and lines 75–104](../../02-recursive-target-harvest.md#L61).
+File-layout source: [`03-flat-pipeline-files.md`, lines 7–20](../../03-flat-pipeline-files.md#L7-L20).
 
 ## Required outcome
 
@@ -32,7 +32,7 @@ Produce `docs/objectives/skill-process/research/08-recursive-wave-01-plan.md` wi
 - A dependency-safe execution order for Goal 04.
 - Explicit reject, defer, and duplicate decisions for every unselected candidate.
 - A stop record if no candidate is strong enough for full harvest.
-- A Goal 03 row added to the candidate-intake table in [`execute-goal-80.md`](execute-goal-80.md)
+- A Goal 03 row added to the candidate-intake table in [`execute-goal-80.md`](../execute-goal-80.md)
   during completion.
 
 ## In scope
