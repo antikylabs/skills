@@ -79,3 +79,13 @@ We can go from here and expand the list as we discover more pipelines.
 - https://itch.io/docs/butler
 - https://partner.steamgames.com/doc/sdk/uploading
 - https://dev.epicgames.com/documentation/en-us/unreal-engine/packaging-your-project
+- https://pearl.scottsun.io
+- https://dev.epicgames.com/documentation/unreal-engine/unreal-automation-tool-overview-for-unreal-engine
+- https://dev.epicgames.com/documentation/unreal-engine/using-the-project-launcher-in-unreal-engine
+- https://github.com/remarkablegames/setup-butler
+- https://github.com/NovaDC/Godot-ButlerExportPlugin
+- https://github.com/Chaser324/unity-build
+- https://partner.steamgames.com/doc/store/testing
+- https://partner.steamgames.com/doc/store/application/branches
+- https://partner.steamgames.com/doc/store/releasing
+- https://partner.steamgames.com/doc/sdk/updating

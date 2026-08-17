@@ -40,6 +40,10 @@ Evidence signals are cumulative and remain separate:
 | [Game-jam delivery](pipeline-gamedev-skills-game-jam-delivery.md) | Delivery | Source-documented |
 | [Game-asset production](pipeline-gamedev-skills-game-asset-production.md) | Asset | Source-documented |
 | [Level blockout, teach, and test](pipeline-gamedev-skills-level-blockout-teach-test.md) | Discipline | Source-documented |
+| [Pearl Sea Park staged agent build](pipeline-pearl-sea-park-staged-agent-build.md) | End-to-end | Source-documented; Author-practiced |
+| [Unreal package and runtime validation](pipeline-unreal-package-runtime-validation.md) | Engine-specific build and verification | Source-documented |
+| [itch.io Butler publish and update](pipeline-itchio-butler-publish-update.md) | Delivery | Source-documented |
+| [Steamworks SteamPipe build and release](pipeline-steamworks-steampipe-build-release.md) | Delivery | Source-documented |
 
 ## Five-minute cold-reader check
 
