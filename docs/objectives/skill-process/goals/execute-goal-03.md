@@ -7,7 +7,7 @@
 - Read [`../02-recursive-target-harvest.md`](../02-recursive-target-harvest.md), especially the execution sequence, ordering rationale, recursive bounds, and file contract.
 - Read `docs/objectives/skill-process/research/05-scott-threejs-harvest.md`, `06-thrixel-harvest.md`, `07-gamedev-skills-harvest.md`, and the current concise target queue.
 - The known-target harvests must have recorded direct outbound sources and rejected duplicates precisely enough to build a source graph.
-- This goal owns `docs/objectives/skill-process/research/08-recursive-wave-01-plan.md`. It may normalize duplicate URLs in `targets.md`, but it must not create pipeline pages or edit the pipeline index.
+- This goal owns `docs/objectives/skill-process/research/08-recursive-wave-01-plan.md` and only the Goal 03 row in Goal 80's candidate-intake table. It may normalize duplicate URLs in `targets.md`, but it must not create pipeline pages or edit the pipeline index.
 
 ### Needed from the owner before starting
 
@@ -32,6 +32,8 @@ Produce `docs/objectives/skill-process/research/08-recursive-wave-01-plan.md` wi
 - A dependency-safe execution order for Goal 04.
 - Explicit reject, defer, and duplicate decisions for every unselected candidate.
 - A stop record if no candidate is strong enough for full harvest.
+- A Goal 03 row added to the candidate-intake table in [`execute-goal-80.md`](execute-goal-80.md)
+  during completion.
 
 ## In scope
 
@@ -52,6 +54,9 @@ At minimum, prove:
 - Duplicate, inaccessible, license-blocked, inventory-only, and already-covered candidates are rejected or deferred with a specific reason.
 - Proposed filenames follow `pipeline-<group-name>-<name>.md` and do not collide with existing pipeline files.
 - Goal 04 can identify its exact allowed targets and output paths from this artifact alone.
+- The Goal 03 intake row links `research/08-recursive-wave-01-plan.md` and explicitly records whether
+  the shallow selection found any deferred pipeline candidate eligible for Goal 80. Target-only
+  deferrals must remain exclusions rather than being relabeled as pipelines.
 - `git diff --check` passes.
 
 ## Explicit non-goals
@@ -68,10 +73,12 @@ At minimum, prove:
 - Keep selection reproducible: cite the parent edge, canonical target, inspected surface, and decision.
 - Preserve negative results. They prevent later agents from repeatedly chasing the same weak targets.
 - Keep `targets.md` concise; all rankings and rationale belong in the wave plan.
+- During completion, update only Goal 03's row in Goal 80 after the selection plan is final and
+  before writing the goal summary. Do not change Goal 80's scope, tests, bounds, or another row.
 - Preserve unrelated worktree changes and do not add co-author trailers.
 
 ## Completion definition
 
-This goal is complete when every one-hop candidate has a disposition and Goal 04 has a frozen, ordered manifest of zero to six harvestable targets with exact candidate filenames and verification questions.
+This goal is complete when every one-hop candidate has a disposition, Goal 04 has a frozen, ordered manifest of zero to six harvestable targets with exact candidate filenames and verification questions, and Goal 03's candidate-intake row matches the final selection plan.
 
 If no candidate meets the selection threshold, record an empty manifest and complete the goal. Goal 04 consumes that manifest as a documented no-op; it must not improvise a replacement wave.

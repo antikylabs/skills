@@ -35,6 +35,7 @@ Nothing.
 | [05](goals/execute-goal-05.md) | Open | Frozen direct-child manifest for recursive wave 2 | 04 |
 | [06](goals/execute-goal-06.md) | Open | Recursive wave-2 harvest | 05 |
 | [07](goals/execute-goal-07.md) | Open | Corpus audit and ranked continuation decision | 00–06 |
+| [80](goals/execute-goal-80.md) | Open | Deferred-candidate follow-up harvest and admitted pages | 07 |
 
 ## Research and targets
 

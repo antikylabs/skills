@@ -6,7 +6,7 @@
 - Read [`../03-flat-pipeline-files.md`](../03-flat-pipeline-files.md) and use its flat filename contract.
 - [Goal 00](_completed/execute-goal-00.md), [Goal 01](execute-goal-01.md), and [Goal 02](execute-goal-02.md) are complete; the page contract, template, and `research/05-scott-threejs-harvest.md`, `06-thrixel-harvest.md`, and `07-gamedev-skills-harvest.md` are available.
 - Read [`../02-recursive-target-harvest.md`](../02-recursive-target-harvest.md), especially the harvest loop, quality bar, recursive bounds, and file contract.
-- This goal has exclusive write ownership of the pipeline files named in the frozen manifest, `docs/pipelines/README.md`, `targets.md`, and its outcome while it runs.
+- This goal has exclusive write ownership of the pipeline files named in the frozen manifest, `docs/pipelines/README.md`, `targets.md`, its outcome, and only the Goal 04 row in Goal 80's candidate-intake table while it runs.
 
 ### Needed from the owner before starting
 
@@ -27,6 +27,8 @@ Produce:
 - Accepted pipeline pages only at the exact filenames authorized by `research/08-recursive-wave-01-plan.md`.
 - Updated `docs/pipelines/README.md` entries for accepted pages only.
 - Newly discovered direct child URLs added concisely to `docs/objectives/skill-process/targets.md`.
+- A Goal 04 row added to the candidate-intake table in [`execute-goal-80.md`](execute-goal-80.md)
+  during completion.
 
 The outcome must record a complete harvest result for every selected target and an admit/reject decision for every proposed candidate. Zero accepted pages is valid when the evidence says so.
 
@@ -53,6 +55,9 @@ At minimum, prove:
 - Every inference and portability note is labeled; observed supporting skills remain separate from potential skills.
 - Duplicates update or cross-reference the existing research record instead of creating parallel pipeline pages.
 - Each page passes the exact Mermaid, link, and cold-reader checks established by Goal 00, plus the evidence-label audit.
+- The Goal 04 intake row links `research/09-recursive-wave-01-outcome.md`, lists every eligible
+  deferred pipeline candidate by stable name and source target or explicitly says `None`, and
+  summarizes ineligible records as exclusions.
 - The index contains all and only accepted pages, `targets.md` remains a terse URL queue, and `git diff --check` passes.
 
 ## Explicit non-goals
@@ -70,10 +75,12 @@ At minimum, prove:
 - Use primary sources and frozen revision links wherever possible.
 - Keep target-specific evidence and negative results in `research/09-recursive-wave-01-outcome.md`.
 - Do not overwrite an existing pipeline file unless the wave plan explicitly identifies it as an audit/update rather than a new page.
+- During completion, update only Goal 04's row in Goal 80 after the wave outcome is final and before
+  writing the goal summary. Do not change Goal 80's scope, tests, bounds, or another row.
 - Serialize shared index and target edits, preserve unrelated worktree changes, and do not add co-author trailers.
 
 ## Completion definition
 
-This goal is complete when every selected target and candidate has a traceable disposition, every accepted page passes the library contract, rejected pages are absent, and a deduplicated direct-child queue exists for wave 2. An empty manifest completes through the documented no-op outcome.
+This goal is complete when every selected target and candidate has a traceable disposition, every accepted page passes the library contract, rejected pages are absent, a deduplicated direct-child queue exists for wave 2, and Goal 04's candidate-intake row matches the final wave outcome. An empty manifest completes through the documented no-op outcome and an explicit `None` intake row.
 
 If the frozen manifest is structurally ambiguous, report the goal as blocked and return it to Goal 03. An explicitly empty manifest is not ambiguous and must not be replaced ad hoc.

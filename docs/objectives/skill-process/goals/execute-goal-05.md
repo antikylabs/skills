@@ -6,7 +6,7 @@
 - Read [`../03-flat-pipeline-files.md`](../03-flat-pipeline-files.md) and freeze complete flat filenames for selected candidates.
 - Read [`../02-recursive-target-harvest.md`](../02-recursive-target-harvest.md), especially the execution sequence and recursive-wave bounds.
 - Read all earlier reject, defer, and duplicate records before selecting another target.
-- This goal owns `docs/objectives/skill-process/research/10-recursive-wave-02-plan.md`. It must not create pipeline pages or edit the pipeline index.
+- This goal owns `docs/objectives/skill-process/research/10-recursive-wave-02-plan.md` and only the Goal 05 row in Goal 80's candidate-intake table. It must not create pipeline pages or edit the pipeline index.
 
 ### Needed from the owner before starting
 
@@ -29,6 +29,8 @@ Produce `docs/objectives/skill-process/research/10-recursive-wave-02-plan.md` wi
 - A dependency-safe execution order for Goal 06.
 - Explicit reject, defer, and duplicate decisions for every unselected child.
 - An empty manifest when no candidate clears the threshold.
+- A Goal 05 row added to the candidate-intake table in [`execute-goal-80.md`](execute-goal-80.md)
+  during completion.
 
 ## In scope
 
@@ -48,6 +50,9 @@ At minimum, prove:
 - Every known child has a selection, reject, defer, or duplicate disposition.
 - Proposed filenames follow `pipeline-<group-name>-<name>.md` and do not collide with existing pages or the wave-1 manifest.
 - Goal 06 can identify its exact allowed targets, candidate paths, and order from this artifact alone.
+- The Goal 05 intake row links `research/10-recursive-wave-02-plan.md` and explicitly records whether
+  the shallow selection found any deferred pipeline candidate eligible for Goal 80. Target-only
+  deferrals must remain exclusions rather than being relabeled as pipelines.
 - `git diff --check` passes.
 
 ## Explicit non-goals
@@ -63,10 +68,12 @@ At minimum, prove:
 - Follow `skills/AGENTS.md`, `docs/GOOD_ENGINEERING_H.md`, and the recursive bounds in the plan.
 - Preserve negative results so future agents do not repeat weak branches.
 - Keep selection rationale in the wave plan; keep `targets.md` unchanged unless exact duplicate URLs need normalization.
+- During completion, update only Goal 05's row in Goal 80 after the selection plan is final and
+  before writing the goal summary. Do not change Goal 80's scope, tests, bounds, or another row.
 - Preserve unrelated worktree changes and do not add co-author trailers.
 
 ## Completion definition
 
-This goal is complete when every wave-1 child has a disposition and Goal 06 has a frozen, ordered manifest of zero to six targets with exact candidate filenames and verification questions.
+This goal is complete when every wave-1 child has a disposition, Goal 06 has a frozen, ordered manifest of zero to six targets with exact candidate filenames and verification questions, and Goal 05's candidate-intake row matches the final selection plan.
 
 If no target clears selection, complete the goal with an empty manifest. Goal 06 must consume it as a documented no-op rather than inventing another branch.

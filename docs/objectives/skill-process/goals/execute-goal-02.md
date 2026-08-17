@@ -7,7 +7,7 @@
 - Read [`../02-recursive-target-harvest.md`](../02-recursive-target-harvest.md), especially the harvest loop, quality bar, execution sequence, recursive bounds, and file contract.
 - Read [`../00-library-boundary.md`](../00-library-boundary.md) and the gamedev-skills evidence in [`../research/02-candidate-pipelines.md`](../research/02-candidate-pipelines.md).
 - Use the existing page contract, evidence vocabulary, and index.
-- This goal has exclusive write ownership of the shared index, target queue, its harvest outcome, and any new pipeline files while it runs.
+- This goal has exclusive write ownership of the shared index, target queue, its harvest outcome, any new pipeline files, and only the Goal 02 row in Goal 80's candidate-intake table while it runs.
 
 ### Needed from the owner before starting
 
@@ -33,6 +33,9 @@ Create only the paths whose candidates pass. Update `docs/pipelines/README.md` f
 
 Record and defer any additional coherent candidate found during full-repository inspection. Only the four declared candidate paths may be published in this goal.
 
+During completion, add Goal 02's row to the candidate-intake table in
+[`execute-goal-80.md`](execute-goal-80.md).
+
 ## In scope
 
 - Freeze and record the source revision, retrieval date, license, canonical URLs, and complete inspected artifact set.
@@ -56,6 +59,9 @@ At minimum, prove:
 - Evidence labels describe what was actually observed; stars, forks, examples, and tests do not become effectiveness claims.
 - Each accepted page passes the exact Mermaid, link, and cold-reader checks established by Goal 00.
 - Rejected candidates have no generated page or index entry.
+- The Goal 02 intake row links `research/07-gamedev-skills-harvest.md`, lists every eligible deferred
+  pipeline candidate by stable name or explicitly says `None`, and summarizes ineligible records as
+  exclusions.
 - Local and external links resolve and `git diff --check` passes.
 
 ## Explicit non-goals
@@ -73,10 +79,12 @@ At minimum, prove:
 - Prefer narrow source fidelity over broad completeness.
 - Keep the evidence matrix, alternative interpretations, and rejection record in `research/07-gamedev-skills-harvest.md`.
 - Serialize shared-file edits and preserve existing pipeline pages unless a link or contract repair is necessary and documented.
+- During completion, update only Goal 02's row in Goal 80 after the harvest outcome is final and
+  before writing the goal summary. Do not change Goal 80's scope, tests, bounds, or another row.
 - Preserve unrelated worktree changes and do not add co-author trailers.
 
 ## Completion definition
 
-This goal is complete when all four candidates have evidence-backed admit/reject decisions, additional candidates are deferred, every accepted candidate has a concise audited page and index entry, every rejected candidate is absent, and newly discovered direct targets are queued for recursive selection. Supported rejection of all four declared candidates is a valid completed harvest.
+This goal is complete when all four candidates have evidence-backed admit/reject decisions, additional candidates are deferred, every accepted candidate has a concise audited page and index entry, every rejected candidate is absent, newly discovered direct targets are queued for recursive selection, and Goal 02's candidate-intake row matches the final harvest outcome. Supported rejection of all four declared candidates is a valid completed harvest.
 
 If none of the four candidates survives, complete the negative harvest outcome and continue the sequence. Report the goal as blocked only when neither the target nor any frozen primary artifact can be inspected well enough to audit the harvest.

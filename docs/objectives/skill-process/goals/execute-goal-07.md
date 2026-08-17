@@ -7,7 +7,7 @@
 - Read every published pipeline page, the current pipeline index, and the concise target queue.
 - Read [`../02-recursive-target-harvest.md`](../02-recursive-target-harvest.md), especially the execution sequence and completion definition.
 - Read [`../03-flat-pipeline-files.md`](../03-flat-pipeline-files.md) and audit the flat filename contract.
-- This goal has exclusive write ownership of `docs/pipelines/**`, `targets.md`, and its audit outcome while it runs.
+- This goal has exclusive write ownership of `docs/pipelines/**`, `targets.md`, its audit outcome, and the complete candidate-intake table in Goal 80 while it runs.
 
 ### Needed from the owner before starting
 
@@ -30,6 +30,8 @@ Produce `docs/objectives/skill-process/research/12-library-audit-and-continuatio
 - A deduplicated continuation graph from unharvested direct children and deferred candidates.
 - A ranked next-wave recommendation with exact URLs, parent edges, expected workflow contribution, known risks, and a clear continue/stop decision.
 - A record of targets that must not be retried without new evidence.
+- A reconciled Goal 00–07 candidate-intake table plus Goal 07's own row in
+  [`execute-goal-80.md`](execute-goal-80.md), ready for Goal 80 or explicitly empty.
 
 Leave `docs/pipelines/README.md`, `docs/pipelines/PIPELINE_TEMPLATE.md`, every surviving page, and `targets.md` mutually consistent.
 
@@ -54,6 +56,9 @@ At minimum, prove:
 - Every page passes the exact Mermaid, link, and cold-reader checks established by Goal 00; `git diff --check` also passes.
 - The continuation queue contains only exact, deduplicated, unharvested targets with traceable parent edges.
 - The continue/stop recommendation cites measured yield from both recursive waves and identifies what a follow-up objective would own.
+- Every Goal 00–07 intake row links its final outcome or plan, agrees with that source's deferred
+  candidate ledger, excludes non-pipeline target deferrals, and has an intake state of
+  `Ready for Goal 80` or `No eligible candidates`.
 
 ## Explicit non-goals
 
@@ -69,10 +74,13 @@ At minimum, prove:
 - Make the smallest source-supported repair. Record material corrections and all withdrawals.
 - Keep deep audit evidence in `research/12-library-audit-and-continuation.md`; keep pages and `targets.md` concise.
 - Preserve history: do not rewrite prior research outcomes to make the final corpus look cleaner.
+- During completion, add Goal 07's row, reconcile every earlier intake row against the audit
+  outcome, deduplicate cross-source workflow leads, and update intake states. Do not broaden Goal
+  80's bounds or pre-admit a candidate.
 - Preserve unrelated worktree changes and do not add co-author trailers.
 
 ## Completion definition
 
-This goal is complete when the surviving library is internally consistent and source-auditable, unsupported pages are absent and documented, the concise target queue matches the continuation graph, and the audit gives a checkable recommendation to continue or stop recursive harvesting.
+This goal is complete when the surviving library is internally consistent and source-auditable, unsupported pages are absent and documented, the concise target queue matches the continuation graph, the audit gives a checkable recommendation to continue or stop recursive harvesting, and the reconciled Goal 00–07 candidate-intake table is ready for Goal 80 or explicitly empty.
 
 If a page cannot be audited because its frozen source is unavailable, do not silently bless it. Record the blockage, remove its active `pipeline.md` and index entry, and rely on Git history plus the audit outcome for recovery.

@@ -7,7 +7,7 @@
 - Read [`../02-recursive-target-harvest.md`](../02-recursive-target-harvest.md), especially the harvest loop, quality bar, execution sequence, recursive bounds, and file contract.
 - Read [`../00-library-boundary.md`](../00-library-boundary.md) and the Thrixel evidence in [`../research/02-candidate-pipelines.md`](../research/02-candidate-pipelines.md).
 - Use the page contract and index structure established by Goal 00.
-- This goal has exclusive write ownership of `docs/pipelines/README.md`, `targets.md`, its new pipeline files, and its harvest outcome while it runs.
+- This goal has exclusive write ownership of `docs/pipelines/README.md`, `targets.md`, its new pipeline files, its harvest outcome, and only the Goal 01 row in Goal 80's candidate-intake table while it runs.
 
 ### Needed from the owner before starting
 
@@ -29,6 +29,8 @@ Produce:
 - `docs/pipelines/pipeline-thrixel-deterministic-threejs-build.md` only if it is a distinct, fully sourced workflow after refresh.
 - Updated `docs/pipelines/README.md` entries for accepted pages only.
 - Newly discovered direct source URLs added concisely to `docs/objectives/skill-process/targets.md`.
+- A Goal 01 row added to the candidate-intake table in [`execute-goal-80.md`](execute-goal-80.md)
+  during completion.
 
 The harvest outcome must give an explicit admit/reject decision for both named candidates. It may admit one and reject the other; page count is not a success criterion. Any additional coherent candidate is recorded and deferred rather than published in this goal.
 
@@ -55,6 +57,9 @@ At minimum, prove:
 - Any deterministic-build page names the actual source of the reference workflow; an unnamed or unverifiable reference fails admission.
 - Each accepted page passes the exact Mermaid, link, and cold-reader checks established by Goal 00 and exposes its trigger, ordered steps, artifacts, review gate, failure/retry loop, output, evidence level, and scope.
 - Rejected candidates have no page and no index entry.
+- The Goal 01 intake row links `research/06-thrixel-harvest.md`, lists every eligible deferred
+  pipeline candidate by stable name or explicitly says `None`, and summarizes ineligible
+  rejections, duplicates, target-only deferrals, and admitted pages as exclusions.
 - All links resolve, Mermaid checks pass, and `git diff --check` passes.
 
 ## Explicit non-goals
@@ -73,10 +78,12 @@ At minimum, prove:
 - Use direct primary sources and frozen revision links when possible.
 - Put the detailed evidence trail in `research/06-thrixel-harvest.md`; keep published pages operational and concise.
 - Serialize edits to the shared index and target queue.
+- During completion, update only Goal 01's row in Goal 80 after the harvest outcome is final and
+  before writing the goal summary. Do not change Goal 80's scope, tests, bounds, or another row.
 - Preserve unrelated worktree changes and do not add co-author trailers.
 
 ## Completion definition
 
-This goal is complete when both named candidates have auditable admit/reject decisions, every additional candidate is deferred, every accepted page passes the contract and source audit, rejected candidates are absent from the index, and direct child targets are queued. Supported rejection of both declared candidates is a valid completed harvest.
+This goal is complete when both named candidates have auditable admit/reject decisions, every additional candidate is deferred, every accepted page passes the contract and source audit, rejected candidates are absent from the index, direct child targets are queued, and Goal 01's candidate-intake row matches the final harvest outcome. Supported rejection of both declared candidates is a valid completed harvest.
 
 If the source revision, terms, or referenced workflow cannot support a candidate, reject that candidate explicitly and continue the sequence. Report the goal as blocked only when neither the target nor any frozen primary artifact can be inspected well enough to audit the harvest.
