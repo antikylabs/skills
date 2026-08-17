@@ -9,6 +9,10 @@ version, not a patch.
 
 ## [Unreleased]
 
+### Fixed
+
+- Added `show-me` to the README skill catalog.
+
 ## [0.7.0] — 2026-08-16
 
 This release adds a visual-explanation skill that chooses the smallest useful representation for

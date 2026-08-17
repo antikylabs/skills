@@ -61,6 +61,7 @@ Skills are grouped by category without carrying that category in their names.
 | [`brometal-patching`](skills/general/brometal-patching/) | Ready | Consume BroMetal as a patched dependency and upstream the fixes. |
 | [`simplified-technical-english`](skills/general/simplified-technical-english/) | Ready | Write, audit, and fix text against ASD-STE100 Issue 9. Carries a deterministic linter and the controlled vocabulary. |
 | [`write-docs`](skills/general/write-docs/) | Ready | Write and audit user-facing documentation with Diátaxis. Covers each page type and the way it fails. |
+| [`show-me`](skills/general/show-me/) | Ready | Explain the current topic with the smallest useful visual: a diagram, code-shape sketch, diff, or focused HTML artifact. |
 | [`engineering`](skills/general/engineering/) | Ready | A principal-engineer sidekick for judgement. Gut-check, talk out, plan, or grill. Read-only. |
 | [`anti-slop`](skills/general/anti-slop/) | Ready | Reject what looks like evidence and is not: tests that cannot fail, discarded errors, stubs, orphan scripts, claims with no referent. Ships a twenty-rule Oxlint plugin and two Node-only linters. |
 | [`wait-what`](skills/general/wait-what/) | Ready | Re-pitch something that did not land. Human-invoked only — it stays out of the model's catalog. |
