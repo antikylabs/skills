@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-- [Goal 00](execute-goal-00.md), [Goal 01](execute-goal-01.md), [Goal 02](execute-goal-02.md), [Goal 03](execute-goal-03.md), [Goal 04](execute-goal-04.md), [Goal 05](execute-goal-05.md), and [Goal 06](execute-goal-06.md) are complete.
+- [Goal 00](_completed/execute-goal-00.md), [Goal 01](execute-goal-01.md), [Goal 02](execute-goal-02.md), [Goal 03](execute-goal-03.md), [Goal 04](execute-goal-04.md), [Goal 05](execute-goal-05.md), and [Goal 06](execute-goal-06.md) are complete.
 - `research/05-scott-threejs-harvest.md`, `06-thrixel-harvest.md`, `07-gamedev-skills-harvest.md`, `08-recursive-wave-01-plan.md`, `09-recursive-wave-01-outcome.md`, `10-recursive-wave-02-plan.md`, and `11-recursive-wave-02-outcome.md` are available.
 - Read every published pipeline page, the current pipeline index, and the concise target queue.
 - Read [`../02-recursive-target-harvest.md`](../02-recursive-target-harvest.md), especially the execution sequence and completion definition.

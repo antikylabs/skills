@@ -4,7 +4,7 @@
 
 **Started:** 2026-08-16
 
-**Next:** [Goal 00](goals/execute-goal-00.md)
+**Next:** [Goal 01](goals/execute-goal-01.md)
 
 Build a concise, Mermaid-first library of source-faithful AI-assisted game-development pipelines.
 Start with one known target, let direct source links feed bounded recursive harvests, and retain only
@@ -27,7 +27,7 @@ Nothing.
 
 | Goal | Status | Delivers | Prerequisite |
 | --- | --- | --- | --- |
-| [00](goals/execute-goal-00.md) | Open | First Scott Three.js pipeline set and library scaffold | None |
+| [00](goals/_completed/execute-goal-00.md) | Complete | First Scott Three.js pipeline set and library scaffold | None |
 | [01](goals/execute-goal-01.md) | Open | Thrixel harvest and admitted pages | 00 |
 | [02](goals/execute-goal-02.md) | Open | gamedev-skills harvest and admitted pages | 00–01 |
 | [03](goals/execute-goal-03.md) | Open | Frozen direct-child manifest for recursive wave 1 | 00–02 |

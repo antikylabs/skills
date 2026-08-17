@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-- [Goal 00](execute-goal-00.md) is complete; it provides `docs/pipelines/README.md`, `docs/pipelines/PIPELINE_TEMPLATE.md`, and `docs/objectives/skill-process/research/05-scott-threejs-harvest.md`.
+- [Goal 00](_completed/execute-goal-00.md) is complete; it provides `docs/pipelines/README.md`, `docs/pipelines/PIPELINE_TEMPLATE.md`, and `docs/objectives/skill-process/research/05-scott-threejs-harvest.md`.
 - Read [`../03-flat-pipeline-files.md`](../03-flat-pipeline-files.md) and use its flat filename contract.
 - Read [`../02-recursive-target-harvest.md`](../02-recursive-target-harvest.md), especially the harvest loop, quality bar, execution sequence, recursive bounds, and file contract.
 - Read [`../00-library-boundary.md`](../00-library-boundary.md) and the Thrixel evidence in [`../research/02-candidate-pipelines.md`](../research/02-candidate-pipelines.md).

@@ -2,10 +2,10 @@
 
 ## Prerequisites
 
-- Read [`../02-recursive-target-harvest.md`](../02-recursive-target-harvest.md), especially the strategic call, harvest loop, quality bar, and file contract.
-- Read [`../03-flat-pipeline-files.md`](../03-flat-pipeline-files.md) and use its flat filename contract.
-- Read [`../00-library-boundary.md`](../00-library-boundary.md) and apply its admission and evidence rules.
-- Read the existing Scott research in [`../research/02-candidate-pipelines.md`](../research/02-candidate-pipelines.md) and [`../research/03-patterns-and-document-contract.md`](../research/03-patterns-and-document-contract.md). Treat it as a lead, not as a substitute for refreshing the source.
+- Read [`../../02-recursive-target-harvest.md`](../../02-recursive-target-harvest.md), especially the strategic call, harvest loop, quality bar, and file contract.
+- Read [`../../03-flat-pipeline-files.md`](../../03-flat-pipeline-files.md) and use its flat filename contract.
+- Read [`../../00-library-boundary.md`](../../00-library-boundary.md) and apply its admission and evidence rules.
+- Read the existing Scott research in [`../../research/02-candidate-pipelines.md`](../../research/02-candidate-pipelines.md) and [`../../research/03-patterns-and-document-contract.md`](../../research/03-patterns-and-document-contract.md). Treat it as a lead, not as a substitute for refreshing the source.
 - This goal owns the first writes under `docs/pipelines/`. Later goals must not edit that tree, `targets.md`, or this goal's research outcome until this goal is complete.
 
 ### Needed from the owner before starting
@@ -16,8 +16,8 @@ Nothing.
 
 Create the first small, source-faithful pipeline set by harvesting the known Scott Three.js target. Test the library format against two expected visual-development loops, then leave a precise record of what the source did and did not support.
 
-Plan source: [`02-recursive-target-harvest.md`, lines 7–52, 58, and 96–104](../02-recursive-target-harvest.md#L7-L52).
-File-layout source: [`03-flat-pipeline-files.md`, lines 7–20](../03-flat-pipeline-files.md#L7-L20).
+Plan source: [`02-recursive-target-harvest.md`, lines 7–52, 58, and 96–104](../../02-recursive-target-harvest.md#L7-L52).
+File-layout source: [`03-flat-pipeline-files.md`, lines 7–20](../../03-flat-pipeline-files.md#L7-L20).
 
 ## Required outcome
 

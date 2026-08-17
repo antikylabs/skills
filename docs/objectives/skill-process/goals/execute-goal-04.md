@@ -4,7 +4,7 @@
 
 - [Goal 03](execute-goal-03.md) is complete and `docs/objectives/skill-process/research/08-recursive-wave-01-plan.md` contains a frozen manifest, which may be empty.
 - Read [`../03-flat-pipeline-files.md`](../03-flat-pipeline-files.md) and use its flat filename contract.
-- [Goal 00](execute-goal-00.md), [Goal 01](execute-goal-01.md), and [Goal 02](execute-goal-02.md) are complete; the page contract, template, and `research/05-scott-threejs-harvest.md`, `06-thrixel-harvest.md`, and `07-gamedev-skills-harvest.md` are available.
+- [Goal 00](_completed/execute-goal-00.md), [Goal 01](execute-goal-01.md), and [Goal 02](execute-goal-02.md) are complete; the page contract, template, and `research/05-scott-threejs-harvest.md`, `06-thrixel-harvest.md`, and `07-gamedev-skills-harvest.md` are available.
 - Read [`../02-recursive-target-harvest.md`](../02-recursive-target-harvest.md), especially the harvest loop, quality bar, recursive bounds, and file contract.
 - This goal has exclusive write ownership of the pipeline files named in the frozen manifest, `docs/pipelines/README.md`, `targets.md`, and its outcome while it runs.
 
