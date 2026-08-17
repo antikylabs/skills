@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-- [Goal 00](_completed/execute-goal-00.md), [Goal 01](_completed/execute-goal-01.md), and [Goal 02](execute-goal-02.md) are complete.
+- [Goal 00](_completed/execute-goal-00.md), [Goal 01](_completed/execute-goal-01.md), and [Goal 02](_completed/execute-goal-02.md) are complete.
 - Read [`../03-flat-pipeline-files.md`](../03-flat-pipeline-files.md) and freeze complete flat filenames for selected candidates.
 - Read [`../02-recursive-target-harvest.md`](../02-recursive-target-harvest.md), especially the execution sequence, ordering rationale, recursive bounds, and file contract.
 - Read `docs/objectives/skill-process/research/05-scott-threejs-harvest.md`, `06-thrixel-harvest.md`, `07-gamedev-skills-harvest.md`, and the current concise target queue.

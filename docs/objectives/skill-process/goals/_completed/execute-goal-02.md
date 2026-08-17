@@ -2,10 +2,10 @@
 
 ## Prerequisites
 
-- [Goal 00](_completed/execute-goal-00.md) and [Goal 01](_completed/execute-goal-01.md) are complete; `docs/pipelines/README.md`, `docs/pipelines/PIPELINE_TEMPLATE.md`, `docs/objectives/skill-process/research/05-scott-threejs-harvest.md`, and `06-thrixel-harvest.md` are available.
-- Read [`../03-flat-pipeline-files.md`](../03-flat-pipeline-files.md) and use its flat filename contract.
-- Read [`../02-recursive-target-harvest.md`](../02-recursive-target-harvest.md), especially the harvest loop, quality bar, execution sequence, recursive bounds, and file contract.
-- Read [`../00-library-boundary.md`](../00-library-boundary.md) and the gamedev-skills evidence in [`../research/02-candidate-pipelines.md`](../research/02-candidate-pipelines.md).
+- [Goal 00](execute-goal-00.md) and [Goal 01](execute-goal-01.md) are complete; `docs/pipelines/README.md`, `docs/pipelines/PIPELINE_TEMPLATE.md`, `docs/objectives/skill-process/research/05-scott-threejs-harvest.md`, and `06-thrixel-harvest.md` are available.
+- Read [`../../03-flat-pipeline-files.md`](../../03-flat-pipeline-files.md) and use its flat filename contract.
+- Read [`../../02-recursive-target-harvest.md`](../../02-recursive-target-harvest.md), especially the harvest loop, quality bar, execution sequence, recursive bounds, and file contract.
+- Read [`../../00-library-boundary.md`](../../00-library-boundary.md) and the gamedev-skills evidence in [`../../research/02-candidate-pipelines.md`](../../research/02-candidate-pipelines.md).
 - Use the existing page contract, evidence vocabulary, and index.
 - This goal has exclusive write ownership of the shared index, target queue, its harvest outcome, any new pipeline files, and only the Goal 02 row in Goal 80's candidate-intake table while it runs.
 
@@ -17,8 +17,8 @@ Nothing.
 
 Harvest the known gamedev-skills target as a workflow source, separate real multi-step loops from its catalogs and routers, and publish only the candidates that remain source-faithful under close inspection.
 
-Plan source: [`02-recursive-target-harvest.md`, lines 20–52, 60, and 80–104](../02-recursive-target-harvest.md#L20-L52).
-File-layout source: [`03-flat-pipeline-files.md`, lines 7–20](../03-flat-pipeline-files.md#L7-L20).
+Plan source: [`02-recursive-target-harvest.md`, lines 20–52, 60, and 80–104](../../02-recursive-target-harvest.md#L20-L52).
+File-layout source: [`03-flat-pipeline-files.md`, lines 7–20](../../03-flat-pipeline-files.md#L7-L20).
 
 ## Required outcome
 
@@ -34,7 +34,7 @@ Create only the paths whose candidates pass. Update `docs/pipelines/README.md` f
 Record and defer any additional coherent candidate found during full-repository inspection. Only the four declared candidate paths may be published in this goal.
 
 During completion, add Goal 02's row to the candidate-intake table in
-[`execute-goal-80.md`](execute-goal-80.md).
+[`execute-goal-80.md`](../execute-goal-80.md).
 
 ## In scope
 
