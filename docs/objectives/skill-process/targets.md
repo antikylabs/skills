@@ -1,91 +1,34 @@
-# Targets for initial search and pipeline discovery
+# Continuation targets
 
-This is not an exhaustive list of targets, but rather a starting point for the initial search and pipeline discovery process.
+Exact primary artifacts for the reconciled deferred-candidate queue. Ranking, parent edges, and
+exclusions live in [`research/12-library-audit-and-continuation.md`](research/12-library-audit-and-continuation.md).
 
-We can go from here and expand the list as we discover more pipelines.
-
-
-## Known
-
-- https://github.com/thrixel/goal-to-game
-- https://github.com/gamedev-skills/awesome-gamedev-agent-skills
-- https://github.com/scottstts/Threejs-Awesome-Graphics-Agent-Skills
-
-## Discovered
-
-- https://arxiv.org/abs/2307.11105
-- https://arxiv.org/abs/2410.01791
-- https://arxiv.org/abs/2308.13355
-- https://arxiv.org/abs/2507.12666
-- https://arxiv.org/abs/2403.02454
-- https://openaccess.thecvf.com/content/CVPR2025W/CV2/papers/Spjut_A_Generative_AI_Game_Jam_Case_Study_from_October_2024_CVPRW_2025_paper.pdf
-- https://arxiv.org/abs/2605.28258
-- https://github.com/FreedomIntelligence/gamecraft-bench
-- https://github.com/waynchi/gamedevbench
-- https://arxiv.org/abs/2606.19830
-- https://github.com/articraftresearch/Articraft
-- https://github.com/scottstts/Manifest3D
-- https://github.com/MRCalderon3D/everything-game-dev-code
-- https://github.com/leigest519/OpenGame
-- https://github.com/Yakoub-ai/phaser4-gamedev
-- https://github.com/DY-2026/GameDesignOS
-- https://github.com/44-99/unreal-agent-benchmark
-- https://github.com/iv4xr-project/iv4xr-framework
-- https://github.com/Unity-Technologies/ml-agents
-- https://arxiv.org/abs/2603.07106
-- https://arxiv.org/abs/2310.08067
-- https://doi.org/10.1145/3643658.3643919
-- https://news.ubisoft.com/en-gb/article/7Cm07zbBGy4Xml6WgYi25d/the-convergence-of-ai-and-creativity-introducing-ghostwriter
-- https://github.com/openai/plugins/tree/main/plugins/game-studio
-- https://github.com/worldwonderer/novel-to-game
-- https://github.com/Donchitos/Claude-Code-Game-Studios
-- https://github.com/LVTD-LLC/skills
-- https://github.com/majidmanzarpour/threejs-game-skills
-- https://github.com/LuigiDeFacci/godot-create-3d-assets
-- https://github.com/hatayama/unity-cli-loop
-- https://github.com/SummerEngine/summer-engine-agent
-- https://codeberg.org/perplexdotgg/mecs-tower-defense-example
-- https://codepen.io/sabosugi/pen/RNKpmQj
-- https://github.com/Faraz-Portfolio/demo-2023-rain-puddle
-- https://github.com/N8python/diamonds
-- https://github.com/SkyeShark/threejs-silhouette-pom
-- https://github.com/YasirAwan4831/holographic-shader-visualizer-three.Js
-- https://github.com/achrefelouafi/GrassSystemThreeJS
-- https://github.com/achrefelouafi/OceanThreejs
-- https://github.com/achrefelouafi/SnowSystemThreeJS
-- https://github.com/achrefelouafi/VegetationGeneratorThreeJS
-- https://github.com/bandinopla/threejs-easyfire
-- https://github.com/dedekpo/stylized-scene
-- https://github.com/dgreenheck/ez-tree
-- https://github.com/gioeledallapozza/FFTOCEAN
-- https://github.com/jeantimex/geospatial
-- https://github.com/jeantimex/threejs-water
-- https://github.com/momentchan/r3f-gist
-- https://github.com/momentchan/r3f-procedural-grass
-- https://github.com/owenyuwono/poseidon
-- https://github.com/playdeadgames/temporal
-- https://github.com/rocksdanister/rain
-- https://github.com/scottstts/Elysium-Mars-Park
-- https://github.com/scottstts/Friends-Apartment
-- https://github.com/scottstts/Interstellar.three.js
-- https://github.com/scottstts/MyCraft
-- https://github.com/scottstts/Pearl-Sea-Park
-- https://github.com/scottstts/Stellar
-- https://github.com/scottstts/mysite_React
-- https://github.com/siliconjungle/inkwell-webgpu-flowers
-- https://github.com/takram-design-engineering/three-geospatial
-- https://github.com/takuma-hmng8/frozen
-- https://github.com/vibe-stack/procedural-bank
-- https://itch.io/docs/butler
-- https://partner.steamgames.com/doc/sdk/uploading
-- https://dev.epicgames.com/documentation/en-us/unreal-engine/packaging-your-project
-- https://pearl.scottsun.io
-- https://dev.epicgames.com/documentation/unreal-engine/unreal-automation-tool-overview-for-unreal-engine
-- https://dev.epicgames.com/documentation/unreal-engine/using-the-project-launcher-in-unreal-engine
-- https://github.com/remarkablegames/setup-butler
-- https://github.com/NovaDC/Godot-ButlerExportPlugin
-- https://github.com/Chaser324/unity-build
-- https://partner.steamgames.com/doc/store/testing
-- https://partner.steamgames.com/doc/store/application/branches
-- https://partner.steamgames.com/doc/store/releasing
-- https://partner.steamgames.com/doc/sdk/updating
+- https://github.com/scottstts/Pearl-Sea-Park/blob/888fc57b817514049b5fb33b0a3e115b585de067/scripts/audit-geometry.mjs
+- https://github.com/scottstts/Pearl-Sea-Park/blob/888fc57b817514049b5fb33b0a3e115b585de067/dev_docs/systems/opening-day.md
+- https://github.com/gamedev-skills/awesome-gamedev-agent-skills/blob/9ca5296b219049c5b68494e1f3c274ead6d727b3/skills/unity/unity-build-pipeline/SKILL.md
+- https://github.com/gamedev-skills/awesome-gamedev-agent-skills/blob/9ca5296b219049c5b68494e1f3c274ead6d727b3/skills/godot/godot-export/SKILL.md
+- https://github.com/thrixel/goal-to-game/blob/db2fd7dc7260f1bb973903b9c0c943ecd2111ac9/skills/goal-to-game/engines/threejs/example/feeltest.mjs
+- https://github.com/scottstts/Pearl-Sea-Park/blob/888fc57b817514049b5fb33b0a3e115b585de067/scripts/audit-fauna-assets.mjs
+- https://github.com/thrixel/goal-to-game/blob/db2fd7dc7260f1bb973903b9c0c943ecd2111ac9/skills/goal-to-game/engines/unity.md
+- https://github.com/scottstts/Threejs-Awesome-Graphics-Agent-Skills/blob/98453747cc0678f6a5d910f38d7483596a5f9a40/skills/threejs-skill-router/SKILL.md
+- https://github.com/scottstts/Threejs-Awesome-Graphics-Agent-Skills/blob/98453747cc0678f6a5d910f38d7483596a5f9a40/skills/threejs-camera-direction/SKILL.md
+- https://github.com/scottstts/Threejs-Awesome-Graphics-Agent-Skills/blob/98453747cc0678f6a5d910f38d7483596a5f9a40/skills/threejs-procedural-animation/SKILL.md
+- https://github.com/scottstts/Threejs-Awesome-Graphics-Agent-Skills/blob/98453747cc0678f6a5d910f38d7483596a5f9a40/skills/threejs-procedural-geometry/SKILL.md
+- https://github.com/scottstts/Threejs-Awesome-Graphics-Agent-Skills/blob/98453747cc0678f6a5d910f38d7483596a5f9a40/skills/threejs-procedural-vegetation/SKILL.md
+- https://github.com/scottstts/Threejs-Awesome-Graphics-Agent-Skills/blob/98453747cc0678f6a5d910f38d7483596a5f9a40/skills/threejs-procedural-architecture/SKILL.md
+- https://github.com/scottstts/Threejs-Awesome-Graphics-Agent-Skills/blob/98453747cc0678f6a5d910f38d7483596a5f9a40/skills/threejs-procedural-planets/SKILL.md
+- https://github.com/scottstts/Threejs-Awesome-Graphics-Agent-Skills/blob/98453747cc0678f6a5d910f38d7483596a5f9a40/skills/threejs-spectral-ocean/SKILL.md
+- https://github.com/scottstts/Threejs-Awesome-Graphics-Agent-Skills/blob/98453747cc0678f6a5d910f38d7483596a5f9a40/skills/threejs-water-optics/SKILL.md
+- https://github.com/scottstts/Threejs-Awesome-Graphics-Agent-Skills/blob/98453747cc0678f6a5d910f38d7483596a5f9a40/skills/threejs-precipitation-surfaces/SKILL.md
+- https://github.com/scottstts/Threejs-Awesome-Graphics-Agent-Skills/blob/98453747cc0678f6a5d910f38d7483596a5f9a40/skills/threejs-atmosphere-aerial-perspective/SKILL.md
+- https://github.com/scottstts/Threejs-Awesome-Graphics-Agent-Skills/blob/98453747cc0678f6a5d910f38d7483596a5f9a40/skills/threejs-volumetric-clouds/SKILL.md
+- https://github.com/scottstts/Threejs-Awesome-Graphics-Agent-Skills/blob/98453747cc0678f6a5d910f38d7483596a5f9a40/skills/threejs-procedural-vfx/SKILL.md
+- https://github.com/scottstts/Threejs-Awesome-Graphics-Agent-Skills/blob/98453747cc0678f6a5d910f38d7483596a5f9a40/skills/threejs-raymarched-space-effects/SKILL.md
+- https://github.com/scottstts/Threejs-Awesome-Graphics-Agent-Skills/blob/98453747cc0678f6a5d910f38d7483596a5f9a40/skills/threejs-procedural-fields/SKILL.md
+- https://github.com/scottstts/Threejs-Awesome-Graphics-Agent-Skills/blob/98453747cc0678f6a5d910f38d7483596a5f9a40/skills/threejs-procedural-materials/SKILL.md
+- https://github.com/scottstts/Threejs-Awesome-Graphics-Agent-Skills/blob/98453747cc0678f6a5d910f38d7483596a5f9a40/skills/threejs-parallax-occlusion-mapping/SKILL.md
+- https://github.com/scottstts/Threejs-Awesome-Graphics-Agent-Skills/blob/98453747cc0678f6a5d910f38d7483596a5f9a40/skills/threejs-temporal-surfaces/SKILL.md
+- https://github.com/scottstts/Threejs-Awesome-Graphics-Agent-Skills/blob/98453747cc0678f6a5d910f38d7483596a5f9a40/skills/threejs-shadow-systems/SKILL.md
+- https://github.com/scottstts/Threejs-Awesome-Graphics-Agent-Skills/blob/98453747cc0678f6a5d910f38d7483596a5f9a40/skills/threejs-screen-space-ambient-occlusion/SKILL.md
+- https://github.com/scottstts/Threejs-Awesome-Graphics-Agent-Skills/blob/98453747cc0678f6a5d910f38d7483596a5f9a40/skills/threejs-bloom/SKILL.md
+- https://github.com/scottstts/Threejs-Awesome-Graphics-Agent-Skills/blob/98453747cc0678f6a5d910f38d7483596a5f9a40/skills/threejs-exposure-color-grading/SKILL.md
