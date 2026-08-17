@@ -76,3 +76,6 @@ We can go from here and expand the list as we discover more pipelines.
 - https://github.com/takram-design-engineering/three-geospatial
 - https://github.com/takuma-hmng8/frozen
 - https://github.com/vibe-stack/procedural-bank
+- https://itch.io/docs/butler
+- https://partner.steamgames.com/doc/sdk/uploading
+- https://dev.epicgames.com/documentation/en-us/unreal-engine/packaging-your-project

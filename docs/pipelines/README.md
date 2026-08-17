@@ -36,6 +36,10 @@ Evidence signals are cumulative and remain separate:
 | [Three.js visual-system validation](pipeline-threejs-visual-system-validation.md) | Verification | Source-documented; Author-practiced |
 | [Three.js final-image pipeline](pipeline-threejs-final-image.md) | Technical graphics | Source-documented; Author-practiced |
 | [Thrixel Goal to Game pipeline](pipeline-thrixel-goal-to-game.md) | End-to-end | Source-documented |
+| [Fast gameplay prototyping](pipeline-gamedev-skills-fast-gameplay-prototyping.md) | Prototyping | Source-documented |
+| [Game-jam delivery](pipeline-gamedev-skills-game-jam-delivery.md) | Delivery | Source-documented |
+| [Game-asset production](pipeline-gamedev-skills-game-asset-production.md) | Asset | Source-documented |
+| [Level blockout, teach, and test](pipeline-gamedev-skills-level-blockout-teach-test.md) | Discipline | Source-documented |
 
 ## Five-minute cold-reader check
 
