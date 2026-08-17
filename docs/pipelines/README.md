@@ -42,9 +42,15 @@ Evidence signals are cumulative and remain separate:
 | [Game-asset production](pipeline-gamedev-skills-game-asset-production.md) | Asset | Source-documented |
 | [Level blockout, teach, and test](pipeline-gamedev-skills-level-blockout-teach-test.md) | Discipline | Source-documented |
 | [Pearl Sea Park staged agent build](pipeline-pearl-sea-park-staged-agent-build.md) | End-to-end | Source-documented; Author-practiced |
+| [Pearl Sea Park simulation-first ride geometry correction](pipeline-pearl-sea-park-simulation-first-ride-geometry-correction.md) | Technical gameplay geometry and ride verification | Source-documented; Author-practiced |
+| [Pearl Sea Park measured performance recovery](pipeline-pearl-sea-park-measured-performance-recovery.md) | Performance diagnosis and recovery | Source-documented; Author-practiced |
 | [Unreal package and runtime validation](pipeline-unreal-package-runtime-validation.md) | Engine-specific build and verification | Source-documented |
+| [Unity build and runtime validation](pipeline-gamedev-skills-unity-build-runtime-validation.md) | Engine-specific build and runtime verification | Source-documented |
+| [Godot export and runtime validation](pipeline-gamedev-skills-godot-export-runtime-validation.md) | Engine-specific export and runtime verification | Source-documented |
 | [itch.io Butler publish and update](pipeline-itchio-butler-publish-update.md) | Delivery | Source-documented |
 | [Steamworks SteamPipe build and release](pipeline-steamworks-steampipe-build-release.md) | Delivery | Source-documented |
+| [Three.js gameplay-relationship bench](pipeline-thrixel-threejs-gameplay-relationship-bench.md) | Non-visual gameplay verification | Source-documented; Author-practiced |
+| [Unity imported-asset inspection and play-mode validation](pipeline-thrixel-unity-imported-asset-validation.md) | Engine-specific asset verification | Source-documented |
 
 ## Five-minute cold-reader check
 
