@@ -1,4 +1,0 @@
-interface:
-  display_name: "Build Antiky Games"
-  short_description: "Build games with Antiky and Studio"
-  default_prompt: "Use $build-antiky-games to create or extend an Antiky game."
