@@ -4,13 +4,13 @@
 
 The frozen four-target wave produced four source-faithful pages:
 
-1. [Pearl Sea Park staged agent build](../../../pipelines/pipeline-pearl-sea-park-staged-agent-build.md)
+1. [Pearl Sea Park staged agent build](../pipeline-pearl-sea-park-staged-agent-build.md)
    — Source-documented and Author-practiced.
-2. [Unreal package and runtime validation](../../../pipelines/pipeline-unreal-package-runtime-validation.md)
+2. [Unreal package and runtime validation](../pipeline-unreal-package-runtime-validation.md)
    — Source-documented.
-3. [itch.io Butler publish and update](../../../pipelines/pipeline-itchio-butler-publish-update.md)
+3. [itch.io Butler publish and update](../pipeline-itchio-butler-publish-update.md)
    — Source-documented.
-4. [Steamworks SteamPipe build and release](../../../pipelines/pipeline-steamworks-steampipe-build-release.md)
+4. [Steamworks SteamPipe build and release](../pipeline-steamworks-steampipe-build-release.md)
    — Source-documented.
 
 Every proposed candidate passed the six admission gates. Admission records auditable order,
@@ -130,8 +130,8 @@ that an equivalent loop transfers to another agent, engine, team, or game.
 | Candidate | Disposition | Reason |
 | --- | --- | --- |
 | Sea Park staged agent build | **Admit** at the authorized filename | Confirmed design → dependency stages → implementation/docs → structural/runtime checks → owner ruling → correction/audit → advance/stop is explicit and practiced |
-| Postcard and render-pass visual validation | **Duplicate** | Its source-specific use is a constituent of the admitted page and materially repeats [Three.js visual-system validation](../../../pipelines/pipeline-threejs-visual-system-validation.md) |
-| Final-image signal chain | **Duplicate** | The system record is project-specific evidence for the existing [Three.js final-image pipeline](../../../pipelines/pipeline-threejs-final-image.md), not a second parallel page |
+| Postcard and render-pass visual validation | **Duplicate** | Its source-specific use is a constituent of the admitted page and materially repeats [Three.js visual-system validation](../pipeline-threejs-visual-system-validation.md) |
+| Final-image signal chain | **Duplicate** | The system record is project-specific evidence for the existing [Three.js final-image pipeline](../pipeline-threejs-final-image.md), not a second parallel page |
 | Sea Park GLB fauna replacement and audit | **Defer to Goal 80** | The source gives a coherent authored-asset → normalize/compress → load/scale → behavioral-parity → offline-audit → runtime-inspect loop, but it was not declared in this wave's frozen page manifest |
 | Sea Park measured performance recovery | **Defer to Goal 80** | Notes and opening-day records repeatedly measure, isolate, remove or bound one cause, and remeasure. It is distinct enough for later admission testing but was not declared here |
 | Sea Park simulation-first ride geometry correction | **Defer to Goal 80** | The shared integrator, long fixed-tick simulations, numeric route scans, owner sightings, correction, and regression-audit pattern is coherent but outside the frozen filename set |

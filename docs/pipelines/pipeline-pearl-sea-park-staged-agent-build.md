@@ -79,4 +79,4 @@ and implementation-memory maintenance. These may not exist as reusable skills.
 - [Design confirmation, agent preview, and self-test loop](https://github.com/scottstts/Pearl-Sea-Park/blob/888fc57b817514049b5fb33b0a3e115b585de067/dev_docs/notes.md#L3-L55)
 - [Owner feedback converted into a new audit class](https://github.com/scottstts/Pearl-Sea-Park/blob/888fc57b817514049b5fb33b0a3e115b585de067/dev_docs/notes.md#L825-L843)
 - [Final postcard and runtime-verification record](https://github.com/scottstts/Pearl-Sea-Park/blob/888fc57b817514049b5fb33b0a3e115b585de067/dev_docs/systems/opening-day.md#L112-L141)
-- [Goal 04 source audit and diagram mapping](../objectives/skill-process/research/09-recursive-wave-01-outcome.md#pearl-sea-park-diagram-mapping)
+- [Goal 04 source audit and diagram mapping](research/09-recursive-wave-01-outcome.md#pearl-sea-park-diagram-mapping)

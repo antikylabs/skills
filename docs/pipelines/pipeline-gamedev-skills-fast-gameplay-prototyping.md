@@ -62,4 +62,4 @@ capabilities inferred by this library. They may not exist as installed skills.
 - [Trigger, boundary, and seven-step workflow](https://github.com/gamedev-skills/awesome-gamedev-agent-skills/blob/9ca5296b219049c5b68494e1f3c274ead6d727b3/skills/workflows/prototype-fast/SKILL.md#L11-L45)
 - [Prototype brief and observable decision criteria](https://github.com/gamedev-skills/awesome-gamedev-agent-skills/blob/9ca5296b219049c5b68494e1f3c274ead6d727b3/skills/workflows/prototype-fast/SKILL.md#L47-L83)
 - [Spike containment and rewrite rule](https://github.com/gamedev-skills/awesome-gamedev-agent-skills/blob/9ca5296b219049c5b68494e1f3c274ead6d727b3/skills/workflows/prototype-fast/SKILL.md#L85-L108)
-- [Goal 02 source audit and diagram mapping](../objectives/skill-process/research/07-gamedev-skills-harvest.md#fast-gameplay-prototyping-diagram-mapping)
+- [Goal 02 source audit and diagram mapping](research/07-gamedev-skills-harvest.md#fast-gameplay-prototyping-diagram-mapping)

@@ -4,7 +4,7 @@
 
 The refreshed target supports one of the two declared pages:
 
-- [Thrixel Goal to Game pipeline](../../../pipelines/pipeline-thrixel-goal-to-game.md)
+- [Thrixel Goal to Game pipeline](../pipeline-thrixel-goal-to-game.md)
 
 The source refresh showed that the declared asset-to-engine candidate is not the source's top-level
 pipeline. It is the central subloop inside the named Goal to Game workflow, which also covers the

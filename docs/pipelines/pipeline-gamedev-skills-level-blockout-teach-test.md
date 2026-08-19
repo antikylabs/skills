@@ -70,4 +70,4 @@ may not exist as installed skills.
 - [Scope and seven-step level workflow](https://github.com/gamedev-skills/awesome-gamedev-agent-skills/blob/9ca5296b219049c5b68494e1f3c274ead6d727b3/skills/disciplines/level-design/SKILL.md#L13-L52)
 - [Metrics, pacing, and path-validation artifacts](https://github.com/gamedev-skills/awesome-gamedev-agent-skills/blob/9ca5296b219049c5b68494e1f3c274ead6d727b3/skills/disciplines/level-design/SKILL.md#L54-L105)
 - [Teaching loop, guidance, and blockout review gate](https://github.com/gamedev-skills/awesome-gamedev-agent-skills/blob/9ca5296b219049c5b68494e1f3c274ead6d727b3/skills/disciplines/level-design/references/pacing-and-flow.md#L21-L93)
-- [Goal 02 source audit and diagram mapping](../objectives/skill-process/research/07-gamedev-skills-harvest.md#level-blockout-teach-and-test-diagram-mapping)
+- [Goal 02 source audit and diagram mapping](research/07-gamedev-skills-harvest.md#level-blockout-teach-and-test-diagram-mapping)

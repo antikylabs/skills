@@ -77,4 +77,4 @@ exist as reusable skills.
 - [Residual-hitch attribution and harness warning](https://github.com/scottstts/Pearl-Sea-Park/blob/888fc57b817514049b5fb33b0a3e115b585de067/dev_docs/notes.md#L936-L953)
 - [Reproduced causes, reverted experiments, and scripted-circuit result](https://github.com/scottstts/Pearl-Sea-Park/blob/888fc57b817514049b5fb33b0a3e115b585de067/dev_docs/notes.md#L1117-L1176)
 - [Retained hitch-record implementation](https://github.com/scottstts/Pearl-Sea-Park/blob/888fc57b817514049b5fb33b0a3e115b585de067/src/render/performanceMonitor.ts#L19-L129)
-- [Goal 80 source audit and diagram mapping](../objectives/skill-process/research/13-deferred-pipeline-follow-up.md#sea-park-performance-diagram-mapping)
+- [Goal 80 source audit and diagram mapping](research/13-deferred-pipeline-follow-up.md#sea-park-performance-diagram-mapping)

@@ -4,8 +4,8 @@
 
 The refreshed target supports both declared pages:
 
-- [Three.js visual-system validation](../../../pipelines/pipeline-threejs-visual-system-validation.md)
-- [Three.js final-image pipeline](../../../pipelines/pipeline-threejs-final-image.md)
+- [Three.js visual-system validation](../pipeline-threejs-visual-system-validation.md)
+- [Three.js final-image pipeline](../pipeline-threejs-final-image.md)
 
 Both pass the six-part admission gate. They are narrow agent workflows in the source itself, not
 engine-neutral game-development processes. Admission records auditable structure; it does not prove

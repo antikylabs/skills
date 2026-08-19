@@ -81,4 +81,4 @@ as reusable skills.
 - [Torrent numeric contracts and corrected results](https://github.com/scottstts/Pearl-Sea-Park/blob/888fc57b817514049b5fb33b0a3e115b585de067/dev_docs/systems/ride-torrent.md#L102-L168)
 - [Owner sighting converted into an aerial-route contract](https://github.com/scottstts/Pearl-Sea-Park/blob/888fc57b817514049b5fb33b0a3e115b585de067/dev_docs/notes.md#L742-L751)
 - [Geometry audit runner](https://github.com/scottstts/Pearl-Sea-Park/blob/888fc57b817514049b5fb33b0a3e115b585de067/scripts/audit-geometry.mjs)
-- [Goal 80 source audit and diagram mapping](../objectives/skill-process/research/13-deferred-pipeline-follow-up.md#sea-park-ride-geometry-diagram-mapping)
+- [Goal 80 source audit and diagram mapping](research/13-deferred-pipeline-follow-up.md#sea-park-ride-geometry-diagram-mapping)

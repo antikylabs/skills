@@ -67,4 +67,4 @@ as installed skills.
 - [Trigger, boundaries, and seven-step delivery flow](https://github.com/gamedev-skills/awesome-gamedev-agent-skills/blob/9ca5296b219049c5b68494e1f3c274ead6d727b3/skills/workflows/game-jam/SKILL.md#L11-L47)
 - [Scope budget, 48-hour sequence, and feature triage](https://github.com/gamedev-skills/awesome-gamedev-agent-skills/blob/9ca5296b219049c5b68494e1f3c274ead6d727b3/skills/workflows/game-jam/SKILL.md#L49-L84)
 - [Clean-build and submission gate](https://github.com/gamedev-skills/awesome-gamedev-agent-skills/blob/9ca5296b219049c5b68494e1f3c274ead6d727b3/skills/workflows/game-jam/SKILL.md#L86-L110)
-- [Goal 02 source audit and diagram mapping](../objectives/skill-process/research/07-gamedev-skills-harvest.md#game-jam-delivery-diagram-mapping)
+- [Goal 02 source audit and diagram mapping](research/07-gamedev-skills-harvest.md#game-jam-delivery-diagram-mapping)

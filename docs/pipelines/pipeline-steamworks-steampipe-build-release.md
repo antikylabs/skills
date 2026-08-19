@@ -86,4 +86,4 @@ rollback planning. These may not exist as reusable skills.
 - [Frozen agent setup, upload, test, review, release, and update loop](https://github.com/gamedev-skills/awesome-gamedev-agent-skills/blob/9ca5296b219049c5b68494e1f3c274ead6d727b3/skills/workflows/steam-publish/SKILL.md#L30-L76)
 - [Frozen advanced scripts, beta, CI, and troubleshooting reference](https://github.com/gamedev-skills/awesome-gamedev-agent-skills/blob/9ca5296b219049c5b68494e1f3c274ead6d727b3/skills/workflows/steam-publish/references/steampipe-build-scripts.md)
 - [Frozen parent repository license](https://github.com/gamedev-skills/awesome-gamedev-agent-skills/blob/9ca5296b219049c5b68494e1f3c274ead6d727b3/LICENSE)
-- [Goal 04 source audit and diagram mapping](../objectives/skill-process/research/09-recursive-wave-01-outcome.md#steamworks-steampipe-build-and-release-diagram-mapping)
+- [Goal 04 source audit and diagram mapping](research/09-recursive-wave-01-outcome.md#steamworks-steampipe-build-and-release-diagram-mapping)

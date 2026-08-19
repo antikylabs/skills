@@ -8,10 +8,10 @@ Larger pieces of work, each in its own folder, retired to one durable summary wh
 | Objective | What it is |
 | --- | --- |
 | [`skill-research/`](skill-research/) | Research into the skills an Antiky game developer needs, and drafts of the first three |
-| [`skill-process/`](skill-process/) | Research and learn common patterns folks are using with AI to build |
 
 ## Archived
 
 | Objective | Archived | Summary |
 | --- | --- | --- |
 | `architecture-life` | 2026-08-14 | [`_archives/architecture-life-summary.md`](_archives/architecture-life-summary.md) — can an ADR become a lint. Shipped `anti-slop` |
+| `skill-process` | 2026-08-18 | [`_archives/skill-process-summary.md`](_archives/skill-process-summary.md) — shipped 17 source-faithful AI-assisted game-development pipelines and their admission workflow |

@@ -78,4 +78,4 @@ exist as reusable skills.
 - [Current Unreal Automation Tool overview](https://dev.epicgames.com/documentation/unreal-engine/unreal-automation-tool-overview-for-unreal-engine)
 - [Current Project Launcher reference](https://dev.epicgames.com/documentation/unreal-engine/using-the-project-launcher-in-unreal-engine)
 - [Frozen parent repository license](https://github.com/gamedev-skills/awesome-gamedev-agent-skills/blob/9ca5296b219049c5b68494e1f3c274ead6d727b3/LICENSE)
-- [Goal 04 source audit and diagram mapping](../objectives/skill-process/research/09-recursive-wave-01-outcome.md#unreal-package-and-runtime-validation-diagram-mapping)
+- [Goal 04 source audit and diagram mapping](research/09-recursive-wave-01-outcome.md#unreal-package-and-runtime-validation-diagram-mapping)

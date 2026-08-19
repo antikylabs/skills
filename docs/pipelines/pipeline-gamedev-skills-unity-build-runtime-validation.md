@@ -75,4 +75,4 @@ skills.
 - [Failure classes and Addressables boundary](https://github.com/gamedev-skills/awesome-gamedev-agent-skills/blob/9ca5296b219049c5b68494e1f3c274ead6d727b3/skills/unity/unity-build-pipeline/SKILL.md#L95-L109)
 - [Parameterized CI script and explicit exit contract](https://github.com/gamedev-skills/awesome-gamedev-agent-skills/blob/9ca5296b219049c5b68494e1f3c274ead6d727b3/skills/unity/unity-build-pipeline/references/ci-build-script.md#L7-L92)
 - [Frozen Apache-2.0 license](https://github.com/gamedev-skills/awesome-gamedev-agent-skills/blob/9ca5296b219049c5b68494e1f3c274ead6d727b3/LICENSE)
-- [Goal 80 source audit and diagram mapping](../objectives/skill-process/research/13-deferred-pipeline-follow-up.md#unity-build-and-runtime-diagram-mapping)
+- [Goal 80 source audit and diagram mapping](research/13-deferred-pipeline-follow-up.md#unity-build-and-runtime-diagram-mapping)

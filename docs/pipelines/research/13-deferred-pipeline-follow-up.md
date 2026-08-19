@@ -99,7 +99,7 @@ and every other routed atomic module individually. No module was grouped away.
 | --- | --- | --- |
 | New procedural-scene orchestration | **Reject** | Goal 80 excludes router/catalog pages. The source's principal artifact is skill selection; its nine-step order has no source-stated repair branch or independent project output outside the routed skills. |
 | Skill-pack source distillation | **Reject** | Scope policy fails: the maintainer's clone → assess → approve → compare → publish-readiness flow authors agent skills, not an AI-assisted game-development artifact. |
-| Deterministic gallery capture | **Duplicate** | Its paused capture, diagnostics, runtime-error, and regression evidence are constituent support already preserved by [`pipeline-threejs-visual-system-validation.md`](../../../pipelines/pipeline-threejs-visual-system-validation.md). |
+| Deterministic gallery capture | **Duplicate** | Its paused capture, diagnostics, runtime-error, and regression evidence are constituent support already preserved by [`pipeline-threejs-visual-system-validation.md`](../pipeline-threejs-visual-system-validation.md). |
 | `threejs-camera-direction` | **Defer** | Outside the frozen manifest; a later goal must audit the linked camera contract and examples before mapping its build order and transition gates. |
 | `threejs-procedural-animation` | **Defer** | Outside the frozen manifest; its phase/frame/kinematics order is plausible, but the linked motion reference and examples still need an individual evidence map. |
 | `threejs-procedural-fields` | **Defer** | Outside the frozen manifest; its seven-step shared-field workflow needs a later reference/example parity and feedback audit. |

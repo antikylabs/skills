@@ -52,7 +52,7 @@ development loop.
 
 All 35 recorded URLs are unique. Canonicalization found no duplicate identities. The itch.io URL
 resolves to the same path with a trailing slash; that normalized form is used below. No change to
-[`targets.md`](../targets.md) is needed.
+[`targets.md`](../TARGETS.md) is needed.
 
 ### Scott Three.js target
 

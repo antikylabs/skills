@@ -80,4 +80,4 @@ may not exist as reusable skills.
 - [Measured table and acceptance thresholds](https://github.com/thrixel/goal-to-game/blob/db2fd7dc7260f1bb973903b9c0c943ecd2111ac9/skills/goal-to-game/engines/threejs/example/feeltest.mjs#L184-L201)
 - [Owner brief, verify/report contract, and measured correction loop](https://github.com/thrixel/goal-to-game/blob/db2fd7dc7260f1bb973903b9c0c943ecd2111ac9/skills/goal-to-game/engines/threejs/PROCESS.md#L85-L119)
 - [Loop stop and honest-report rules](https://github.com/thrixel/goal-to-game/blob/db2fd7dc7260f1bb973903b9c0c943ecd2111ac9/skills/goal-to-game/engines/threejs/PROCESS.md#L170-L180)
-- [Goal 80 source audit and diagram mapping](../objectives/skill-process/research/13-deferred-pipeline-follow-up.md#threejs-gameplay-relationship-bench-diagram-mapping)
+- [Goal 80 source audit and diagram mapping](research/13-deferred-pipeline-follow-up.md#threejs-gameplay-relationship-bench-diagram-mapping)

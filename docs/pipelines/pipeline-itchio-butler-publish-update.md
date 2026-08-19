@@ -80,4 +80,4 @@ exist as reusable skills.
 - [Frozen agent workflow and update loop](https://github.com/gamedev-skills/awesome-gamedev-agent-skills/blob/9ca5296b219049c5b68494e1f3c274ead6d727b3/skills/workflows/itch-publish/SKILL.md#L29-L51)
 - [Live pushing manual refreshed on 2026-08-17](https://itch.io/docs/butler/pushing.html)
 - [Frozen Butler MIT license](https://github.com/itchio/butler/blob/0c9a730a9305fc9d23724e28ce0e4a5b01d048ee/LICENSE)
-- [Goal 04 source audit and diagram mapping](../objectives/skill-process/research/09-recursive-wave-01-outcome.md#itchio-butler-publish-and-update-diagram-mapping)
+- [Goal 04 source audit and diagram mapping](research/09-recursive-wave-01-outcome.md#itchio-butler-publish-and-update-diagram-mapping)

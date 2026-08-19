@@ -4,10 +4,10 @@
 
 All four declared candidates pass the six-part admission gate:
 
-- [Fast gameplay prototyping](../../../pipelines/pipeline-gamedev-skills-fast-gameplay-prototyping.md)
-- [Game-jam delivery](../../../pipelines/pipeline-gamedev-skills-game-jam-delivery.md)
-- [Game-asset production](../../../pipelines/pipeline-gamedev-skills-game-asset-production.md)
-- [Level blockout, teach, and test](../../../pipelines/pipeline-gamedev-skills-level-blockout-teach-test.md)
+- [Fast gameplay prototyping](../pipeline-gamedev-skills-fast-gameplay-prototyping.md)
+- [Game-jam delivery](../pipeline-gamedev-skills-game-jam-delivery.md)
+- [Game-asset production](../pipeline-gamedev-skills-game-asset-production.md)
+- [Level blockout, teach, and test](../pipeline-gamedev-skills-level-blockout-teach-test.md)
 
 Each is an agent instruction with a source-stated order, artifacts or gates, a feedback or stop
 path, and traceable authorship. This is the weakest accepted evidence tier: **Source-documented**.

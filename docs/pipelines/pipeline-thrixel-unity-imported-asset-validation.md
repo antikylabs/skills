@@ -80,4 +80,4 @@ capabilities may not exist as reusable skills.
 - [Shared thumbnail/edit and grouping-before-import order](https://github.com/thrixel/goal-to-game/blob/db2fd7dc7260f1bb973903b9c0c943ecd2111ac9/skills/goal-to-game/SKILL.md#L541-L595)
 - [Name-inspection and grouping failure gate](https://github.com/thrixel/goal-to-game/blob/db2fd7dc7260f1bb973903b9c0c943ecd2111ac9/skills/goal-to-game/SKILL.md#L617-L633)
 - [Frozen Apache-2.0 license](https://github.com/thrixel/goal-to-game/blob/db2fd7dc7260f1bb973903b9c0c943ecd2111ac9/LICENSE)
-- [Goal 80 source audit and diagram mapping](../objectives/skill-process/research/13-deferred-pipeline-follow-up.md#unity-imported-asset-diagram-mapping)
+- [Goal 80 source audit and diagram mapping](research/13-deferred-pipeline-follow-up.md#unity-imported-asset-diagram-mapping)

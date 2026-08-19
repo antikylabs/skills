@@ -74,4 +74,4 @@ installed skills.
 - [Deterministic raster checks and quality gates](https://github.com/gamedev-skills/awesome-gamedev-agent-skills/blob/9ca5296b219049c5b68494e1f3c274ead6d727b3/skills/disciplines/create-game-assets/SKILL.md#L80-L117)
 - [Copyable art-direction brief](https://github.com/gamedev-skills/awesome-gamedev-agent-skills/blob/9ca5296b219049c5b68494e1f3c274ead6d727b3/skills/disciplines/create-game-assets/assets/art-direction-brief.md)
 - [Asset manifest contract](https://github.com/gamedev-skills/awesome-gamedev-agent-skills/blob/9ca5296b219049c5b68494e1f3c274ead6d727b3/skills/disciplines/create-game-assets/assets/asset-manifest.json)
-- [Goal 02 source audit and diagram mapping](../objectives/skill-process/research/07-gamedev-skills-harvest.md#game-asset-production-diagram-mapping)
+- [Goal 02 source audit and diagram mapping](research/07-gamedev-skills-harvest.md#game-asset-production-diagram-mapping)
