@@ -1,0 +1,7 @@
+- list of antislop skills/plugins to review.
+
+
+Words or phrases to antislop
+
+- "fail-closed" .... "An independent review also identified several fail-closed hardening fixes worth addressing before final acceptance."
+- "load-bearing" .... "You found the load-bearing issue."
