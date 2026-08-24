@@ -1,4 +1,5 @@
-- list of antislop skills/plugins to review.
+- review this for addition to slop checks and good engineering and engineering skill: https://github.com/tigerbeetle/tigerbeetle/blob/main/docs/TIGER_STYLE.md
+- list of antislop skills/plugins to review: https://x.com/juampitech/status/2090834948332655011
 
 
 Words or phrases to antislop
